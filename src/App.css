@@ -40,3 +40,76 @@
 .read-the-docs {
   color: #888;
 }
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #333;
+}
+
+section {
+  margin: 40px 0;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+}
+
+/* Estilos para los ejes */
+.domain,
+.tick line {
+  stroke: black;
+}
+
+.tick text {
+  fill: black;
+  font-size: 12px;
+}
+
+/* Estilos para los gráficos */
+svg {
+  display: block;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+circle:hover {
+  fill: #003366;
+  r: 6;
+  transition: all 0.2s;
+}
+
+.file-uploader {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.upload-section {
+  margin: 10px 0;
+}
+
+.upload-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.upload-section input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
