@@ -1,17 +1,18 @@
 import { Form, Card, Alert } from 'react-bootstrap';
 import { useState } from 'react';
 import * as d3 from 'd3';
+import { ChartTypes } from "../constants/graph-type";
 
-function FileUploader({ onBarDataLoad, onLineDataLoad }) {
+function
+  FileUploader({ setData, type, setType }) {
   const [error, setError] = useState('');
-  const [selectedChart, setSelectedChart] = useState('');
   const [csvData, setCsvData] = useState(null);
 
-  const processCSV = (file, type) => {
+  const processCSV = (file) => {
     if (!file) return;
-    
+
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
       try {
         const csvData = d3.csvParse(event.target.result);
@@ -20,7 +21,7 @@ function FileUploader({ onBarDataLoad, onLineDataLoad }) {
           return;
         }
         const columns = Object.keys(csvData[0]);
-        
+
         if (columns.length < 2) {
           setError('CSV must have at least two columns');
           return;
@@ -34,13 +35,8 @@ function FileUploader({ onBarDataLoad, onLineDataLoad }) {
             y: +d[columns[1]]
           }))
         };
+        setData(formattedData);
 
-        if (type === 'bar') {
-          onBarDataLoad(formattedData);
-        } else if (type === 'line') {
-          onLineDataLoad(formattedData);
-        }
-        
         setError('');
       } catch (err) {
         setError('Error processing CSV file');
@@ -58,40 +54,41 @@ function FileUploader({ onBarDataLoad, onLineDataLoad }) {
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
       setCsvData(e.target.files[0]);
-      processCSV(e.target.files[0], selectedChart);
+      processCSV(e.target.files[0], type);
     }
   };
 
   const handleChartTypeChange = (e) => {
     const newType = e.target.value;
-    setSelectedChart(newType);
-    
-    onBarDataLoad(null);
-    onLineDataLoad(null);
-    
+    setType(newType);
+
+    setData(null);
+
     if (newType && csvData) {
       processCSV(csvData, newType);
     }
   };
-
   return (
     <Card>
       <Card.Body>
         <Form>
           <Form.Group className="mb-3">
             <Form.Label><strong>Select Chart Type</strong></Form.Label>
-            <Form.Select 
-              value={selectedChart}
+            <Form.Select
+              value={type}
               onChange={handleChartTypeChange}
               className="mb-3"
             >
               <option value="">Select a chart type</option>
-              <option value="bar">Bar Chart</option>
-              <option value="line">Line Chart</option>
+              {Object.keys(ChartTypes).map((key) => (
+                <option key={key} value={ChartTypes[key]}>
+                  {key.charAt(0) + key.slice(1).toLowerCase()}
+                </option>
+              ))}
             </Form.Select>
           </Form.Group>
 
-          {selectedChart && (
+          {type && (
             <Form.Group>
               <Form.Label>
                 <strong>Upload Data</strong>
@@ -107,7 +104,7 @@ function FileUploader({ onBarDataLoad, onLineDataLoad }) {
             </Form.Group>
           )}
         </Form>
-        
+
         {error && (
           <Alert variant="danger" className="mt-3">
             {error}
