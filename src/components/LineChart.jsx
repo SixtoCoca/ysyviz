@@ -1,20 +1,22 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { addAxisLabels } from './interface/axisLabels';
 
-function LineChart({ data }) {
+const LineChart = ({ data, filled = false }) => {
   const svgRef = useRef();
 
   useEffect(() => {
     if (!data || !data.values || data.values.length === 0) return;
 
-    const width = 600;
-    const height = 400;
-    const margin = { top: 20, right: 30, bottom: 60, left: 60 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+    const { width, height, margin } = chartDimensions;
+    const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
+    clearSvg(svg);
+
+    const g = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleBand()
       .domain(data.values.map(d => d.x))
@@ -23,14 +25,24 @@ function LineChart({ data }) {
 
     const y = d3.scaleLinear()
       .domain([0, d3.max(data.values, d => d.y)])
+      .nice()
       .range([innerHeight, 0]);
-
-    const g = svg.append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
 
     const line = d3.line()
       .x(d => x(d.x) + x.bandwidth() / 2)
       .y(d => y(d.y));
+
+    const area = d3.area()
+      .x(d => x(d.x) + x.bandwidth() / 2)
+      .y0(innerHeight)
+      .y1(d => y(d.y));
+
+    if (filled) {
+      g.append("path")
+        .datum(data.values)
+        .attr("fill", "lightsteelblue")
+        .attr("d", area);
+    }
 
     g.append("path")
       .datum(data.values)
@@ -59,27 +71,16 @@ function LineChart({ data }) {
     g.append("g")
       .call(d3.axisLeft(y));
 
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", height - 10)
-      .style("text-anchor", "middle")
-      .text(data.xAxisLabel);
-
-    svg.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("x", -(height / 2))
-      .attr("y", 15)
-      .style("text-anchor", "middle")
-      .text(data.yAxisLabel);
+    addAxisLabels(svg, data, { width, height });
 
     return () => {
-      svg.selectAll("*").remove();
+      clearSvg(svg);
     };
-  }, [data]);
+  }, [data, filled]);
 
   if (!data || !data.values || data.values.length === 0) return null;
 
-  return <svg ref={svgRef} width="600" height="400"></svg>;
-}
+  return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
+};
 
-export default LineChart; 
+export default LineChart;

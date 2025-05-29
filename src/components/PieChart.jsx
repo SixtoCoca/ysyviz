@@ -1,38 +1,37 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { chartDimensions, clearSvg } from './interface/chartLayout';
 
-function PieChart({ data, isDonut = false }) {
+const PieChart = ({ data, isDonut = false }) => {
   const svgRef = useRef();
 
   useEffect(() => {
     if (!data || !data.values || data.values.length === 0) return;
 
-    const width = 600;
-    const height = 400;
+    const { width, height } = chartDimensions;
     const radius = Math.min(width, height) / 2;
 
-    const svg = d3.select(svgRef.current)
+    const svg = d3.select(svgRef.current);
+    clearSvg(svg);
+
+    const container = svg
       .attr('width', width)
       .attr('height', height)
       .append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`);
 
     const color = d3.scaleOrdinal(d3.schemeCategory10);
-
-    // Generar los ángulos para el gráfico de pastel
-    const pie = d3.pie()
-      .value(d => d.y); // Valor que define el tamaño de cada "porción"
+    const pie = d3.pie().value(d => d.y);
     const sizeCenter = isDonut ? 100 : 0;
 
     const arc = d3.arc()
       .outerRadius(radius - 10)
-      .innerRadius(sizeCenter); // Gráfico de pastel sin agujeros (donut)
+      .innerRadius(sizeCenter);
 
     const arcLabel = d3.arc()
       .outerRadius(radius - 40)
       .innerRadius(radius - 40);
 
-    // Crear el tooltip (fuera del SVG, ya que es un div)
     const tooltip = d3.select('body')
       .append("div")
       .attr("class", "tooltip")
@@ -44,13 +43,11 @@ function PieChart({ data, isDonut = false }) {
       .style("border-radius", "4px")
       .style("pointer-events", "none");
 
-    // Generar los segmentos (arc) del gráfico de pastel
-    const arcs = svg.selectAll('.arc')
+    const arcs = container.selectAll('.arc')
       .data(pie(data.values))
       .enter().append('g')
       .attr('class', 'arc');
 
-    // Añadir los segmentos al gráfico
     arcs.append('path')
       .attr('d', arc)
       .attr('fill', (d, i) => color(i))
@@ -66,29 +63,21 @@ function PieChart({ data, isDonut = false }) {
         tooltip.style("visibility", "hidden");
       });
 
-    // Añadir etiquetas a las porciones
     arcs.append('text')
       .attr('transform', d => `translate(${arcLabel.centroid(d)})`)
       .attr('dy', '.35em')
       .style('text-anchor', 'middle')
       .text(d => d.data.x);
 
-    // Añadir el título
-    svg.append("text")
-      .attr("x", 0)
-      .attr("y", -radius - 10)
-      .style("text-anchor", "middle")
-      .text(data.xAxisLabel);
-
     return () => {
-      svg.selectAll("*").remove();
-      tooltip.remove(); // Eliminar el tooltip al desmontar el componente
+      clearSvg(svg);
+      tooltip.remove();
     };
-  }, [data]);
+  }, [data, isDonut]);
 
   if (!data || !data.values || data.values.length === 0) return null;
 
-  return <svg ref={svgRef}></svg>;
-}
+  return <svg ref={svgRef} />;
+};
 
 export default PieChart;

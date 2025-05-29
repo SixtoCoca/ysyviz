@@ -3,5 +3,10 @@ export const ChartTypes = {
   LINE: "line",
   PIE: "pie",
   DONUT: "donut",
-  SCATTER: "scatter"
-}
+  SCATTER: "scatter",
+  BUBBLE: "bubble",
+  HEATMAP: "heatmap",
+  AREA: "area",
+  SANKEY: 'sankey',
+  CHORD: 'chord'
+};
