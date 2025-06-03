@@ -1,25 +1,42 @@
 import { Card, Form } from 'react-bootstrap';
-import { useChartConfig } from './hooks/useChartConfig';
+import { useState, useEffect, useMemo } from 'react';
+import debounce from 'lodash.debounce';
 
-const AdvancedSettings = ({ onChange }) => {
-    const [cfg, setCfg] = useChartConfig();
+const AdvancedSettings = ({ cfg, setCfg }) => {
+    const [draft, setDraft] = useState(cfg);
+    useEffect(() => setDraft(cfg), [cfg]);
 
-    const updateTitle = (value) => {
-        const next = { ...cfg, title: value };
-        setCfg(next);
-        onChange(next);
+    const debouncedCommit = useMemo(() => debounce(setCfg, 400), [setCfg]);
+
+    useEffect(() => {
+        return () => debouncedCommit.flush();
+    }, [debouncedCommit]);
+    const handleInput = (e) => {
+        const { name, value } = e.target;
+        setDraft(prev => ({ ...prev, [name]: value }));
+        debouncedCommit({ ...draft, [name]: value });
+        console.log(draft)
     };
-
     return (
         <Card className="h-100">
             <Card.Body>
                 <h4 className="mb-3 text-center">Chart Settings</h4>
+
                 <Form.Label>Title</Form.Label>
                 <Form.Control
                     type="text"
-                    value={cfg.title}
+                    name="title"
+                    value={draft.title}
                     placeholder="Enter chart title"
-                    onChange={(e) => updateTitle(e.target.value)}
+                    onChange={handleInput}
+                />
+
+                <Form.Label className="mt-3">Color</Form.Label>
+                <Form.Control
+                    type="color"
+                    name="color"
+                    value={draft.color}
+                    onChange={handleInput}
                 />
             </Card.Body>
         </Card>

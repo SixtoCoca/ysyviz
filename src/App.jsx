@@ -10,24 +10,27 @@ import HeatmapChart from './components/HeatChart';
 import SankeyChart from './components/SanKeyChart';
 import ChordChart from './components/ChordChart';
 import AdvancedSettings from './components/config/AdvancedSettings';
+import { useChartConfig } from './components/config/hooks/useChartConfig';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   const [type, setType] = useState(null);
   const [data, setData] = useState(null);
-  const [options, setOptions] = useState({});
+  const [cfg, setCfg] = useChartConfig();
+
+  const chartProps = { data, config: cfg };
 
   const chartComponents = {
-    bar: <BarChart data={data} options={options} />,
-    line: <LineChart data={data} options={options} />,
-    pie: <PieChart data={data} options={options} />,
-    donut: <PieChart data={data} isDonut={true} options={options} />,
-    scatter: <ScatterChart data={data} options={options} />,
-    bubble: <BubbleChart data={data} options={options} />,
-    heatmap: <HeatmapChart data={data} options={options} />,
-    area: <LineChart data={data} filled={true} options={options} />,
-    sankey: <SankeyChart data={data} options={options} />,
-    chord: <ChordChart data={data} options={options} />
+    bar: <BarChart   {...chartProps} />,
+    line: <LineChart  {...chartProps} />,
+    area: <LineChart  {...chartProps} filled />,
+    pie: <PieChart   {...chartProps} />,
+    donut: <PieChart   {...chartProps} isDonut />,
+    scatter: <ScatterChart {...chartProps} />,
+    bubble: <BubbleChart {...chartProps} />,
+    heatmap: <HeatmapChart {...chartProps} />,
+    sankey: <SankeyChart {...chartProps} />,
+    chord: <ChordChart  {...chartProps} />
   };
 
   return (
@@ -47,14 +50,14 @@ const App = () => {
                 </Card.Body>
               </Card>
 
-              <AdvancedSettings onChange={setOptions} />
+              <AdvancedSettings cfg={cfg} setCfg={setCfg} />
             </Col>
 
             <Col md={8} className="h-100 p-4">
               <Card className="h-100">
                 <Card.Body className="d-flex flex-column justify-content-center align-items-center">
                   <h4 className="mb-4 text-center">
-                    {options.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
+                    {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
                   </h4>
                   <div
                     style={{ width: '100%', minHeight: '400px' }}

@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
 import { addAxisLabels } from './interface/axisLabels';
 
-const ScatterChart = ({ data }) => {
+const ScatterChart = ({ data, config }) => {
     const svgRef = useRef();
 
     useEffect(() => {
@@ -38,13 +38,15 @@ const ScatterChart = ({ data }) => {
         g.append("g")
             .call(d3.axisLeft(y));
 
+        const pointColor = config?.color || 'steelblue';
+
         g.selectAll("circle")
             .data(data.values)
             .join("circle")
             .attr("cx", d => x(+d.x))
             .attr("cy", d => y(+d.y))
             .attr("r", 3)
-            .attr("fill", "steelblue")
+            .attr('fill', pointColor)
             .attr("opacity", 0.7);
 
         addAxisLabels(svg, data, { width, height });
@@ -52,7 +54,7 @@ const ScatterChart = ({ data }) => {
         return () => {
             clearSvg(svg);
         };
-    }, [data]);
+    }, [data, config]);
 
     if (!data || !data.values || data.values.length === 0) return null;
 

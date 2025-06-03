@@ -1,6 +1,6 @@
 export const chartDimensions = {
-    width: 600,
-    height: 400,
+    width: 1000,
+    height: 700,
     margin: { top: 20, right: 30, bottom: 60, left: 60 },
 };
 

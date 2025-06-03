@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
 import { addAxisLabels } from './interface/axisLabels';
 
-const BarChart = ({ data }) => {
+const BarChart = ({ data, config }) => {
   const svgRef = useRef();
 
   useEffect(() => {
@@ -28,6 +28,10 @@ const BarChart = ({ data }) => {
     const g = svg.append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    const fill = config?.color
+      ? () => config.color
+      : (i) => d3.schemeCategory10[i % 10];
+
     g.selectAll("rect")
       .data(data.values)
       .join("rect")
@@ -35,7 +39,7 @@ const BarChart = ({ data }) => {
       .attr("y", d => y(d.y))
       .attr("height", d => innerHeight - y(d.y))
       .attr("width", x.bandwidth())
-      .attr("fill", "steelblue");
+      .attr("fill", (d, i) => fill(i));
 
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
@@ -54,7 +58,7 @@ const BarChart = ({ data }) => {
     return () => {
       clearSvg(svg);
     };
-  }, [data]);
+  }, [data, config]);
 
   if (!data || !data.values || data.values.length === 0) return null;
 

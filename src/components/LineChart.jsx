@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
 import { addAxisLabels } from './interface/axisLabels';
 
-const LineChart = ({ data, filled = false }) => {
+const LineChart = ({ data, config, filled = false }) => {
   const svgRef = useRef();
 
   useEffect(() => {
@@ -37,27 +37,33 @@ const LineChart = ({ data, filled = false }) => {
       .y0(innerHeight)
       .y1(d => y(d.y));
 
+    const pointColor = config?.color
+      ? () => config.color
+      : i => d3.schemeCategory10[i % 10];
+
     if (filled) {
-      g.append("path")
+      const c = d3.color(config?.color || 'steelblue');
+      c.opacity = 0.5;
+      g.append('path')
         .datum(data.values)
-        .attr("fill", "lightsteelblue")
-        .attr("d", area);
+        .attr('fill', c.formatRgb())
+        .attr('d', area);
     }
 
-    g.append("path")
+    g.append('path')
       .datum(data.values)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 2)
-      .attr("d", line);
+      .attr('fill', 'none')
+      .attr('stroke', config?.color || 'steelblue')
+      .attr('stroke-width', 2)
+      .attr('d', line);
 
-    g.selectAll("circle")
+    g.selectAll('circle')
       .data(data.values)
-      .join("circle")
-      .attr("cx", d => x(d.x) + x.bandwidth() / 2)
-      .attr("cy", d => y(d.y))
-      .attr("r", 4)
-      .attr("fill", "steelblue");
+      .join('circle')
+      .attr('cx', d => x(d.x) + x.bandwidth() / 2)
+      .attr('cy', d => y(d.y))
+      .attr('r', 4)
+      .attr('fill', (d, i) => pointColor(i));
 
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
@@ -76,7 +82,7 @@ const LineChart = ({ data, filled = false }) => {
     return () => {
       clearSvg(svg);
     };
-  }, [data, filled]);
+  }, [data, config, filled]);
 
   if (!data || !data.values || data.values.length === 0) return null;
 
