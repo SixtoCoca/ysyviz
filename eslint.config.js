@@ -1,38 +1,39 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig } from "eslint/config";
+import js from "@eslint/js";
+import pluginReact from "eslint-plugin-react";
+import globals from "globals";
 
-export default [
-  { ignores: ['dist'] },
+export default defineConfig([
   {
-    files: ['**/*.{js,jsx}'],
+    files: ["**/*.{js,mjs,cjs,jsx}"],
     languageOptions: {
-      ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+        ecmaVersion: "latest",
+        sourceType: "module",
       },
     },
-    settings: { react: { version: '18.3' } },
     plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      react: pluginReact,
+    },
+    extends: [
+      "eslint:recommended", // Reglas generales recomendadas
+      "plugin:react/recommended", // Reglas recomendadas para React
+    ],
+    settings: {
+      react: {
+        version: "detect", // 🔍 Detecta la versión de React automáticamente
+      },
     },
     rules: {
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules,
-      'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      "react/react-in-jsx-scope": "off", // 🔴 No es necesario importar React en JSX (React 17+)
+      "react/prop-types": "off", // 🔵 Opcional, si no usas PropTypes
+      "react/jsx-uses-react": "off", // 🔵 Evita advertencias innecesarias
+      "react/jsx-uses-vars": "warn", // ⚠️ Detecta variables no usadas en JSX
+      "no-unused-vars": "warn", // ⚠️ Marca variables no utilizadas
+      "semi": ["error", "always"], // 🔴 Exige punto y coma al final de las líneas
+      "quotes": ["error", "double"], // 🔴 Obliga a usar comillas dobles
+      "indent": ["error", 2], // 🔴 Exige indentación de 2 espacios
     },
   },
-]
+]);
