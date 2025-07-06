@@ -18,7 +18,7 @@ const AdvancedSettings = ({ cfg, setCfg }) => {
         console.log(draft)
     };
     return (
-        <Card className="h-100">
+        <Card>
             <Card.Body>
                 <h4 className="mb-3 text-center">Chart Settings</h4>
 

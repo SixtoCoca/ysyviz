@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
 import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +8,8 @@ import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
 import PieChart from './components/PieChart';
 import ScatterChart from './components/ScatterChart';
-import FileUploader from './components/FileUploader';
+import ChartSelector from './components/interface/ChartSelector';
+import DataUploader from './components/interface/DataUploader';
 import BubbleChart from './components/BubbleChart';
 import HeatmapChart from './components/HeatChart';
 import SankeyChart from './components/SanKeyChart';
@@ -16,12 +17,12 @@ import ChordChart from './components/ChordChart';
 import AdvancedSettings from './components/config/AdvancedSettings';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 const App = () => {
   const [type, setType] = useState(null);
   const [data, setData] = useState(null);
   const [cfg, setCfg] = useChartConfig();
-
   const chartRef = useRef();
 
   const chartProps = { data, config: cfg };
@@ -52,61 +53,89 @@ const App = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header className="py-3">
-        <h1 className="text-center fw-bold m-0">No-Code Graphs</h1>
+    <div className="min-vh-100 d-flex flex-column">
+      <header className="logo-header">
+        <img
+          src="/icono-app.png"
+          alt="No-Code Graphs Logo"
+          className="img-fluid"
+          width="150"
+          height="auto"
+        />
       </header>
 
-      <main className="flex-grow-1">
-        <Container fluid className="h-100">
-          <Row className="h-100">
-            <Col md={4} className="h-100 p-4">
-              <Card className="mb-4">
-                <Card.Body>
-                  <h4 className="mb-3 text-center">Upload CSV/XLSX & Select Chart</h4>
-                  <FileUploader setData={setData} setType={setType} type={type} />
-                </Card.Body>
-              </Card>
-
-              <AdvancedSettings cfg={cfg} setCfg={setCfg} />
+      <div className="flex-grow-1 d-flex">
+        <Tab.Container defaultActiveKey="upload">
+          <Row className="flex-grow-1 w-100 m-0">
+            <Col md={3} className="sidebar px-0 d-flex flex-column">
+              <Nav variant="tabs" className="flex-column p-3 gap-2 flex-grow-1">
+                <Nav.Item>
+                  <Nav.Link eventKey="upload" className="text-center">Upload File</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="config" className="text-center">Configure Chart</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="view" className="text-center">View & Download</Nav.Link>
+                </Nav.Item>
+              </Nav>
             </Col>
 
-            <Col md={8} className="h-100 p-4">
-              <Card className="h-100 position-relative">
-                {type && data && (
-                  <Button
-                    variant="light"
-                    className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm"
-                    onClick={handleDownload}
-                  >
-                    <FontAwesomeIcon icon={faDownload} />
-                    Download
-                  </Button>
-                )}
-                <Card.Body
-                  ref={chartRef}
-                  className="d-flex flex-column justify-content-center align-items-center"
-                >
-                  <h4 className="mb-4 text-center">
-                    {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
-                  </h4>
+            <Col md={10} className="p-4 content">
+              <Tab.Content className="h-100">
+                <Tab.Pane eventKey="upload" className="h-100">
+                  <Card className="h-100">
+                    <Card.Body>
+                      <h4 className="mb-3 text-center">Select Chart & Upload CSV/XLSX</h4>
+                      <DataUploader type={type} setData={setData} />
+                    </Card.Body>
+                  </Card>
+                </Tab.Pane>
 
-                  <div
-                    style={{ width: '100%', minHeight: '400px' }}
-                    className="d-flex justify-content-center align-items-center"
-                  >
-                    {type && data ? chartComponents[type] : (
-                      <p className="text-muted text-center">
-                        Please upload a data file and select a chart type to see the visualization.
-                      </p>
+                <Tab.Pane eventKey="config" className="h-100">
+                  <Card className="h-100 position-relative">
+                    <Card.Body>
+                      <h4 className="mb-3 text-center">Chart Configuration</h4>
+                      <ChartSelector type={type} setType={setType} setData={setData} />
+                      <AdvancedSettings cfg={cfg} setCfg={setCfg} />
+                    </Card.Body>
+                  </Card>
+                </Tab.Pane>
+
+                <Tab.Pane eventKey="view" className="h-100">
+                  <Card className="h-100 position-relative">
+                    {type && data && (
+                      <Button
+                        variant="light"
+                        className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm"
+                        onClick={handleDownload}
+                      >
+                        <FontAwesomeIcon icon={faDownload} />
+                        Download
+                      </Button>
                     )}
-                  </div>
-                </Card.Body>
-              </Card>
+                    <Card.Body
+                      ref={chartRef}
+                      className="d-flex flex-column justify-content-center align-items-center"
+                    >
+                      <h4 className="mb-4 text-center">
+                        {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
+                      </h4>
+                      <div className="w-100 d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+                        {type && data ? chartComponents[type] : (
+                          <p className="text-muted text-center">
+                            Please upload a data file and select a chart type to see the visualization.
+                          </p>
+                        )}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Tab.Pane>
+              </Tab.Content>
             </Col>
           </Row>
-        </Container>
-      </main>
+        </Tab.Container>
+      </div>
     </div>
   );
 };
