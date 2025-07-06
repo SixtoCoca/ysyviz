@@ -1,5 +1,9 @@
-import { useState } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { useState, useRef } from 'react';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import html2canvas from 'html2canvas';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
+
 import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
 import PieChart from './components/PieChart';
@@ -18,19 +22,33 @@ const App = () => {
   const [data, setData] = useState(null);
   const [cfg, setCfg] = useChartConfig();
 
+  const chartRef = useRef();
+
   const chartProps = { data, config: cfg };
 
   const chartComponents = {
-    bar: <BarChart   {...chartProps} />,
-    line: <LineChart  {...chartProps} />,
-    area: <LineChart  {...chartProps} filled />,
-    pie: <PieChart   {...chartProps} />,
-    donut: <PieChart   {...chartProps} isDonut />,
+    bar: <BarChart {...chartProps} />,
+    line: <LineChart {...chartProps} />,
+    area: <LineChart {...chartProps} filled />,
+    pie: <PieChart {...chartProps} />,
+    donut: <PieChart {...chartProps} isDonut />,
     scatter: <ScatterChart {...chartProps} />,
     bubble: <BubbleChart {...chartProps} />,
     heatmap: <HeatmapChart {...chartProps} />,
     sankey: <SankeyChart {...chartProps} />,
-    chord: <ChordChart  {...chartProps} />
+    chord: <ChordChart {...chartProps} />
+  };
+
+  const handleDownload = async () => {
+    if (!chartRef.current) return;
+    const canvas = await html2canvas(chartRef.current, {
+      backgroundColor: 'white',
+      scale: 2
+    });
+    const link = document.createElement('a');
+    link.download = `${cfg.title || 'chart'}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
   };
 
   return (
@@ -45,7 +63,7 @@ const App = () => {
             <Col md={4} className="h-100 p-4">
               <Card className="mb-4">
                 <Card.Body>
-                  <h4 className="mb-3 text-center">Upload CSV & Select Chart</h4>
+                  <h4 className="mb-3 text-center">Upload CSV/XLSX & Select Chart</h4>
                   <FileUploader setData={setData} setType={setType} type={type} />
                 </Card.Body>
               </Card>
@@ -54,18 +72,32 @@ const App = () => {
             </Col>
 
             <Col md={8} className="h-100 p-4">
-              <Card className="h-100">
-                <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+              <Card className="h-100 position-relative">
+                {type && data && (
+                  <Button
+                    variant="light"
+                    className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm"
+                    onClick={handleDownload}
+                  >
+                    <FontAwesomeIcon icon={faDownload} />
+                    Download
+                  </Button>
+                )}
+                <Card.Body
+                  ref={chartRef}
+                  className="d-flex flex-column justify-content-center align-items-center"
+                >
                   <h4 className="mb-4 text-center">
                     {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
                   </h4>
+
                   <div
                     style={{ width: '100%', minHeight: '400px' }}
                     className="d-flex justify-content-center align-items-center"
                   >
                     {type && data ? chartComponents[type] : (
                       <p className="text-muted text-center">
-                        Please upload a CSV file and select a chart type to see the visualization.
+                        Please upload a data file and select a chart type to see the visualization.
                       </p>
                     )}
                   </div>
