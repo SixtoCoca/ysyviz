@@ -5,7 +5,6 @@ import { chartDimensions, clearSvg } from './interface/chartLayout';
 
 const SankeyChart = ({ data }) => {
     const svgRef = useRef();
-
     useEffect(() => {
         if (!data || !data.nodes || !data.links || data.nodes.length === 0 || data.links.length === 0) return;
 

@@ -17,7 +17,7 @@ const HeatmapChart = ({ data }) => {
 
         const g = svg
             .attr('width', width)
-            .attr('height', height + 60) // espacio adicional para la leyenda
+            .attr('height', height + 60)
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 

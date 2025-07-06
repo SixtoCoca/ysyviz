@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Container, Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
+import { Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
 import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +8,6 @@ import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
 import PieChart from './components/PieChart';
 import ScatterChart from './components/ScatterChart';
-import ChartSelector from './components/interface/ChartSelector';
 import DataUploader from './components/interface/DataUploader';
 import BubbleChart from './components/BubbleChart';
 import HeatmapChart from './components/HeatChart';
@@ -16,6 +15,8 @@ import SankeyChart from './components/SanKeyChart';
 import ChordChart from './components/ChordChart';
 import AdvancedSettings from './components/config/AdvancedSettings';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
+import { useChartData } from './components/config/hooks/useChartData';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -25,7 +26,8 @@ const App = () => {
   const [cfg, setCfg] = useChartConfig();
   const chartRef = useRef();
 
-  const chartProps = { data, config: cfg };
+  const chartData = useChartData(data, type, cfg);
+  const chartProps = { data: chartData, config: cfg };
 
   const chartComponents = {
     bar: <BarChart {...chartProps} />,
@@ -51,6 +53,7 @@ const App = () => {
     link.href = canvas.toDataURL();
     link.click();
   };
+
 
   return (
     <div className="min-vh-100 d-flex flex-column">
@@ -96,15 +99,21 @@ const App = () => {
                   <Card className="h-100 position-relative">
                     <Card.Body>
                       <h4 className="mb-3 text-center">Chart Configuration</h4>
-                      <ChartSelector type={type} setType={setType} setData={setData} />
-                      <AdvancedSettings cfg={cfg} setCfg={setCfg} />
+                      <AdvancedSettings
+                        cfg={cfg}
+                        setCfg={setCfg}
+                        type={type}
+                        setType={setType}
+                        setData={setData}
+                        data={data}
+                      />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
 
                 <Tab.Pane eventKey="view" className="h-100">
                   <Card className="h-100 position-relative">
-                    {type && data && (
+                    {type && chartData && (
                       <Button
                         variant="light"
                         className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm"
@@ -122,7 +131,7 @@ const App = () => {
                         {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
                       </h4>
                       <div className="w-100 d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-                        {type && data ? chartComponents[type] : (
+                        {type && chartData ? chartComponents[type] : (
                           <p className="text-muted text-center">
                             Please upload a data file and select a chart type to see the visualization.
                           </p>
