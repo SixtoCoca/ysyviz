@@ -1,4 +1,4 @@
-export function addAxisLabels(svg, data, dimensions) {
+export const addAxisLabels = (svg, data, dimensions) => {
     const { width, height } = dimensions;
 
     svg.append("text")
