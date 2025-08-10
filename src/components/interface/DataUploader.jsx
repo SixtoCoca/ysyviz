@@ -150,10 +150,10 @@ const DataUploader = ({ setData, type, helpText }) => {
                     Upload
                 </Button>
             </div>
-
             {error && <Alert variant="danger">{error}</Alert>}
         </>
     );
 };
 
 export default DataUploader;
+
