@@ -3,6 +3,7 @@ import { Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
 import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { Toaster } from 'react-hot-toast'; // ⟵ NUEVO
 
 import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
@@ -53,7 +54,6 @@ const App = () => {
     link.href = canvas.toDataURL();
     link.click();
   };
-
 
   return (
     <div className="min-vh-100 d-flex flex-column">
@@ -145,6 +145,8 @@ const App = () => {
           </Row>
         </Tab.Container>
       </div>
+
+      <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
     </div>
   );
 };

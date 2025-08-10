@@ -1,9 +1,13 @@
 html,
 body,
-#root {
+#no-code-graphs {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
+  overflow: hidden;
 }
 
 .logo-header {
@@ -15,6 +19,7 @@ body,
   justify-content: center;
   align-items: center;
   z-index: 1;
+  width: 100%;
 }
 
 .sidebar {
@@ -24,6 +29,8 @@ body,
   border-right: 1px solid #dee2e6;
   height: 100%;
   box-shadow: inset -2px 0 6px rgba(0, 0, 0, 0.05);
+  min-height: 0;
+  overflow: auto;
 }
 
 .sidebar .nav-link {
@@ -41,11 +48,11 @@ body,
 
 .content {
   flex: 1;
-  overflow-y: auto;
+  overflow: auto;
+  min-height: 0;
   padding: 2rem;
 }
 
-/* Chart container */
 svg {
   display: block;
   margin: 0 auto;
@@ -54,7 +61,6 @@ svg {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Chart axis */
 .domain,
 .tick line {
   stroke: black;
@@ -65,14 +71,12 @@ svg {
   font-size: 12px;
 }
 
-/* Chart point hover */
 circle:hover {
   fill: #003366;
   r: 6;
   transition: all 0.2s;
 }
 
-/* FileUploader styles */
 .file-uploader {
   margin: 20px 0;
   padding: 20px;
@@ -100,8 +104,4 @@ circle:hover {
 .error {
   color: red;
   margin-top: 10px;
-}
-
-body {
-  overflow-x: hidden;
 }
