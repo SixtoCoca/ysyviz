@@ -5,6 +5,7 @@ import { chartDimensions, clearSvg } from './interface/chartLayout';
 
 const SankeyChart = ({ data }) => {
     const svgRef = useRef();
+
     useEffect(() => {
         if (!data || !data.nodes || !data.links || data.nodes.length === 0 || data.links.length === 0) return;
 
@@ -12,22 +13,32 @@ const SankeyChart = ({ data }) => {
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const sankeyGenerator = sankey()
-            .nodeWidth(20)
-            .nodePadding(15)
-            .extent([[1, 1], [width - 1, height - 1]]);
-
-        const nodeMap = new Map(data.nodes.map((d, i) => [d.name, i]));
-
-        const sankeyInput = {
-            nodes: data.nodes.map(d => ({ ...d })),
-            links: data.links.map(d => ({
-                source: nodeMap.get(d.source),
-                target: nodeMap.get(d.target),
-                value: d.value,
-            })),
+        const norm = (s) => String(s ?? '').trim();
+        const toNumber = (v) => {
+            if (typeof v === 'number') return v;
+            const s = String(v ?? '').trim();
+            const standardized = s.includes(',') && !s.includes('.') ? s.replace(',', '.') : s;
+            return Number(standardized);
         };
 
+        const nodes = data.nodes.map(d => ({ ...d, name: norm(d.name) }));
+        const nodeMap = new Map(nodes.map((d, i) => [d.name, i]));
+
+        const mapped = data.links.map(d => {
+            const src = typeof d.source === 'number' ? d.source : nodeMap.get(norm(d.source));
+            const tgt = typeof d.target === 'number' ? d.target : nodeMap.get(norm(d.target));
+            const val = toNumber(d.value);
+            return { source: src, target: tgt, value: val, _raw: d };
+        });
+
+        const invalid = mapped.filter(l => l.source === undefined || l.target === undefined || !Number.isFinite(l.value) || l.value <= 0);
+        if (invalid.length) console.warn('Invalid links dropped:', invalid);
+
+        const links = mapped.filter(l => l.source !== undefined && l.target !== undefined && Number.isFinite(l.value) && l.value > 0);
+
+        const sankeyInput = { nodes, links };
+
+        const sankeyGenerator = sankey().nodeWidth(20).nodePadding(15).extent([[1, 1], [width - 1, height - 1]]);
         const sankeyData = sankeyGenerator(sankeyInput);
 
         const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -42,7 +53,7 @@ const SankeyChart = ({ data }) => {
             .attr('width', d => d.x1 - d.x0)
             .attr('fill', (d, i) => color(i))
             .append('title')
-            .text(d => `${d.name}\n${d.value}`);
+            .text(d => `${d.name}\n${Number(d.value)}`);
 
         container.append('g')
             .attr('fill', 'none')
@@ -54,7 +65,7 @@ const SankeyChart = ({ data }) => {
             .attr('stroke-width', d => Math.max(1, d.width))
             .attr('opacity', 0.5)
             .append('title')
-            .text(d => `${d.source.name} → ${d.target.name}\n${d.value}`);
+            .text(d => `${d.source.name} → ${d.target.name}\n${Number(d.value)}`);
 
         container.selectAll('text')
             .data(sankeyData.nodes)
