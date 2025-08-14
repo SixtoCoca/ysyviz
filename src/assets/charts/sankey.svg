@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<path d="M20 36 C40 36, 40 56, 60 56 C80 56, 80 76, 108 76" fill="none" stroke="#80DEEA" stroke-width="12" stroke-linecap="round"/>
+<path d="M20 52 C44 52, 44 64, 64 64 C84 64, 84 84, 108 84" fill="none" stroke="#9C8ADE" stroke-width="12" stroke-linecap="round" opacity="0.95"/>
+<path d="M20 68 C48 68, 48 60, 72 60 C96 60, 96 44, 108 44" fill="none" stroke="#FFA552" stroke-width="12" stroke-linecap="round" opacity="0.95"/>
+</svg>
