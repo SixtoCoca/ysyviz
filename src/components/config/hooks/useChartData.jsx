@@ -8,19 +8,28 @@ const toNumber = (v) => {
     return Number(standardized);
 };
 
-export const useChartData = (data, type, cfg) => {
+export const useChartData = (rawData, chartType, config) => {
     return useMemo(() => {
-        if (!data) return null;
+        if (!rawData) return null;
 
-        if (type === 'sankey') {
-            const sCol = cfg?.field_source || '';
-            const tCol = cfg?.field_target || '';
-            const vCol = cfg?.field_value || '';
-            if (!(Array.isArray(data.values) && sCol && tCol && vCol)) return null;
+        if (rawData.nodes && rawData.links) {
+            return { nodes: rawData.nodes, links: rawData.links };
+        }
 
-            const rows = data.values
+        if (rawData.matrix && rawData.labels) {
+            return { matrix: rawData.matrix, labels: rawData.labels };
+        }
+
+        if (chartType === 'sankey') {
+            const sCol = config?.field_source || '';
+            const tCol = config?.field_target || '';
+            const vCol = config?.field_value || '';
+            if (!Array.isArray(rawData.values) || !sCol || !tCol || !vCol) return null;
+
+            const rows = rawData.values
                 .map(r => ({ source: norm(r[sCol]), target: norm(r[tCol]), value: toNumber(r[vCol]) }))
                 .filter(d => d.source && d.target && Number.isFinite(d.value) && d.value > 0);
+
             if (rows.length === 0) return null;
 
             const names = Array.from(new Set(rows.flatMap(d => [d.source, d.target])));
@@ -38,13 +47,9 @@ export const useChartData = (data, type, cfg) => {
             return { nodes, links };
         }
 
-        if (type === 'chord') {
-            if (Array.isArray(data.matrix) && Array.isArray(data.labels)) {
-                return { matrix: data.matrix, labels: data.labels };
-            }
-            if (!Array.isArray(data.values) || data.values.length === 0) return null;
-
-            const first = data.values.find(r => r && typeof r === 'object') || {};
+        if (chartType === 'chord') {
+            if (!Array.isArray(rawData.values) || rawData.values.length === 0) return null;
+            const first = rawData.values.find(r => r && typeof r === 'object') || {};
             const keys = Object.keys(first).filter(k => k !== '__rowNum__');
             if (keys.length < 2) return null;
 
@@ -53,15 +58,11 @@ export const useChartData = (data, type, cfg) => {
             const n = labels.length;
             if (n === 0) return null;
 
-            const rowIndex = new Map(
-                Array.from(new Set(data.values.map(r => norm(r[labelKey]))))
-                    .filter(Boolean)
-                    .slice(0, n)
-                    .map((name, i) => [name, i])
-            );
+            const rowNames = Array.from(new Set(rawData.values.map(r => norm(r[labelKey])))).filter(Boolean).slice(0, n);
+            const rowIndex = new Map(rowNames.map((name, i) => [name, i]));
             const matrix = Array.from({ length: n }, () => Array(n).fill(0));
 
-            for (const row of data.values) {
+            for (const row of rawData.values) {
                 const i = rowIndex.get(norm(row[labelKey]));
                 if (i === undefined) continue;
                 for (let j = 0; j < n; j++) {
@@ -69,11 +70,32 @@ export const useChartData = (data, type, cfg) => {
                     if (Number.isFinite(v)) matrix[i][j] = v;
                 }
             }
+
             return { matrix, labels };
         }
 
-        return data;
-    }, [data, type, cfg]);
+        if (!Array.isArray(rawData.values)) return null;
+
+        const { color, title, ...mappings } = config || {};
+        const mappedFields = Object.entries(mappings)
+            .filter(([k, v]) => k.startsWith('field_') && v)
+            .map(([k, v]) => [k.replace('field_', ''), v]);
+
+        const values = rawData.values.map(row => {
+            const newRow = {};
+            mappedFields.forEach(([key, col]) => {
+                newRow[key] = row[col];
+            });
+            return newRow;
+        });
+
+        const xAxisLabel = mappings.field_x || '';
+        const yAxisLabel = mappings.field_y || '';
+        const rLabel = mappings.field_r || '';
+        const labelLabel = mappings.field_label || '';
+
+        return { values, xAxisLabel, yAxisLabel, rLabel, labelLabel };
+    }, [rawData, chartType, config]);
 };
 
 export default useChartData;

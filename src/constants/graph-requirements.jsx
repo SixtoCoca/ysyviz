@@ -38,7 +38,7 @@ export const ChartFieldRequirements = {
         optional: []
     },
     [ChartTypes.CHORD]: {
-        required: ['labels', 'matrix'],
+        required: [],
         optional: []
     }
 };
