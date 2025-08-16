@@ -2,49 +2,39 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { chartDimensions, clearSvg } from './interface/chartLayout';
+import useValidatedData from './config/hooks/useValidatedData';
 
-const SankeyChart = ({ data }) => {
+const SankeyChart = ({ data, config }) => {
     const svgRef = useRef();
 
+    const { data: valid } = useValidatedData(
+        data,
+        'sankey',
+        issues => {
+            console.log('[SankeyChart] validation issues:', issues);
+            if (typeof config?.onValidation === 'function') config.onValidation(issues);
+        },
+        config
+    );
+
     useEffect(() => {
-        if (!data || !data.nodes || !data.links || data.nodes.length === 0 || data.links.length === 0) return;
+        if (!valid || !valid.nodes || !valid.links || valid.nodes.length === 0 || valid.links.length === 0) return;
 
         const { width, height } = chartDimensions;
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const norm = (s) => String(s ?? '').trim();
-        const toNumber = (v) => {
-            if (typeof v === 'number') return v;
-            const s = String(v ?? '').trim();
-            const standardized = s.includes(',') && !s.includes('.') ? s.replace(',', '.') : s;
-            return Number(standardized);
-        };
-
-        const nodes = data.nodes.map(d => ({ ...d, name: norm(d.name) }));
-        const nodeMap = new Map(nodes.map((d, i) => [d.name, i]));
-
-        const mapped = data.links.map(d => {
-            const src = typeof d.source === 'number' ? d.source : nodeMap.get(norm(d.source));
-            const tgt = typeof d.target === 'number' ? d.target : nodeMap.get(norm(d.target));
-            const val = toNumber(d.value);
-            return { source: src, target: tgt, value: val, _raw: d };
-        });
-
-        const invalid = mapped.filter(l => l.source === undefined || l.target === undefined || !Number.isFinite(l.value) || l.value <= 0);
-        if (invalid.length) console.warn('Invalid links dropped:', invalid);
-
-        const links = mapped.filter(l => l.source !== undefined && l.target !== undefined && Number.isFinite(l.value) && l.value > 0);
-
-        const sankeyInput = { nodes, links };
-
         const sankeyGenerator = sankey().nodeWidth(20).nodePadding(15).extent([[1, 1], [width - 1, height - 1]]);
-        const sankeyData = sankeyGenerator(sankeyInput);
+        const sankeyData = sankeyGenerator({
+            nodes: valid.nodes.map(d => ({ ...d })),
+            links: valid.links.map(d => ({ ...d }))
+        });
 
         const color = d3.scaleOrdinal(d3.schemeCategory10);
         const container = svg.append('g');
 
-        container.selectAll('rect')
+        container
+            .selectAll('rect')
             .data(sankeyData.nodes)
             .join('rect')
             .attr('x', d => d.x0)
@@ -55,7 +45,8 @@ const SankeyChart = ({ data }) => {
             .append('title')
             .text(d => `${d.name}\n${Number(d.value)}`);
 
-        container.append('g')
+        container
+            .append('g')
             .attr('fill', 'none')
             .selectAll('path')
             .data(sankeyData.links)
@@ -67,22 +58,19 @@ const SankeyChart = ({ data }) => {
             .append('title')
             .text(d => `${d.source.name} → ${d.target.name}\n${Number(d.value)}`);
 
-        container.selectAll('text')
+        container
+            .selectAll('text')
             .data(sankeyData.nodes)
             .join('text')
-            .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+            .attr('x', d => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
             .attr('y', d => (d.y0 + d.y1) / 2)
             .attr('dy', '0.35em')
-            .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+            .attr('text-anchor', d => (d.x0 < width / 2 ? 'start' : 'end'))
             .text(d => d.name)
             .style('font-size', '10px');
+    }, [valid, config]);
 
-        return () => {
-            clearSvg(svg);
-        };
-    }, [data]);
-
-    if (!data || !data.nodes || !data.links || data.nodes.length === 0 || data.links.length === 0) return null;
+    if (!valid || !valid.nodes || !valid.links || valid.nodes.length === 0 || valid.links.length === 0) return null;
 
     return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
 };

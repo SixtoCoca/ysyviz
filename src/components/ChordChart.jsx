@@ -3,31 +3,34 @@ import * as d3 from 'd3';
 import { chord, ribbon } from 'd3-chord';
 import { arc } from 'd3-shape';
 import { chartDimensions, clearSvg } from './interface/chartLayout';
+import useValidatedData from './config/hooks/useValidatedData';
 
-const ChordChart = ({ data }) => {
+const ChordChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { data: valid } = useValidatedData(
+        data,
+        'chord',
+        issues => {
+            console.log('[ChordChart] validation issues:', issues);
+            if (typeof config?.onValidation === 'function') config.onValidation(issues);
+        },
+        config
+    );
 
     useEffect(() => {
-        if (!data || !data.matrix || !data.labels || data.matrix.length === 0 || data.labels.length === 0) return;
+        if (!valid || !valid.matrix || !valid.labels || valid.matrix.length === 0 || valid.labels.length === 0) return;
 
         const { width, height } = chartDimensions;
         const margin = 20;
         const innerRadius = Math.min(width, height) * 0.5 - 100;
         const outerRadius = innerRadius + 10;
 
-        const svg = d3.select(svgRef.current)
-            .attr('width', width)
-            .attr('height', height);
-
+        const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const g = svg
-            .append('g')
-            .attr('transform', `translate(${width / 2},${height / 2})`);
+        const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`);
 
-        const chords = chord()
-            .padAngle(0.05)
-            .sortSubgroups(d3.descending)(data.matrix);
+        const chords = chord().padAngle(0.05).sortSubgroups(d3.descending)(valid.matrix);
 
         const color = d3.scaleOrdinal(d3.schemeCategory10);
         const arcGenerator = arc().innerRadius(innerRadius).outerRadius(outerRadius);
@@ -53,7 +56,7 @@ const ChordChart = ({ data }) => {
                 return `rotate(${rotate}) ${translate} ${angle > Math.PI ? 'rotate(180)' : ''}`;
             })
             .attr('text-anchor', d => (d.startAngle + d.endAngle) / 2 > Math.PI ? 'end' : 'start')
-            .text(d => data.labels[d.index])
+            .text(d => valid.labels[d.index])
             .style('font-size', '10px');
 
         g.append('g')
@@ -63,13 +66,9 @@ const ChordChart = ({ data }) => {
             .attr('d', ribbonGenerator)
             .attr('fill', d => color(d.target.index))
             .attr('stroke', d => d3.rgb(color(d.target.index)).darker());
+    }, [valid, config]);
 
-        return () => {
-            clearSvg(svg);
-        };
-    }, [data]);
-
-    if (!data || !data.matrix || !data.labels || data.matrix.length === 0 || data.labels.length === 0) return null;
+    if (!valid || !valid.matrix || !valid.labels || valid.matrix.length === 0 || valid.labels.length === 0) return null;
 
     return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
 };
