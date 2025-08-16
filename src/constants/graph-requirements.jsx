@@ -7,19 +7,19 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.LINE]: {
         required: ['x', 'y'],
-        optional: ['group']
+        optional: []
     },
     [ChartTypes.AREA]: {
         required: ['x', 'y'],
-        optional: ['group']
+        optional: []
     },
     [ChartTypes.SCATTER]: {
         required: ['x', 'y'],
-        optional: ['group']
+        optional: []
     },
     [ChartTypes.BUBBLE]: {
         required: ['x', 'y', 'r'],
-        optional: ['label', 'color']
+        optional: []
     },
     [ChartTypes.PIE]: {
         required: ['label', 'value'],
@@ -31,7 +31,7 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.HEATMAP]: {
         required: ['x', 'y', 'value'],
-        optional: ['tooltip', 'size']
+        optional: []
     },
     [ChartTypes.SANKEY]: {
         required: ['source', 'target', 'value'],

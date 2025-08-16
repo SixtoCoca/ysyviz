@@ -50,9 +50,35 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data, setData }) => {
                     <ChartTypePicker value={type} onChange={handleChartTypeChange} />
                 </Card.Body>
             </Card>
+
+            {requiredFields.length > 0 && columns.length > 0 && (
+                <Card className="mb-3">
+                    <Card.Body>
+                        <h4 className="mb-3 text-center">Column Mapping</h4>
+                        <Row>
+                            {requiredFields.map((field) => (
+                                <Col md={6} key={field} className="mb-3">
+                                    <Form.Label>{field.charAt(0).toUpperCase() + field.slice(1)}</Form.Label>
+                                    <Form.Select
+                                        name={`field_${field}`}
+                                        value={draft[`field_${field}`] ?? ''}
+                                        onChange={handleInput}
+                                    >
+                                        <option value="">Select column</option>
+                                        {columns.map(col => (
+                                            <option key={col} value={col}>{col}</option>
+                                        ))}
+                                    </Form.Select>
+                                </Col>
+                            ))}
+                        </Row>
+                    </Card.Body>
+                </Card>
+            )}
+
             <Card>
                 <Card.Body>
-                    <h4 className="mb-3 text-center">Chart Settings</h4>
+                    <h4 className="mb-3 text-center">Aesthetic Changes</h4>
 
                     <Form.Label>Title</Form.Label>
                     <Form.Control
@@ -70,29 +96,6 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data, setData }) => {
                         value={draft.color || '#000000'}
                         onChange={handleInput}
                     />
-
-                    {requiredFields.length > 0 && columns.length > 0 && (
-                        <div className="mt-4">
-                            <h5 className="text-center">Column Mapping</h5>
-                            <Row>
-                                {requiredFields.map((field) => (
-                                    <Col md={6} key={field} className="mb-3">
-                                        <Form.Label>{field.charAt(0).toUpperCase() + field.slice(1)}</Form.Label>
-                                        <Form.Select
-                                            name={`field_${field}`}
-                                            value={draft[`field_${field}`] ?? ''}
-                                            onChange={handleInput}
-                                        >
-                                            <option value="">Select column</option>
-                                            {columns.map(col => (
-                                                <option key={col} value={col}>{col}</option>
-                                            ))}
-                                        </Form.Select>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </div>
-                    )}
                 </Card.Body>
             </Card>
         </>
