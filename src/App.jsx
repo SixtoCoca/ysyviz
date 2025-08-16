@@ -96,13 +96,15 @@ const App = () => {
                   <Card className="h-100 position-relative">
                     {type && chartData && (
                       <Button
-                        variant="light"
-                        className="position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm"
+                        variant='light'
+                        className='position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm'
                         onClick={handleDownload}
                       >
-                        <FontAwesomeIcon icon={faDownload} />
+                        <FontAwesomeIcon icon={faDownload} style={{ color: 'currentColor' }} />
                         Download
                       </Button>
+
+
                     )}
                     <Card.Body className="h-100">
                       <Row className="h-100">
