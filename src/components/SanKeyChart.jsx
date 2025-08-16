@@ -24,13 +24,19 @@ const SankeyChart = ({ data, config }) => {
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const sankeyGenerator = sankey().nodeWidth(20).nodePadding(15).extent([[1, 1], [width - 1, height - 1]]);
+        const sankeyGenerator = sankey()
+            .nodeWidth(20)
+            .nodePadding(15)
+            .extent([[1, 1], [width - 1, height - 1]]);
+
         const sankeyData = sankeyGenerator({
             nodes: valid.nodes.map(d => ({ ...d })),
             links: valid.links.map(d => ({ ...d }))
         });
 
-        const color = d3.scaleOrdinal(d3.schemeCategory10);
+        const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
+        const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
+
         const container = svg.append('g');
 
         container

@@ -1,44 +1,44 @@
-import { ChartTypes } from './graph-type'
+import { ChartTypes } from './graph-type';
 
 export const ChartFieldRequirements = {
     [ChartTypes.BAR]: {
         required: ['x', 'y'],
-        optional: ['color']
+        optional: ['title', 'color']
     },
     [ChartTypes.LINE]: {
         required: ['x', 'y'],
-        optional: []
+        optional: ['title', 'color']
     },
     [ChartTypes.AREA]: {
         required: ['x', 'y'],
-        optional: []
+        optional: ['title', 'color']
     },
     [ChartTypes.SCATTER]: {
         required: ['x', 'y'],
-        optional: []
+        optional: ['title', 'color']
     },
     [ChartTypes.BUBBLE]: {
         required: ['x', 'y', 'r'],
-        optional: []
+        optional: ['title', 'color']
     },
     [ChartTypes.PIE]: {
         required: ['label', 'value'],
-        optional: []
+        optional: ['title', 'palette']
     },
     [ChartTypes.DONUT]: {
         required: ['label', 'value'],
-        optional: []
+        optional: ['title', 'palette', 'donutHole']
     },
     [ChartTypes.HEATMAP]: {
         required: ['x', 'y', 'value'],
-        optional: []
+        optional: ['title', 'color']
     },
     [ChartTypes.SANKEY]: {
         required: ['source', 'target', 'value'],
-        optional: []
+        optional: ['title', 'palette']
     },
     [ChartTypes.CHORD]: {
         required: [],
-        optional: []
+        optional: ['title', 'palette']
     }
 };

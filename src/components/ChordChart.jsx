@@ -32,7 +32,9 @@ const ChordChart = ({ data, config }) => {
 
         const chords = chord().padAngle(0.05).sortSubgroups(d3.descending)(valid.matrix);
 
-        const color = d3.scaleOrdinal(d3.schemeCategory10);
+        const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
+        const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
+
         const arcGenerator = arc().innerRadius(innerRadius).outerRadius(outerRadius);
         const ribbonGenerator = ribbon().radius(innerRadius);
 

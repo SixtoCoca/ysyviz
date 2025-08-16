@@ -38,11 +38,11 @@ const HeatmapChart = ({ data, config }) => {
         const xScale = d3.scaleBand().domain(xValues).range([0, innerWidth]).padding(0.05);
         const yScale = d3.scaleBand().domain(yValues).range([0, innerHeight]).padding(0.05);
 
-        const maxVal = d3.max(valid.values, d => d.value) || 1;
+        const minVal = d3.min(valid.values, d => +d.value) ?? 0;
+        const maxVal = d3.max(valid.values, d => +d.value) ?? 1;
 
-        const colorScale = d3.scaleSequential()
-            .interpolator(d3.interpolateYlGnBu)
-            .domain([0, maxVal]);
+        const base = typeof config?.color === 'string' ? config.color : '#4682b4';
+        const colorScale = d3.scaleSequential(t => d3.interpolateRgb('#ffffff', base)(t)).domain([minVal, maxVal]);
 
         g.selectAll('rect')
             .data(valid.values)
@@ -51,7 +51,7 @@ const HeatmapChart = ({ data, config }) => {
             .attr('y', d => yScale(d.y))
             .attr('width', xScale.bandwidth())
             .attr('height', yScale.bandwidth())
-            .style('fill', d => colorScale(d.value));
+            .style('fill', d => colorScale(+d.value));
 
         g.append('g')
             .attr('transform', `translate(0, ${innerHeight})`)
@@ -74,15 +74,15 @@ const HeatmapChart = ({ data, config }) => {
             .attr('x1', '0%')
             .attr('x2', '100%');
 
-        gradient.append('stop').attr('offset', '0%').attr('stop-color', colorScale(0));
-        gradient.append('stop').attr('offset', '100%').attr('stop-color', colorScale(maxVal));
+        gradient.append('stop').attr('offset', '0%').attr('stop-color', '#ffffff');
+        gradient.append('stop').attr('offset', '100%').attr('stop-color', base);
 
         legend.append('rect')
             .attr('width', legendWidth)
             .attr('height', legendHeight)
             .style('fill', `url(#${gradientId})`);
 
-        const legendScale = d3.scaleLinear().domain([0, maxVal]).range([0, legendWidth]);
+        const legendScale = d3.scaleLinear().domain([minVal, maxVal]).range([0, legendWidth]);
         const legendAxis = d3.axisBottom(legendScale).ticks(5).tickSize(legendHeight);
 
         legend.append('g')

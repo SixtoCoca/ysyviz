@@ -31,9 +31,13 @@ const PieChart = ({ data, isDonut = false, config }) => {
       .append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`);
 
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
+    const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
+    const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
+
     const pie = d3.pie().value(d => d.value);
-    const inner = isDonut ? Math.max(0, radius * 0.55) : 0;
+
+    const holePct = typeof config?.donutHole === 'number' ? Math.max(0, Math.min(80, config.donutHole)) : 55;
+    const inner = isDonut ? radius * (holePct / 100) : 0;
 
     const arcGen = d3.arc().outerRadius(radius - 10).innerRadius(inner);
     const arcLabel = d3.arc().outerRadius(radius - 40).innerRadius(radius - 40);

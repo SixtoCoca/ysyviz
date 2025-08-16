@@ -2,45 +2,83 @@ import { Card, Form, Row, Col } from 'react-bootstrap';
 import { useState, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { ChartFieldRequirements } from '../../constants/graph-requirements';
+import { ChartColors, ChartPalettes } from '../../constants/chart-colors';
 import ChartTypePicker from '../config/ChartTypePicker';
+import ColorSelector from '../config/ColorSelector';
 
-const AdvancedSettings = ({ cfg, setCfg, type, setType, data, setData }) => {
+const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const [draft, setDraft] = useState(cfg);
 
     useEffect(() => setDraft(cfg), [cfg]);
-
     const debouncedCommit = useMemo(() => debounce(setCfg, 400), [setCfg]);
+    useEffect(() => () => debouncedCommit.flush(), [debouncedCommit]);
+
+    const requirements = ChartFieldRequirements[type] || { required: [], optional: [] };
+    const requiredFields = requirements.required || [];
+    const optionalFields = requirements.optional || [];
+
+    const hasPalette = optionalFields.includes('palette');
+    const hasColor = optionalFields.includes('color');
+    const hasDonutHole = optionalFields.includes('donutHole');
+    const hasTitle = optionalFields.includes('title');
+
+    const colorMode = hasPalette ? 'multi' : hasColor ? 'single' : null;
 
     useEffect(() => {
-        return () => debouncedCommit.flush();
-    }, [debouncedCommit]);
+        if (colorMode === 'single') {
+            const updated = { ...draft, color: draft.color || ChartColors[0], palette: undefined };
+            setDraft(updated);
+            debouncedCommit(updated);
+        } else if (colorMode === 'multi') {
+            const seed = draft.palette && draft.palette.length ? draft.palette : ChartPalettes[0].colors;
+            const updated = { ...draft, palette: seed, color: undefined };
+            setDraft(updated);
+            debouncedCommit(updated);
+        } else {
+            const updated = { ...draft, color: undefined, palette: undefined };
+            setDraft(updated);
+            debouncedCommit(updated);
+        }
+        if (!hasTitle && draft.title) {
+            const updated = { ...draft, title: '' };
+            setDraft(updated);
+            debouncedCommit(updated);
+        }
+    }, [type]);
 
     const handleInput = (e) => {
         const { name, value } = e.target;
-        const updated = { ...draft, [name]: value };
+        const next = name === 'donutHole' ? Number(value) : value;
+        const updated = { ...draft, [name]: next };
         setDraft(updated);
         debouncedCommit(updated);
     };
 
-    const handleChartTypeChange = (newType) => {
-        setType(newType);
-    };
-
-    const requiredFields = ChartFieldRequirements[type]?.required || [];
+    const handleChartTypeChange = (newType) => setType(newType);
 
     const columns = useMemo(() => {
         if (!data || typeof data !== 'object') return [];
-        if (Array.isArray(data.columns)) {
-            return data.columns;
-        }
+        if (Array.isArray(data.columns)) return data.columns;
         if (Array.isArray(data.values) && data.values.length > 0) {
-            const firstRow = data.values.find(row => typeof row === 'object' && row !== null);
-            if (firstRow) {
-                return Object.keys(firstRow).filter(k => k !== '__rowNum__');
-            }
+            const firstRow = data.values.find(r => typeof r === 'object' && r !== null);
+            if (firstRow) return Object.keys(firstRow).filter(k => k !== '__rowNum__');
         }
         return [];
     }, [data]);
+
+    const setSingleColor = (hex) => {
+        const updated = { ...draft, color: hex, palette: undefined };
+        setDraft(updated);
+        debouncedCommit(updated);
+    };
+
+    const setPalette = (arr) => {
+        const updated = { ...draft, palette: arr, color: undefined };
+        setDraft(updated);
+        debouncedCommit(updated);
+    };
+
+    const showAesthetic = hasTitle || !!colorMode || hasDonutHole;
 
     return (
         <>
@@ -76,28 +114,62 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data, setData }) => {
                 </Card>
             )}
 
-            <Card>
-                <Card.Body>
-                    <h4 className="mb-3 text-center">Aesthetic Changes</h4>
+            {showAesthetic && (
+                <Card>
+                    <Card.Body>
+                        <h4 className="mb-3 text-center">Aesthetic Changes</h4>
 
-                    <Form.Label>Title</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="title"
-                        value={draft.title || ''}
-                        placeholder="Enter chart title"
-                        onChange={handleInput}
-                    />
+                        {hasTitle && (
+                            <>
+                                <Form.Label>Title</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="title"
+                                    value={draft.title || ''}
+                                    placeholder="Enter chart title"
+                                    onChange={handleInput}
+                                />
+                            </>
+                        )}
 
-                    <Form.Label className="mt-3">Color</Form.Label>
-                    <Form.Control
-                        type="color"
-                        name="color"
-                        value={draft.color || '#000000'}
-                        onChange={handleInput}
-                    />
-                </Card.Body>
-            </Card>
+                        {colorMode && (
+                            <div className="mt-3">
+                                {colorMode === 'single' ? (
+                                    <ColorSelector
+                                        value={draft.color || ChartColors[0]}
+                                        onChange={setSingleColor}
+                                        palette={ChartColors}
+                                        mode="single"
+                                        label="Color"
+                                    />
+                                ) : (
+                                    <ColorSelector
+                                        value={draft.palette || ChartPalettes[0].colors}
+                                        onChange={setPalette}
+                                        palettes={ChartPalettes}
+                                        mode="multi"
+                                        label="Palette"
+                                    />
+                                )}
+                            </div>
+                        )}
+                        {hasDonutHole && (
+                            <div className="mt-3">
+                                <Form.Label>Donut Hole Size (%)</Form.Label>
+                                <Form.Range
+                                    min={0}
+                                    max={80}
+                                    step={5}
+                                    name="donutHole"
+                                    value={draft.donutHole ?? 55}
+                                    onChange={handleInput}
+                                />
+                                <div className="text-muted small">{draft.donutHole ?? 55}%</div>
+                            </div>
+                        )}
+                    </Card.Body>
+                </Card>
+            )}
         </>
     );
 };

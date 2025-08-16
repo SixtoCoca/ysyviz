@@ -86,7 +86,7 @@ const App = () => {
                 <Tab.Pane eventKey="upload" className="h-100">
                   <Card className="h-100">
                     <Card.Body>
-                      <h4 className="mb-3 text-center">Select Chart & Upload CSV/XLSX</h4>
+                      <h4 className="mb-3 text-center">Upload CSV/XLSX</h4>
                       <DataUploader type={type} setData={setData} />
                     </Card.Body>
                   </Card>
