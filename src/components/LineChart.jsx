@@ -2,12 +2,23 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
 import { addAxisLabels } from './interface/axisLabels';
+import useValidatedData from './config/hooks/useValidatedData';
 
 const LineChart = ({ data, config, filled = false }) => {
   const svgRef = useRef();
 
+  const { data: valid } = useValidatedData(
+    data,
+    'line',
+    issues => {
+      console.log('[LineChart] validation issues:', issues);
+      if (typeof config?.onValidation === 'function') config.onValidation(issues);
+    },
+    config
+  );
+
   useEffect(() => {
-    if (!data || !data.values || data.values.length === 0) return;
+    if (!valid || !valid.values || valid.values.length === 0) return;
 
     const { width, height, margin } = chartDimensions;
     const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
@@ -15,16 +26,16 @@ const LineChart = ({ data, config, filled = false }) => {
     const svg = d3.select(svgRef.current);
     clearSvg(svg);
 
-    const g = svg.append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleBand()
-      .domain(data.values.map(d => d.x))
+      .domain(valid.values.map(d => d.x))
       .range([0, innerWidth])
       .padding(0.1);
 
+    const yMax = d3.max(valid.values, d => d.y) ?? 0;
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data.values, d => d.y)])
+      .domain([0, yMax === 0 ? 1 : yMax])
       .nice()
       .range([innerHeight, 0]);
 
@@ -42,49 +53,46 @@ const LineChart = ({ data, config, filled = false }) => {
       : i => d3.schemeCategory10[i % 10];
 
     if (filled) {
-      const c = d3.color(config?.color || 'steelblue');
+      const c = d3.color(config?.color || 'steelblue') || d3.color('steelblue');
       c.opacity = 0.5;
       g.append('path')
-        .datum(data.values)
+        .datum(valid.values)
         .attr('fill', c.formatRgb())
         .attr('d', area);
     }
 
     g.append('path')
-      .datum(data.values)
+      .datum(valid.values)
       .attr('fill', 'none')
       .attr('stroke', config?.color || 'steelblue')
       .attr('stroke-width', 2)
       .attr('d', line);
 
     g.selectAll('circle')
-      .data(data.values)
+      .data(valid.values)
       .join('circle')
       .attr('cx', d => x(d.x) + x.bandwidth() / 2)
       .attr('cy', d => y(d.y))
       .attr('r', 4)
       .attr('fill', (d, i) => pointColor(i));
 
-    g.append("g")
-      .attr("transform", `translate(0,${innerHeight})`)
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
       .call(d3.axisBottom(x))
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", ".15em")
-      .attr("transform", "rotate(-45)");
+      .selectAll('text')
+      .style('text-anchor', 'end')
+      .attr('dx', '-.8em')
+      .attr('dy', '.15em')
+      .attr('transform', 'rotate(-45)');
 
-    g.append("g")
-      .call(d3.axisLeft(y));
+    g.append('g').call(d3.axisLeft(y));
 
     addAxisLabels(svg, data, { width, height });
 
-    return () => {
-      clearSvg(svg);
-    };
-  }, [data, config, filled]);
+    return () => clearSvg(svg);
+  }, [valid, config, filled, data]);
 
-  if (!data || !data.values || data.values.length === 0) return null;
+  if (!valid || !valid.values || valid.values.length === 0) return null;
 
   return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
 };

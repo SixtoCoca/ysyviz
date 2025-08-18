@@ -21,6 +21,7 @@
     "lodash.debounce": "^4.0.8",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.10",
+    "react-color": "^2.19.3",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "xlsx": "^0.18.5"

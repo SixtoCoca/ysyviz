@@ -1,0 +1,125 @@
+.color-selector {
+    position: relative;
+    display: block;
+}
+
+.color-selector__label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.swatch {
+    width: 180px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+}
+
+.swatch--single {
+    height: 28px;
+}
+
+.swatch--palette {
+    min-height: 28px;
+    padding: 6px;
+}
+
+.palette-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.palette-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    justify-self: center;
+}
+
+.popover {
+    position: absolute;
+    z-index: 10;
+    top: 48px;
+    left: 0;
+}
+
+.popover__content {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 12px;
+    width: max-content;
+}
+
+.popover__content--palettes {
+    width: 300px;
+    max-height: 260px;
+    overflow: auto;
+    padding: 10px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.preview-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.preview {
+    width: 34px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    pointer-events: none;
+}
+
+.preview-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.btn {
+    appearance: none;
+    border: 1px solid #6c757d;
+    background: #6c757d;
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.palette-card {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 6px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.palette-card.is-selected {
+    border: 2px solid #0d6efd;
+}
+
+.palette-card__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.palette-card__name {
+    font-size: 11px;
+    text-align: center;
+}

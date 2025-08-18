@@ -8,5 +8,6 @@ export const ChartTypes = {
   HEATMAP: "heatmap",
   AREA: "area",
   SANKEY: 'sankey',
-  CHORD: 'chord'
+  CHORD: 'chord',
+  VIOLIN: 'violin'
 };

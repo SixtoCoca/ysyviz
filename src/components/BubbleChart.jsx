@@ -1,12 +1,23 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { chartDimensions, clearSvg } from './interface/chartLayout';
+import useValidatedData from './config/hooks/useValidatedData';
 
-const BubbleChart = ({ data }) => {
+const BubbleChart = ({ data, config }) => {
     const svgRef = useRef();
 
+    const { data: valid } = useValidatedData(
+        data,
+        'bubble',
+        issues => {
+            console.log('[BubbleChart] validation issues:', issues);
+            if (typeof config?.onValidation === 'function') config.onValidation(issues);
+        },
+        config
+    );
+
     useEffect(() => {
-        if (!data || !data.values || data.values.length === 0) return;
+        if (!valid || !valid.values || valid.values.length === 0) return;
 
         const { width, height, margin } = chartDimensions;
         const innerWidth = width - margin.left - margin.right;
@@ -21,80 +32,42 @@ const BubbleChart = ({ data }) => {
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        const x = d3.scaleLinear()
-            .domain(d3.extent(data.values, d => +d.x))
-            .nice()
-            .range([0, innerWidth]);
+        const extX = d3.extent(valid.values, d => d.x);
+        const extY = d3.extent(valid.values, d => d.y);
+        const pad = v => (v === 0 ? 1 : Math.max(1, Math.abs(v) * 0.05));
+        const domainX = extX[0] === extX[1] ? [extX[0] - pad(extX[0]), extX[1] + pad(extX[1])] : extX;
+        const domainY = extY[0] === extY[1] ? [extY[0] - pad(extY[0]), extY[1] + pad(extY[1])] : extY;
 
-        const y = d3.scaleLinear()
-            .domain(d3.extent(data.values, d => +d.y))
-            .nice()
-            .range([innerHeight, 0]);
+        const x = d3.scaleLinear().domain(domainX).nice().range([0, innerWidth]);
+        const y = d3.scaleLinear().domain(domainY).nice().range([innerHeight, 0]);
 
-        const r = d3.scaleSqrt()
-            .domain([0, d3.max(data.values, d => +d.r || 1)])
-            .range([4, 30]);
+        const maxR = d3.max(valid.values, d => d.r || 1) || 1;
+        const r = d3.scaleSqrt().domain([0, maxR]).range([4, 30]);
 
-        g.append('g')
-            .attr('transform', `translate(0,${innerHeight})`)
-            .call(d3.axisBottom(x));
+        g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(x));
+        g.append('g').call(d3.axisLeft(y));
 
-        g.append('g')
-            .call(d3.axisLeft(y));
+        const sizeLabel = data?.rLabel || config?.rLabel || 'Size';
 
-        const tooltip = d3.select('body')
-            .append("div")
-            .attr("class", "tooltip")
-            .style("position", "absolute")
-            .style("visibility", "hidden")
-            .style("background-color", "rgba(0, 0, 0, 0.7)")
-            .style("color", "white")
-            .style("padding", "5px")
-            .style("border-radius", "4px")
-            .style("pointer-events", "none");
+        const fill = config?.color ? () => config.color : i => d3.schemeCategory10[i % 10];
 
-        g.selectAll("circle")
-            .data(data.values)
-            .join("circle")
-            .attr("cx", d => x(+d.x))
-            .attr("cy", d => y(+d.y))
-            .attr("r", d => r(+d.r || 1))
-            .attr("fill", "steelblue")
-            .attr("opacity", 0.7)
-            .on("mouseover", (event, d) => {
-                tooltip.style("visibility", "visible")
-                    .text(`${data.xAxisLabel}: ${d.x}, ${data.yAxisLabel}: ${d.y}, Size: ${d.r}`);
-            })
-            .on("mousemove", (event) => {
-                tooltip.style("top", `${event.pageY + 5}px`)
-                    .style("left", `${event.pageX + 5}px`);
-            })
-            .on("mouseout", () => {
-                tooltip.style("visibility", "hidden");
-            });
+        const nodes = g.selectAll('circle')
+            .data(valid.values)
+            .join('circle')
+            .attr('cx', d => x(d.x))
+            .attr('cy', d => y(d.y))
+            .attr('r', d => r(d.r || 1))
+            .style('r', d => `${r(d.r || 1)}`)
+            .attr('fill', (d, i) => fill(i))
+            .attr('opacity', 0.7)
+            .style('transform', 'none');
 
-        svg.append("text")
-            .attr("x", width / 2)
-            .attr("y", height - 10)
-            .style("text-anchor", "middle")
-            .text(data.xAxisLabel);
+        nodes.append('title').text(d => `${sizeLabel}: ${d.r ?? 0}`);
+    }, [valid, data, config]);
 
-        svg.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -height / 2)
-            .attr("y", 15)
-            .style("text-anchor", "middle")
-            .text(data.yAxisLabel);
+    if (!valid || !valid.values || valid.values.length === 0) return null;
 
-        return () => {
-            clearSvg(svg);
-            tooltip.remove();
-        };
-    }, [data]);
-
-    if (!data || !data.values || data.values.length === 0) return null;
-
-    return <svg ref={svgRef} />;
+    return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
 };
 
 export default BubbleChart;
