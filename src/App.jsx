@@ -14,6 +14,7 @@ import BubbleChart from './components/BubbleChart';
 import HeatmapChart from './components/HeatChart';
 import SankeyChart from './components/SanKeyChart';
 import ChordChart from './components/ChordChart';
+import ViolinChart from './components/ViolinChart';
 import AdvancedSettings from './components/config/AdvancedSettings';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
 import { useChartData } from './components/config/hooks/useChartData';
@@ -40,7 +41,8 @@ const App = () => {
     bubble: <BubbleChart {...chartProps} />,
     heatmap: <HeatmapChart {...chartProps} />,
     sankey: <SankeyChart {...chartProps} />,
-    chord: <ChordChart {...chartProps} />
+    chord: <ChordChart {...chartProps} />,
+    violin: <ViolinChart {...chartProps} />
   };
 
   const handleDownload = async () => {

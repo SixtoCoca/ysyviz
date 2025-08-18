@@ -40,5 +40,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.CHORD]: {
         required: [],
         optional: ['title', 'palette']
+    },
+    [ChartTypes.VIOLIN]: {
+        required: ['x', 'y'],
+        optional: ['title', 'color']
     }
 };

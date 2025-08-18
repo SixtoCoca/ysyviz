@@ -74,6 +74,31 @@ export const useChartData = (rawData, chartType, config) => {
             return { matrix, labels };
         }
 
+        if (chartType === 'violin') {
+            if (!Array.isArray(rawData.values)) return null;
+
+            const looksNormalized = rawData.values.some(r => r && Object.prototype.hasOwnProperty.call(r, 'x') && Object.prototype.hasOwnProperty.call(r, 'y'));
+            if (looksNormalized) {
+                const values = rawData.values
+                    .map(r => ({ x: norm(r.x), y: toNumber(r.y) }))
+                    .filter(d => d.x !== '' && Number.isFinite(d.y));
+                if (values.length === 0) return null;
+                return { values, xAxisLabel: config?.field_x || 'x', yAxisLabel: config?.field_y || 'y', rLabel: '', labelLabel: '' };
+            }
+
+            const xCol = config?.field_x || '';
+            const yCol = config?.field_y || '';
+            if (!xCol || !yCol) return null;
+
+            const values = rawData.values
+                .map(r => ({ x: norm(r[xCol]), y: toNumber(r[yCol]) }))
+                .filter(d => d.x !== '' && Number.isFinite(d.y));
+
+            if (values.length === 0) return null;
+
+            return { values, xAxisLabel: xCol, yAxisLabel: yCol, rLabel: '', labelLabel: '' };
+        }
+
         if (!Array.isArray(rawData.values)) return null;
 
         const { color, title, ...mappings } = config || {};
