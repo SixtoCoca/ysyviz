@@ -44,5 +44,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.VIOLIN]: {
         required: ['x', 'y'],
         optional: ['title', 'color']
+    },
+    [ChartTypes.BOXPLOT]: {
+        required: ['label', 'value'],
+        optional: ['title', 'palette']
     }
 };

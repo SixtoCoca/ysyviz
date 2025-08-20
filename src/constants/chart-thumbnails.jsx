@@ -9,5 +9,6 @@ import heatmap from '../assets/charts/heatmap.svg';
 import chord from '../assets/charts/chord.svg';
 import sankey from '../assets/charts/sankey.svg';
 import violin from '../assets/charts/violin.svg';
+import boxplot from '../assets/charts/boxplot.svg';
 
-export const ChartThumbnails = { bar, line, area, pie, donut, scatter, bubble, heatmap, chord, sankey, violin };
+export const ChartThumbnails = { bar, line, area, pie, donut, scatter, bubble, heatmap, chord, sankey, violin, boxplot };

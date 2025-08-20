@@ -15,6 +15,7 @@ import HeatmapChart from './components/HeatChart';
 import SankeyChart from './components/SanKeyChart';
 import ChordChart from './components/ChordChart';
 import ViolinChart from './components/ViolinChart';
+import BoxplotChart from './components/BoxplotChart';
 import AdvancedSettings from './components/config/AdvancedSettings';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
 import { useChartData } from './components/config/hooks/useChartData';
@@ -42,7 +43,8 @@ const App = () => {
     heatmap: <HeatmapChart {...chartProps} />,
     sankey: <SankeyChart {...chartProps} />,
     chord: <ChordChart {...chartProps} />,
-    violin: <ViolinChart {...chartProps} />
+    violin: <ViolinChart {...chartProps} />,
+    boxplot: <BoxplotChart {...chartProps} />
   };
 
   const handleDownload = async () => {

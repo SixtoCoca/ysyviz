@@ -9,5 +9,6 @@ export const ChartTypes = {
   AREA: "area",
   SANKEY: 'sankey',
   CHORD: 'chord',
-  VIOLIN: 'violin'
+  VIOLIN: 'violin',
+  BOXPLOT: 'boxplot'
 };

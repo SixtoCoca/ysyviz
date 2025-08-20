@@ -99,6 +99,33 @@ export const useChartData = (rawData, chartType, config) => {
             return { values, xAxisLabel: xCol, yAxisLabel: yCol, rLabel: '', labelLabel: '' };
         }
 
+        if (chartType === 'boxplot') {
+            if (!Array.isArray(rawData.values)) return null;
+            const first = rawData.values.find(r => r && typeof r === 'object') || {};
+            const keys = Object.keys(first).filter(k => k !== '__rowNum__');
+            let gKey = config?.field_group || '';
+            let vKey = config?.field_value || '';
+
+            if (!gKey) {
+                if (keys.includes('group')) gKey = 'group';
+                else if (keys.includes('label')) gKey = 'label';
+                else gKey = keys.find(k => typeof first[k] === 'string') || keys[0] || '';
+            }
+            if (!vKey) {
+                if (keys.includes('value')) vKey = 'value';
+                else vKey = keys.find(k => Number.isFinite(toNumber(first[k]))) || keys[1] || '';
+            }
+            if (!gKey || !vKey) return null;
+
+            const values = rawData.values
+                .map(r => ({ group: norm(r[gKey]), value: toNumber(r[vKey]) }))
+                .filter(d => d.group !== '' && Number.isFinite(d.value));
+
+            if (values.length === 0) return null;
+
+            return { values, xAxisLabel: gKey, yAxisLabel: vKey, rLabel: '', labelLabel: '' };
+        }
+
         if (!Array.isArray(rawData.values)) return null;
 
         const { color, title, ...mappings } = config || {};
