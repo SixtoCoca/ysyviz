@@ -1,24 +1,14 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chord, ribbon } from 'd3-chord';
-import { arc } from 'd3-shape';
+import { chord as d3Chord, ribbon as d3Ribbon } from 'd3-chord';
+import { arc as d3Arc } from 'd3-shape';
 import { chartDimensions, clearSvg } from './interface/chartLayout';
-import useValidatedData from './config/hooks/useValidatedData';
 
 const ChordChart = ({ data, config }) => {
     const svgRef = useRef();
-    const { data: valid } = useValidatedData(
-        data,
-        'chord',
-        issues => {
-            console.log('[ChordChart] validation issues:', issues);
-            if (typeof config?.onValidation === 'function') config.onValidation(issues);
-        },
-        config
-    );
 
     useEffect(() => {
-        if (!valid || !valid.matrix || !valid.labels || valid.matrix.length === 0 || valid.labels.length === 0) return;
+        if (!data?.matrix?.length || !data?.labels?.length) return;
 
         const { width, height } = chartDimensions;
         const margin = 20;
@@ -30,13 +20,13 @@ const ChordChart = ({ data, config }) => {
 
         const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`);
 
-        const chords = chord().padAngle(0.05).sortSubgroups(d3.descending)(valid.matrix);
+        const chords = d3Chord().padAngle(0.05).sortSubgroups(d3.descending)(data.matrix);
 
         const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
         const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
 
-        const arcGenerator = arc().innerRadius(innerRadius).outerRadius(outerRadius);
-        const ribbonGenerator = ribbon().radius(innerRadius);
+        const arc = d3Arc().innerRadius(innerRadius).outerRadius(outerRadius);
+        const ribbon = d3Ribbon().radius(innerRadius);
 
         g.append('g')
             .selectAll('path')
@@ -44,7 +34,7 @@ const ChordChart = ({ data, config }) => {
             .join('path')
             .attr('fill', d => color(d.index))
             .attr('stroke', d => d3.rgb(color(d.index)).darker())
-            .attr('d', arcGenerator);
+            .attr('d', arc);
 
         g.append('g')
             .selectAll('text')
@@ -58,21 +48,21 @@ const ChordChart = ({ data, config }) => {
                 return `rotate(${rotate}) ${translate} ${angle > Math.PI ? 'rotate(180)' : ''}`;
             })
             .attr('text-anchor', d => (d.startAngle + d.endAngle) / 2 > Math.PI ? 'end' : 'start')
-            .text(d => valid.labels[d.index])
+            .text(d => data.labels[d.index])
             .style('font-size', '10px');
 
         g.append('g')
             .selectAll('path')
             .data(chords)
             .join('path')
-            .attr('d', ribbonGenerator)
+            .attr('d', ribbon)
             .attr('fill', d => color(d.target.index))
             .attr('stroke', d => d3.rgb(color(d.target.index)).darker());
-    }, [valid, config]);
+    }, [data, config]);
 
-    if (!valid || !valid.matrix || !valid.labels || valid.matrix.length === 0 || valid.labels.length === 0) return null;
+    if (!data?.matrix?.length || !data?.labels?.length) return null;
 
-    return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
+    return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
 };
 
 export default ChordChart;

@@ -1,47 +1,35 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
+import { sankey as d3Sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { chartDimensions, clearSvg } from './interface/chartLayout';
-import useValidatedData from './config/hooks/useValidatedData';
 
 const SankeyChart = ({ data, config }) => {
     const svgRef = useRef();
 
-    const { data: valid } = useValidatedData(
-        data,
-        'sankey',
-        issues => {
-            console.log('[SankeyChart] validation issues:', issues);
-            if (typeof config?.onValidation === 'function') config.onValidation(issues);
-        },
-        config
-    );
-
     useEffect(() => {
-        if (!valid || !valid.nodes || !valid.links || valid.nodes.length === 0 || valid.links.length === 0) return;
+        if (!data?.nodes?.length || !data?.links?.length) return;
 
         const { width, height } = chartDimensions;
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const sankeyGenerator = sankey()
+        const sankey = d3Sankey()
             .nodeWidth(20)
             .nodePadding(15)
             .extent([[1, 1], [width - 1, height - 1]]);
 
-        const sankeyData = sankeyGenerator({
-            nodes: valid.nodes.map(d => ({ ...d })),
-            links: valid.links.map(d => ({ ...d }))
+        const layout = sankey({
+            nodes: data.nodes.map(d => ({ ...d })),
+            links: data.links.map(d => ({ ...d }))
         });
 
         const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
         const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
 
-        const container = svg.append('g');
+        const g = svg.append('g');
 
-        container
-            .selectAll('rect')
-            .data(sankeyData.nodes)
+        g.selectAll('rect')
+            .data(layout.nodes)
             .join('rect')
             .attr('x', d => d.x0)
             .attr('y', d => d.y0)
@@ -51,11 +39,10 @@ const SankeyChart = ({ data, config }) => {
             .append('title')
             .text(d => `${d.name}\n${Number(d.value)}`);
 
-        container
-            .append('g')
+        g.append('g')
             .attr('fill', 'none')
             .selectAll('path')
-            .data(sankeyData.links)
+            .data(layout.links)
             .join('path')
             .attr('d', sankeyLinkHorizontal())
             .attr('stroke', '#999')
@@ -64,9 +51,8 @@ const SankeyChart = ({ data, config }) => {
             .append('title')
             .text(d => `${d.source.name} → ${d.target.name}\n${Number(d.value)}`);
 
-        container
-            .selectAll('text')
-            .data(sankeyData.nodes)
+        g.selectAll('text')
+            .data(layout.nodes)
             .join('text')
             .attr('x', d => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
             .attr('y', d => (d.y0 + d.y1) / 2)
@@ -74,11 +60,11 @@ const SankeyChart = ({ data, config }) => {
             .attr('text-anchor', d => (d.x0 < width / 2 ? 'start' : 'end'))
             .text(d => d.name)
             .style('font-size', '10px');
-    }, [valid, config]);
+    }, [data, config]);
 
-    if (!valid || !valid.nodes || !valid.links || valid.nodes.length === 0 || valid.links.length === 0) return null;
+    if (!data?.nodes?.length || !data?.links?.length) return null;
 
-    return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
+    return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
 };
 
 export default SankeyChart;

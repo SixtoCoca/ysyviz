@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
-import useChartData from './config/hooks/useChartData';
+import { toNumber } from '../data/utils';
 
 const ViolinChart = ({ data, config }) => {
     const svgRef = useRef();
-    const chartData = useChartData(data, 'violin', config);
 
     useEffect(() => {
-        if (!chartData || !chartData.values || chartData.values.length === 0) return;
+        if (!data?.values?.length) return;
 
-        const rows = chartData.values.map(d => ({ x: d.x, y: +d.y })).filter(d => d.x !== undefined && d.x !== null && Number.isFinite(d.y));
-        if (rows.length === 0) return;
+        const rows = data.values
+            .map(d => ({ x: d.x, y: toNumber(d.y) }))
+            .filter(d => d.x !== undefined && d.x !== null && Number.isFinite(d.y));
+        if (!rows.length) return;
 
         const { width, height, margin } = chartDimensions;
         const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
@@ -73,11 +74,11 @@ const ViolinChart = ({ data, config }) => {
                     .curve(d3.curveCatmullRom)
                 );
         });
-    }, [chartData, config]);
+    }, [data, config]);
 
-    if (!chartData || !chartData.values || chartData.values.length === 0) return null;
+    if (!data?.values?.length) return null;
 
-    return <svg ref={svgRef} width={chartDimensions.width} height={chartDimensions.height} />;
+    return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
 };
 
 export default ViolinChart;
