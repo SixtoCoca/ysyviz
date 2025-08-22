@@ -15,6 +15,7 @@ import SankeyChart from './components/charts/SanKeyChart';
 import ChordChart from './components/charts/ChordChart';
 import ViolinChart from './components/charts/ViolinChart';
 import BoxplotChart from './components/charts/BoxplotChart';
+import HexbinChart from './components/charts/HexbinChart';
 
 import DataUploader from './components/interface/DataUploader';
 import AdvancedSettings from './components/config/AdvancedSettings';
@@ -45,7 +46,8 @@ const App = () => {
     sankey: <SankeyChart {...chartProps} />,
     chord: <ChordChart {...chartProps} />,
     violin: <ViolinChart {...chartProps} />,
-    boxplot: <BoxplotChart {...chartProps} />
+    boxplot: <BoxplotChart {...chartProps} />,
+    hexbin: <HexbinChart {...chartProps} />
   };
 
   const handleDownload = async () => {

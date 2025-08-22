@@ -9,6 +9,7 @@ import { mapSankey } from '../mappers/mapSankey';
 import { mapChord } from '../mappers/mapChord';
 import { mapViolin } from '../mappers/mapViolin';
 import { mapBoxplot } from '../mappers/mapBoxplot';
+import { mapHexbin } from '../mappers/mapHexbin';
 
 const pickMapper = type => {
     if (type === 'bar') return mapBar;
@@ -23,6 +24,7 @@ const pickMapper = type => {
     if (type === 'chord') return mapChord;
     if (type === 'violin') return mapViolin;
     if (type === 'boxplot') return mapBoxplot;
+    if (type === 'hexbin') return mapHexbin;
     return () => null;
 };
 

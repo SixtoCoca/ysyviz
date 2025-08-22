@@ -48,5 +48,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.BOXPLOT]: {
         required: ['group', 'value'],
         optional: ['title', 'palette']
+    },
+    [ChartTypes.HEXBIN]: {
+        required: ['x', 'y'],
+        optional: ['title', 'color']
     }
 };
