@@ -67,6 +67,6 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.WATERFALL]: {
         required: ['category', 'value'],
-        optional: ['title', 'palette', 'initialValue', 'includeTotal', 'totalLabel', 'showValues', 'valueFormat', 'colorPositive', 'colorNegative', 'colorTotal']
+        optional: ['title']
     }
 };
