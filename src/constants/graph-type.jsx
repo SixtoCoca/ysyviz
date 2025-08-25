@@ -11,5 +11,6 @@ export const ChartTypes = {
   CHORD: 'chord',
   VIOLIN: 'violin',
   BOXPLOT: 'boxplot',
-  HEXBIN: 'hexbin'
+  HEXBIN: 'hexbin',
+  PARALLEL: 'parallel'
 };

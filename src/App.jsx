@@ -16,6 +16,7 @@ import ChordChart from './components/charts/ChordChart';
 import ViolinChart from './components/charts/ViolinChart';
 import BoxplotChart from './components/charts/BoxplotChart';
 import HexbinChart from './components/charts/HexbinChart';
+import ParallelCoordinatesChart from './components/charts/ParallelCordinatesCharts';
 
 import DataUploader from './components/interface/DataUploader';
 import AdvancedSettings from './components/config/AdvancedSettings';
@@ -47,7 +48,8 @@ const App = () => {
     chord: <ChordChart {...chartProps} />,
     violin: <ViolinChart {...chartProps} />,
     boxplot: <BoxplotChart {...chartProps} />,
-    hexbin: <HexbinChart {...chartProps} />
+    hexbin: <HexbinChart {...chartProps} />,
+    parallel: <ParallelCoordinatesChart {...chartProps} />
   };
 
   const handleDownload = async () => {

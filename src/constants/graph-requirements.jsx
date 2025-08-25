@@ -52,5 +52,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.HEXBIN]: {
         required: ['x', 'y'],
         optional: ['title', 'color']
+    },
+    [ChartTypes.PARALLEL]: {
+        required: ['dimensions'],
+        optional: ['title', 'color']
     }
 };

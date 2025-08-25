@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CirclePicker } from 'react-color';
+import Select from 'react-select';
 import './ColorSelector.css';
 
 const PaletteCard = ({ palette, selected, onSelect }) => (
     <button
-        type="button"
+        type='button'
         onClick={() => onSelect(palette)}
         className={`palette-card ${selected ? 'is-selected' : ''}`}
     >
-        <div className="palette-card__grid">
+        <div className='palette-card__grid'>
             {palette.colors.slice(0, 9).map((c, i) => (
-                <div key={`${palette.id}-${i}`} className="palette-dot" style={{ background: c }} />
+                <div key={`${palette.id}-${i}`} className='palette-dot' style={{ background: c }} />
             ))}
         </div>
-        <div className="palette-card__name">{palette.name}</div>
+        <div className='palette-card__name'>{palette.name}</div>
     </button>
 );
 
@@ -35,40 +36,40 @@ const ColorSelector = ({ value, onChange, palette, mode = 'single', label = 'Col
     }, []);
 
     return (
-        <div ref={wrapperRef} className="color-selector">
-            <label className="color-selector__label">{isMulti ? 'Palette' : label}</label>
+        <div ref={wrapperRef} className='color-selector'>
+            <label className='color-selector__label'>{isMulti ? 'Palette' : label}</label>
 
             {!isMulti && (
                 <>
                     <div
                         onClick={() => setOpen(v => !v)}
-                        className="swatch swatch--single"
+                        className='swatch swatch--single'
                         style={{ background: singleValue }}
-                        title="Pick color"
+                        title='Pick color'
                     />
                     {open && (
-                        <div className="popover">
-                            <div className="popover__content">
+                        <div className='popover'>
+                            <div className='popover__content'>
                                 <CirclePicker
                                     colors={palette}
                                     color={singleValue}
                                     circleSize={28}
                                     circleSpacing={10}
-                                    width="180px"
+                                    width='180px'
                                     onChange={(c) => onChange(c.hex)}
                                 />
-                                <div className="controls">
-                                    <div className="preview-wrap">
-                                        <div className="preview" style={{ background: singleValue }} />
+                                <div className='controls'>
+                                    <div className='preview-wrap'>
+                                        <div className='preview' style={{ background: singleValue }} />
                                         <input
-                                            type="color"
+                                            type='color'
                                             value={singleValue || palette?.[0] || '#000000'}
                                             onChange={(e) => onChange(e.target.value)}
-                                            className="preview-input"
-                                            aria-label="Custom color"
+                                            className='preview-input'
+                                            aria-label='Custom color'
                                         />
                                     </div>
-                                    <button type="button" onClick={() => setOpen(false)} className="btn">
+                                    <button type='button' onClick={() => setOpen(false)} className='btn'>
                                         Done
                                     </button>
                                 </div>
@@ -79,36 +80,31 @@ const ColorSelector = ({ value, onChange, palette, mode = 'single', label = 'Col
             )}
 
             {isMulti && (
-                <>
-                    <div
-                        onClick={() => setOpen(v => !v)}
-                        className="swatch swatch--palette"
-                        title="Pick palette"
-                    >
-                        <div className="palette-grid">
-                            {(multiValue.length ? multiValue : (palette || [])).slice(0, 9).map((c, i) => (
-                                <div key={`preview-${i}`} className="palette-dot" style={{ background: c }} />
-                            ))}
-                        </div>
-                    </div>
-
-                    {open && (
-                        <div className="popover">
-                            <div className="popover__content popover__content--palettes">
-                                <div className="palette-cards">
-                                    {palettes.map(p => (
-                                        <PaletteCard
-                                            key={p.id}
-                                            palette={p}
-                                            selected={JSON.stringify(p.colors) === JSON.stringify(multiValue)}
-                                            onSelect={(pal) => { onChange(pal.colors); setOpen(false); }}
-                                        />
-                                    ))}
-                                </div>
+                <Select
+                    options={palettes.map(p => ({ value: p.id, label: p.name, colors: p.colors }))}
+                    value={
+                        palettes
+                            .map(p => ({ value: p.id, label: p.name, colors: p.colors }))
+                            .find(o => JSON.stringify(o.colors) === JSON.stringify(multiValue)) || null
+                    }
+                    onChange={(opt) => onChange(opt?.colors || [])}
+                    classNamePrefix='ncg-select'
+                    placeholder='Pick palette'
+                    formatOptionLabel={(opt) => (
+                        <div className='d-flex align-items-center'>
+                            <div className='d-flex flex-wrap gap-1 me-2' style={{ width: 72 }}>
+                                {opt.colors.slice(0, 8).map((c, i) => (
+                                    <span
+                                        key={`${opt.value}-${i}`}
+                                        className='d-inline-block rounded border'
+                                        style={{ width: 14, height: 14, background: c }}
+                                    />
+                                ))}
                             </div>
+                            <span>{opt.label}</span>
                         </div>
                     )}
-                </>
+                />
             )}
         </div>
     );

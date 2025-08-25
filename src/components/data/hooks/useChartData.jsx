@@ -10,6 +10,8 @@ import { mapChord } from '../mappers/mapChord';
 import { mapViolin } from '../mappers/mapViolin';
 import { mapBoxplot } from '../mappers/mapBoxplot';
 import { mapHexbin } from '../mappers/mapHexbin';
+import { mapParallel } from '../mappers/mapParallel';
+
 
 const pickMapper = type => {
     if (type === 'bar') return mapBar;
@@ -25,6 +27,7 @@ const pickMapper = type => {
     if (type === 'violin') return mapViolin;
     if (type === 'boxplot') return mapBoxplot;
     if (type === 'hexbin') return mapHexbin;
+    if (type === 'parallel') return mapParallel;
     return () => null;
 };
 
