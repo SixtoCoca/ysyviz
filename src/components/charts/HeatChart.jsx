@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
 import { toNumber } from '../data/utils';
+import { drawLinearLegend } from './interface/colorLegend';
 
 const HeatmapChart = ({ data, config }) => {
     const svgRef = useRef();
@@ -48,35 +49,28 @@ const HeatmapChart = ({ data, config }) => {
         const legendWidth = 200;
         const legendHeight = 10;
         const legendX = (width - legendWidth) / 2;
+        const legendY = height + 20;
 
-        const defs = svg.append('defs');
-        const gradientId = 'heatmap-gradient';
-        const gradient = defs.append('linearGradient')
-            .attr('id', gradientId)
-            .attr('x1', '0%')
-            .attr('x2', '100%');
-
-        gradient.append('stop').attr('offset', '0%').attr('stop-color', '#ffffff');
-        gradient.append('stop').attr('offset', '100%').attr('stop-color', base);
-
-        const legend = svg.append('g').attr('transform', `translate(${legendX}, ${height + 20})`);
-
-        legend.append('rect')
-            .attr('width', legendWidth)
-            .attr('height', legendHeight)
-            .style('fill', `url(#${gradientId})`);
-
-        const legendScale = d3.scaleLinear().domain([minVal, maxVal]).range([0, legendWidth]);
-        const legendAxis = d3.axisBottom(legendScale).ticks(5).tickSize(legendHeight);
-
-        legend.append('g')
-            .attr('transform', `translate(0, ${legendHeight})`)
-            .call(legendAxis)
-            .select('.domain')
-            .remove();
+        drawLinearLegend(svg, {
+            x: legendX,
+            y: legendY,
+            width: legendWidth,
+            height: legendHeight,
+            scale: v => color(v),
+            domain: [minVal, maxVal],
+            ticks: 5,
+            gradientId: 'heatmap-gradient'
+        });
     }, [data, config]);
 
-    return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height + 60} />;
+    return (
+        <svg
+            ref={svgRef}
+            className='w-100 d-block'
+            width={chartDimensions.width}
+            height={chartDimensions.height + 60}
+        />
+    );
 };
 
 export default HeatmapChart;

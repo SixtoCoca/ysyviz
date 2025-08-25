@@ -20,6 +20,7 @@ import ParallelCoordinatesChart from './components/charts/ParallelCordinatesChar
 import TreemapChart from './components/charts/TreemapChart';
 import SunburstChart from './components/charts/SunburstChart';
 import WaterfallChart from './components/charts/WaterfallChart';
+import CalendarHeatmapChart from './components/charts/CalendarHeatmapChart';
 
 import DataUploader from './components/interface/DataUploader';
 import AdvancedSettings from './components/config/AdvancedSettings';
@@ -55,7 +56,8 @@ const App = () => {
     parallel: <ParallelCoordinatesChart {...chartProps} />,
     treemap: <TreemapChart {...chartProps} />,
     sunburst: <SunburstChart {...chartProps} />,
-    waterfall: <WaterfallChart {...chartProps} />
+    waterfall: <WaterfallChart {...chartProps} />,
+    calendar: <CalendarHeatmapChart {...chartProps} />
   };
 
   const handleDownload = async () => {
