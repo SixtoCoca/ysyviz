@@ -3,21 +3,6 @@ import { CirclePicker } from 'react-color';
 import Select from 'react-select';
 import './ColorSelector.css';
 
-const PaletteCard = ({ palette, selected, onSelect }) => (
-    <button
-        type='button'
-        onClick={() => onSelect(palette)}
-        className={`palette-card ${selected ? 'is-selected' : ''}`}
-    >
-        <div className='palette-card__grid'>
-            {palette.colors.slice(0, 9).map((c, i) => (
-                <div key={`${palette.id}-${i}`} className='palette-dot' style={{ background: c }} />
-            ))}
-        </div>
-        <div className='palette-card__name'>{palette.name}</div>
-    </button>
-);
-
 const ColorSelector = ({ value, onChange, palette, mode = 'single', label = 'Color', palettes = [] }) => {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef(null);

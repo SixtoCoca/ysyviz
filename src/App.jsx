@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
 import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,9 +23,12 @@ import WaterfallChart from './components/charts/WaterfallChart';
 import CalendarHeatmapChart from './components/charts/CalendarHeatmapChart';
 
 import DataUploader from './components/interface/DataUploader';
-import AdvancedSettings from './components/config/AdvancedSettings';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
 import useValidatedData from './components/validate/hooks/useValidatedData';
+import { ChartFieldRequirements } from './constants/graph-requirements';
+
+import ConfigWithValidation from './components/interface/ConfigWithValidation';
+import ChartPreviewMessage from './components/interface/ChartPreviewMessage';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -34,9 +37,34 @@ const App = () => {
   const [type, setType] = useState(null);
   const [data, setData] = useState(null);
   const [cfg, setCfg] = useChartConfig();
+  const [issues, setIssues] = useState([]);
   const chartRef = useRef();
 
-  const { data: chartData } = useValidatedData(data, type, cfg?.onValidation, cfg);
+  const isFilled = v => {
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === 'number') return Number.isFinite(v);
+    return v !== undefined && v !== null && String(v).trim() !== '';
+  };
+
+  const hasRequiredFields = useMemo(() => {
+    if (!type) return false;
+    const req = ChartFieldRequirements?.[type]?.required || [];
+    if (req.length === 0) return true;
+    return req.every(key => {
+      const candidate = cfg?.[`field_${key}`] ?? cfg?.[key];
+      return isFilled(candidate);
+    });
+  }, [type, cfg]);
+
+  const enableValidation = Boolean(type && hasRequiredFields);
+
+  const { data: chartData } = useValidatedData(
+    enableValidation ? data : null,
+    enableValidation ? type : null,
+    enableValidation ? setIssues : undefined,
+    cfg
+  );
+
   const chartProps = { data: chartData, config: cfg };
 
   const chartComponents = {
@@ -68,6 +96,8 @@ const App = () => {
     link.href = canvas.toDataURL();
     link.click();
   };
+
+  const hasErrors = Array.isArray(issues) && issues.some(i => i.level === 'error');
 
   return (
     <div className='min-vh-100 d-flex flex-column'>
@@ -102,7 +132,7 @@ const App = () => {
 
                 <Tab.Pane eventKey='preview' className='h-100'>
                   <Card className='h-100 position-relative'>
-                    {type && chartData && (
+                    {enableValidation && chartData && !hasErrors && (
                       <Button
                         variant='light'
                         className='position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm'
@@ -114,15 +144,17 @@ const App = () => {
                     )}
                     <Card.Body className='h-100'>
                       <Row className='h-100'>
-                        <Col md={4} className='border-end pe-3 overflow-auto' style={{ maxHeight: 'calc(100vh - 220px)' }}>
-                          <h5 className='mb-3 text-center'>Chart Configuration</h5>
-                          <AdvancedSettings
+                        <Col md={4} className='border-end pe-3 d-flex flex-column'>
+                          <ConfigWithValidation
                             cfg={cfg}
                             setCfg={setCfg}
                             type={type}
                             setType={setType}
                             setData={setData}
                             data={data}
+                            enableValidation={enableValidation}
+                            issues={issues}
+                            onClearIssues={() => setIssues([])}
                           />
                         </Col>
                         <Col md={8} className='ps-3'>
@@ -131,11 +163,13 @@ const App = () => {
                               {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
                             </h4>
                             <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
-                              {type && chartData ? chartComponents[type] : (
-                                <p className='text-muted text-center'>
-                                  Please upload a data file and select a chart type to see the visualization.
-                                </p>
-                              )}
+                              <ChartPreviewMessage
+                                type={type}
+                                hasRequiredFields={hasRequiredFields}
+                                hasErrors={hasErrors}
+                                chartData={chartData}
+                              />
+                              {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
                             </div>
                           </div>
                         </Col>
