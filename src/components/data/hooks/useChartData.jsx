@@ -12,6 +12,7 @@ import { mapBoxplot } from '../mappers/mapBoxplot';
 import { mapHexbin } from '../mappers/mapHexbin';
 import { mapParallel } from '../mappers/mapParallel';
 import { mapTreemap } from '../mappers/mapTreemap';
+import { mapSunburst } from '../mappers/mapSunburst';
 
 const pickMapper = type => {
     if (type === 'bar') return mapBar;
@@ -29,6 +30,7 @@ const pickMapper = type => {
     if (type === 'hexbin') return mapHexbin;
     if (type === 'parallel') return mapParallel;
     if (type === 'treemap') return mapTreemap;
+    if (type === 'sunburst') return mapSunburst;
     return () => null;
 };
 

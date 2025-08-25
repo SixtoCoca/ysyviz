@@ -60,5 +60,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.TREEMAP]: {
         required: ['label', 'value'],
         optional: ['group', 'title', 'palette']
+    },
+    [ChartTypes.SUNBURST]: {
+        required: ['path', 'value'],
+        optional: ['title', 'palette']
     }
 };

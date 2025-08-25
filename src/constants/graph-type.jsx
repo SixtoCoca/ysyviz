@@ -13,5 +13,6 @@ export const ChartTypes = {
   BOXPLOT: 'boxplot',
   HEXBIN: 'hexbin',
   PARALLEL: 'parallel',
-  TREEMAP: 'treemap'
+  TREEMAP: 'treemap',
+  SUNBURST: 'sunburst'
 };
