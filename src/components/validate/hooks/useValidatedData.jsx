@@ -9,8 +9,7 @@ import { validateSankey } from '../validators/validateSankey';
 import { validateChord } from '../validators/validateChord';
 import { validateViolin } from '../validators/validateViolin';
 import { validateBoxplot } from '../validators/validateBoxplot';
-import { validateHexbin } from '../validators/validateHexbin';
-import { validateParallel } from '../validators/validateParallel';
+import { validateTreemap } from '../validators/validataTreemap';
 import useChartData from '../../data/hooks/useChartData';
 
 const pickValidator = type => {
@@ -26,8 +25,7 @@ const pickValidator = type => {
     if (type === 'chord') return validateChord;
     if (type === 'violin') return validateViolin;
     if (type === 'boxplot') return validateBoxplot;
-    if (type === 'hexbin') return validateHexbin;
-    if (type === 'parallel') return validateParallel;
+    if (type === 'treemap') return validateTreemap;
     return d => ({ data: d, issues: [] });
 };
 

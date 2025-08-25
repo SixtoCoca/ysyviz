@@ -56,5 +56,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.PARALLEL]: {
         required: ['dimensions'],
         optional: ['title', 'color']
+    },
+    [ChartTypes.TREEMAP]: {
+        required: ['label', 'value'],
+        optional: ['group', 'title', 'palette']
     }
 };

@@ -17,6 +17,7 @@ import ViolinChart from './components/charts/ViolinChart';
 import BoxplotChart from './components/charts/BoxplotChart';
 import HexbinChart from './components/charts/HexbinChart';
 import ParallelCoordinatesChart from './components/charts/ParallelCordinatesCharts';
+import TreemapChart from './components/charts/TreemapChart';
 
 import DataUploader from './components/interface/DataUploader';
 import AdvancedSettings from './components/config/AdvancedSettings';
@@ -49,7 +50,8 @@ const App = () => {
     violin: <ViolinChart {...chartProps} />,
     boxplot: <BoxplotChart {...chartProps} />,
     hexbin: <HexbinChart {...chartProps} />,
-    parallel: <ParallelCoordinatesChart {...chartProps} />
+    parallel: <ParallelCoordinatesChart {...chartProps} />,
+    treemap: <TreemapChart {...chartProps} />
   };
 
   const handleDownload = async () => {
