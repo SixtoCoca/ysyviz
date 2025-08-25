@@ -14,5 +14,6 @@ export const ChartTypes = {
   HEXBIN: 'hexbin',
   PARALLEL: 'parallel',
   TREEMAP: 'treemap',
-  SUNBURST: 'sunburst'
+  SUNBURST: 'sunburst',
+  WATERFALL: 'waterfall',
 };

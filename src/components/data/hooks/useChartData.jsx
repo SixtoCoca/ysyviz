@@ -13,6 +13,7 @@ import { mapHexbin } from '../mappers/mapHexbin';
 import { mapParallel } from '../mappers/mapParallel';
 import { mapTreemap } from '../mappers/mapTreemap';
 import { mapSunburst } from '../mappers/mapSunburst';
+import { mapWaterfall } from '../mappers/mapWaterfall';
 
 const pickMapper = type => {
     if (type === 'bar') return mapBar;
@@ -31,6 +32,7 @@ const pickMapper = type => {
     if (type === 'parallel') return mapParallel;
     if (type === 'treemap') return mapTreemap;
     if (type === 'sunburst') return mapSunburst;
+    if (type === 'waterfall') return mapWaterfall;
     return () => null;
 };
 

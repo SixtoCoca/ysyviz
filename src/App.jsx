@@ -19,6 +19,7 @@ import HexbinChart from './components/charts/HexbinChart';
 import ParallelCoordinatesChart from './components/charts/ParallelCordinatesCharts';
 import TreemapChart from './components/charts/TreemapChart';
 import SunburstChart from './components/charts/SunburstChart';
+import WaterfallChart from './components/charts/WaterfallChart';
 
 import DataUploader from './components/interface/DataUploader';
 import AdvancedSettings from './components/config/AdvancedSettings';
@@ -53,7 +54,8 @@ const App = () => {
     hexbin: <HexbinChart {...chartProps} />,
     parallel: <ParallelCoordinatesChart {...chartProps} />,
     treemap: <TreemapChart {...chartProps} />,
-    sunburst: <SunburstChart {...chartProps} />
+    sunburst: <SunburstChart {...chartProps} />,
+    waterfall: <WaterfallChart {...chartProps} />
   };
 
   const handleDownload = async () => {

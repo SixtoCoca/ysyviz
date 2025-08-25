@@ -64,5 +64,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.SUNBURST]: {
         required: ['path', 'value'],
         optional: ['title', 'palette']
+    },
+    [ChartTypes.WATERFALL]: {
+        required: ['category', 'value'],
+        optional: ['title', 'palette', 'initialValue', 'includeTotal', 'totalLabel', 'showValues', 'valueFormat', 'colorPositive', 'colorNegative', 'colorTotal']
     }
 };

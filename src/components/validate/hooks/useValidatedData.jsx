@@ -11,6 +11,7 @@ import { validateViolin } from '../validators/validateViolin';
 import { validateBoxplot } from '../validators/validateBoxplot';
 import { validateTreemap } from '../validators/validataTreemap';
 import { validateSunburst } from '../validators/validateSunburst';
+import { validateWaterfall } from '../validators/validateWaterfall';
 import useChartData from '../../data/hooks/useChartData';
 
 const pickValidator = type => {
@@ -28,6 +29,7 @@ const pickValidator = type => {
     if (type === 'boxplot') return validateBoxplot;
     if (type === 'treemap') return validateTreemap;
     if (type === 'sunburst') return validateSunburst;
+    if (type === 'waterfall') return validateWaterfall;
     return d => ({ data: d, issues: [] });
 };
 
