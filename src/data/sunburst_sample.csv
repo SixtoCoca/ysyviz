@@ -1,11 +1,12 @@
 path,value
-Electronics/Phones/Android,120
-Electronics/Phones/iOS,80
-Electronics/Computers/Laptops,150
-Electronics/Computers/Desktops,90
+Elect/Phones/Android,120
+Elect/Phones/iOS,80
+Elect/Computers/Laptops,60
+Elect/Computers/Desktops,90
 Home/Furniture/Chairs,60
+Home/Furniture/Chairs/Wood,60
 Home/Furniture/Tables,40
 Home/Kitchen/Appliances,100
 Sports/Outdoor/Camping,50
 Sports/Outdoor/Hiking,70
-Sports/Indoor/Gym,30
+Sports/Indoor/Gym,40
