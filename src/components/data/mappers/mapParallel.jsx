@@ -5,13 +5,6 @@ export const mapParallel = (raw, cfg) => {
     if (!rows.length) return null;
 
     const dimensions = Array.isArray(cfg?.dimensions) ? cfg.dimensions.filter(Boolean) : [];
-    if (!dimensions.length) {
-        const sample = rows[0] || {};
-        const numeric = Object.keys(sample).filter(k => Number.isFinite(toNumber(sample[k])));
-        if (numeric.length < 2) return null;
-        return mapParallel(raw, { ...cfg, dimensions: numeric.slice(0, 5) });
-    }
-
     if (dimensions.length < 2) return null;
 
     const groupKey = cfg?.field_group || '';
@@ -32,9 +25,7 @@ export const mapParallel = (raw, cfg) => {
     const extentByDim = {};
     for (const d of dimensions) {
         const xs = mappedRows.map(r => r.values[d]);
-        const min = Math.min(...xs);
-        const max = Math.max(...xs);
-        extentByDim[d] = [min, max];
+        extentByDim[d] = [Math.min(...xs), Math.max(...xs)];
     }
 
     return {

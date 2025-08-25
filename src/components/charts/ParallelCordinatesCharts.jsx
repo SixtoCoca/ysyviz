@@ -26,8 +26,8 @@ const ParallelCoordinatesChart = ({ data, config }) => {
 
         const y = {};
         for (const d of dims) {
-            const ext = d3.extent(rows, r => r.values[d]);
-            const dom = ext[0] === ext[1] ? [ext[0] - 1, ext[1] + 1] : ext;
+            const [min, max] = data?.extentByDim?.[d] || [0, 1];
+            const dom = min === max ? [min - 1, max + 1] : [min, max];
             y[d] = d3.scaleLinear().domain(dom).nice().range([innerHeight, 0]);
         }
 
@@ -67,7 +67,7 @@ const ParallelCoordinatesChart = ({ data, config }) => {
             .text(d => d);
     }, [data, config?.color]);
 
-    if (!data) return null;
+    if (!data?.rows?.length) return null;
 
     return (
         <svg
