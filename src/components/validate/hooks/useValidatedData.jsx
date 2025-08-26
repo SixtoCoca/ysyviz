@@ -1,4 +1,5 @@
 import { useMemo, useEffect } from 'react';
+import { ChartTypes } from '../../../constants/graph-type';
 import { validateBar } from '../validators/validateBar';
 import { validateLine } from '../validators/validateLine';
 import { validatePie } from '../validators/validatePie';
@@ -9,38 +10,39 @@ import { validateSankey } from '../validators/validateSankey';
 import { validateChord } from '../validators/validateChord';
 import { validateViolin } from '../validators/validateViolin';
 import { validateBoxplot } from '../validators/validateBoxplot';
-import { validateTreemap } from '../validators/validataTreemap';
+import { validateTreemap } from '../validators/validateTreemap';
 import { validateSunburst } from '../validators/validateSunburst';
 import { validateWaterfall } from '../validators/validateWaterfall';
 import { validateCalendarHeatmap } from '../validators/validateCalendarHeatmap';
 import useChartData from '../../data/hooks/useChartData';
 
-const pickValidator = type => {
-    if (type === 'bar') return validateBar;
-    if (type === 'line') return validateLine;
-    if (type === 'area') return validateLine;
-    if (type === 'pie') return validatePie;
-    if (type === 'donut') return validatePie;
-    if (type === 'scatter') return validateScatter;
-    if (type === 'bubble') return validateBubble;
-    if (type === 'heatmap') return validateHeat;
-    if (type === 'sankey') return validateSankey;
-    if (type === 'chord') return validateChord;
-    if (type === 'violin') return validateViolin;
-    if (type === 'boxplot') return validateBoxplot;
-    if (type === 'treemap') return validateTreemap;
-    if (type === 'sunburst') return validateSunburst;
-    if (type === 'waterfall') return validateWaterfall;
-    if (type === 'calendar') return validateCalendarHeatmap;
-    return d => ({ data: d, issues: [] });
+const NullValidator = d => ({ data: d, issues: [] });
+
+const Validators = {
+    [ChartTypes.BAR]: validateBar,
+    [ChartTypes.LINE]: validateLine,
+    [ChartTypes.AREA]: validateLine,
+    [ChartTypes.SCATTER]: validateScatter,
+    [ChartTypes.BUBBLE]: validateBubble,
+    [ChartTypes.PIE]: validatePie,
+    [ChartTypes.DONUT]: validatePie,
+    [ChartTypes.HEATMAP]: validateHeat,
+    [ChartTypes.SANKEY]: validateSankey,
+    [ChartTypes.CHORD]: validateChord,
+    [ChartTypes.VIOLIN]: validateViolin,
+    [ChartTypes.BOXPLOT]: validateBoxplot,
+    [ChartTypes.TREEMAP]: validateTreemap,
+    [ChartTypes.SUNBURST]: validateSunburst,
+    [ChartTypes.WATERFALL]: validateWaterfall,
+    [ChartTypes.CALENDAR]: validateCalendarHeatmap
 };
 
 const useValidatedData = (rawData, chartType, onIssues, config) => {
     const mapped = useChartData(rawData, chartType, config);
+
     const { data, issues } = useMemo(() => {
-        const validator = pickValidator(chartType);
-        const res = validator(mapped, config);
-        return res;
+        const validate = Validators[chartType] || NullValidator;
+        return validate(mapped, config);
     }, [mapped, chartType, config]);
 
     useEffect(() => {

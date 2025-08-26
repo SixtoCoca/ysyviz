@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { ChartTypes } from '../../../constants/graph-type';
 import { mapBar } from '../mappers/mapBar';
 import { mapLine } from '../mappers/mapLine';
 import { mapPie } from '../mappers/mapPie';
@@ -16,34 +17,34 @@ import { mapSunburst } from '../mappers/mapSunburst';
 import { mapWaterfall } from '../mappers/mapWaterfall';
 import { mapCalendarHeatmap } from '../mappers/mapCalendarHeatmap';
 
-const pickMapper = type => {
-    if (type === 'bar') return mapBar;
-    if (type === 'line') return mapLine;
-    if (type === 'area') return mapLine;
-    if (type === 'pie') return mapPie;
-    if (type === 'donut') return mapPie;
-    if (type === 'scatter') return mapScatter;
-    if (type === 'bubble') return mapBubble;
-    if (type === 'heatmap') return mapHeat;
-    if (type === 'sankey') return mapSankey;
-    if (type === 'chord') return mapChord;
-    if (type === 'violin') return mapViolin;
-    if (type === 'boxplot') return mapBoxplot;
-    if (type === 'hexbin') return mapHexbin;
-    if (type === 'parallel') return mapParallel;
-    if (type === 'treemap') return mapTreemap;
-    if (type === 'sunburst') return mapSunburst;
-    if (type === 'waterfall') return mapWaterfall;
-    if (type === 'calendar') return mapCalendarHeatmap;
-    return () => null;
+const NullMapper = () => null;
+
+const Mappers = {
+    [ChartTypes.BAR]: mapBar,
+    [ChartTypes.LINE]: mapLine,
+    [ChartTypes.AREA]: mapLine,
+    [ChartTypes.SCATTER]: mapScatter,
+    [ChartTypes.BUBBLE]: mapBubble,
+    [ChartTypes.PIE]: mapPie,
+    [ChartTypes.DONUT]: mapPie,
+    [ChartTypes.HEATMAP]: mapHeat,
+    [ChartTypes.SANKEY]: mapSankey,
+    [ChartTypes.CHORD]: mapChord,
+    [ChartTypes.VIOLIN]: mapViolin,
+    [ChartTypes.BOXPLOT]: mapBoxplot,
+    [ChartTypes.HEXBIN]: mapHexbin,
+    [ChartTypes.PARALLEL]: mapParallel,
+    [ChartTypes.TREEMAP]: mapTreemap,
+    [ChartTypes.SUNBURST]: mapSunburst,
+    [ChartTypes.WATERFALL]: mapWaterfall,
+    [ChartTypes.CALENDAR]: mapCalendarHeatmap
 };
 
 const useChartData = (rawData, chartType, config) => {
     return useMemo(() => {
         if (!rawData || !chartType) return null;
-        const mapper = pickMapper(chartType);
-        const mapped = mapper(rawData, config);
-        return mapped;
+        const mapper = Mappers[chartType] || NullMapper;
+        return mapper(rawData, config);
     }, [rawData, chartType, config]);
 };
 
