@@ -1,0 +1,139 @@
+import { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
+import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { toNumber, rowsOf, resolveFieldKey, norm } from '../data/utils';
+
+const TreemapChart = ({ data, config }) => {
+    const svgRef = useRef();
+
+    useEffect(() => {
+        const rows = rowsOf(data);
+        if (!rows.length) return;
+
+        const sample = rows[0] || {};
+        const groupKey = resolveFieldKey(sample, config?.field_group, ['group', 'category']);
+        const labelKey = resolveFieldKey(sample, config?.field_label, ['label', 'name']);
+        const valueKey = resolveFieldKey(sample, config?.field_value, ['value', 'size']);
+        if (!valueKey || !labelKey) return;
+
+        const items = rows
+            .map(r => ({
+                group: groupKey ? norm(r?.[groupKey]) : '',
+                label: norm(r?.[labelKey]),
+                value: toNumber(r?.[valueKey])
+            }))
+            .filter(d => d.label !== '' && Number.isFinite(d.value) && d.value >= 0);
+        if (!items.length) return;
+
+        const { width, height, margin } = chartDimensions;
+        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+
+        const svg = d3.select(svgRef.current);
+        clearSvg(svg);
+
+        const g = svg
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        const groups = Array.from(new Set(items.map(d => d.group || '')));
+        const rootData = {
+            name: 'root',
+            children: groups.map(grp => ({
+                name: grp || 'all',
+                children: items.filter(d => (d.group || '') === grp).map(d => ({ name: d.label, value: d.value }))
+            }))
+        };
+
+        const root = d3.hierarchy(rootData).sum(d => d.value || 0).sort((a, b) => (b.value || 0) - (a.value || 0));
+        d3.treemap().size([innerWidth, innerHeight]).paddingInner(2).paddingTop(22)(root);
+
+        const palette = Array.isArray(config?.palette) && config.palette.length > 0 ? config.palette : d3.schemeTableau10;
+        const hasMultipleGroups = (root.children || []).filter(c => c.data && c.data.name !== 'all').length > 1;
+        const colorMode = config?.colorMode || (hasMultipleGroups ? 'group' : 'leaf');
+        const colorByGroup = d3.scaleOrdinal(palette).domain(groups);
+        const colorByLeaf = d3.scaleOrdinal(palette);
+
+        g.append('g')
+            .selectAll('g.ncg-treemap-node')
+            .data(root.leaves())
+            .join('g')
+            .attr('class', 'ncg-treemap-node')
+            .attr('transform', d => `translate(${d.x0},${d.y0})`)
+            .call(sel => {
+                sel.append('rect')
+                    .attr('width', d => Math.max(0, d.x1 - d.x0))
+                    .attr('height', d => Math.max(0, d.y1 - d.y0))
+                    .attr('fill', d => {
+                        if (colorMode === 'group') return colorByGroup(d.parent?.data?.name || 'all');
+                        return colorByLeaf(d.data.name);
+                    })
+                    .attr('opacity', 0.9)
+                    .attr('stroke', config?.strokeColor || 'white')
+                    .attr('stroke-opacity', 0.6);
+
+                sel.append('text')
+                    .attr('x', 6)
+                    .attr('y', 16)
+                    .attr('pointer-events', 'none')
+                    .attr('font-size', 12)
+                    .attr('font-weight', 600)
+                    .text(d => d.data.name)
+                    .each(function (d) {
+                        const node = d3.select(this);
+                        const w = Math.max(0, d.x1 - d.x0) - 8;
+                        const txt = d.data.name || '';
+                        let t = txt;
+                        if (!this.getComputedTextLength) return;
+                        while (t.length > 0 && this.getComputedTextLength() > w) {
+                            t = t.slice(0, -1);
+                            node.text(t + '…');
+                        }
+                    });
+
+                sel.append('text')
+                    .attr('x', 6)
+                    .attr('y', 32)
+                    .attr('pointer-events', 'none')
+                    .attr('font-size', 11)
+                    .text(d => d3.format(',')(d.data.value || 0))
+                    .each(function (d) {
+                        const node = d3.select(this);
+                        const w = Math.max(0, d.x1 - d.x0) - 8;
+                        let t = String(d3.format(',')(d.data.value || 0));
+                        if (!this.getComputedTextLength) return;
+                        while (t.length > 0 && this.getComputedTextLength() > w) {
+                            t = t.slice(0, -1);
+                            node.text(t + '…');
+                        }
+                    });
+            });
+
+        g.append('g')
+            .selectAll('text.ncg-group-title')
+            .data(root.children || [])
+            .join('text')
+            .attr('class', 'ncg-group-title')
+            .attr('x', d => d.x0 + 6)
+            .attr('y', d => d.y0 + 14)
+            .attr('font-size', 12)
+            .attr('font-weight', 700)
+            .text(d => d.data.name);
+    }, [data, config]);
+
+    if (!data) return null;
+
+    return (
+        <svg
+            ref={svgRef}
+            className='w-100 d-block'
+            width={chartDimensions.width}
+            height={chartDimensions.height}
+            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height}`}
+            preserveAspectRatio='xMidYMid meet'
+        />
+    );
+};
+
+export default TreemapChart;

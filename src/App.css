@@ -105,3 +105,29 @@ circle:hover {
   color: red;
   margin-top: 10px;
 }
+
+.pane-scroll {
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+.min-h-400 {
+  min-height: 400px;
+}
+
+.chart-tooltip {
+  position: absolute;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  font-size: 0.875rem;
+  z-index: 1060;
+}
+
+.ncg-bubble:hover {
+  fill: inherit !important;
+  r: inherit !important;
+}

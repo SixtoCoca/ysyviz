@@ -2,7 +2,7 @@ import { ChartTypes } from './graph-type';
 
 export const ChartFieldRequirements = {
     [ChartTypes.BAR]: {
-        required: ['x', 'y'],
+        required: ['category', 'value'],
         optional: ['title', 'color']
     },
     [ChartTypes.LINE]: {
@@ -43,6 +43,34 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.VIOLIN]: {
         required: ['x', 'y'],
+        optional: ['title', 'color']
+    },
+    [ChartTypes.BOXPLOT]: {
+        required: ['group', 'value'],
+        optional: ['title', 'palette']
+    },
+    [ChartTypes.HEXBIN]: {
+        required: ['x', 'y'],
+        optional: ['title', 'color']
+    },
+    [ChartTypes.PARALLEL]: {
+        required: ['dimensions'],
+        optional: ['title', 'color']
+    },
+    [ChartTypes.TREEMAP]: {
+        required: ['label', 'value'],
+        optional: ['group', 'title', 'palette']
+    },
+    [ChartTypes.SUNBURST]: {
+        required: ['path', 'value'],
+        optional: ['title', 'palette']
+    },
+    [ChartTypes.WATERFALL]: {
+        required: ['category', 'value'],
+        optional: ['title']
+    },
+    [ChartTypes.CALENDAR]: {
+        required: ['date', 'value'],
         optional: ['title', 'color']
     }
 };
