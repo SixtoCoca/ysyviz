@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
 const LineChart = ({ data, config, filled = false }) => {
   const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
   useEffect(() => {
     const series = Array.isArray(data?.series) && data.series.length
@@ -12,8 +13,9 @@ const LineChart = ({ data, config, filled = false }) => {
         ? [{ id: 'series', values: data.values }]
         : [];
 
-    const { width, height, margin } = chartDimensions;
-    const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
     const svg = d3.select(svgRef.current);
     clearSvg(svg);
@@ -98,13 +100,15 @@ const LineChart = ({ data, config, filled = false }) => {
         .attr('cx', d => xPos(d))
         .attr('cy', d => y(Number(d.y)))
         .attr('r', 3)
-        .attr('fill', col);
+        .attr('fill', col)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1);
     });
 
-    if (hasMultipleSeries) {
+    if (hasMultipleSeries && data.seriesNames) {
       const legend = g.append('g')
         .attr('class', 'legend')
-        .attr('transform', `translate(${innerWidth - 120}, 20)`);
+        .attr('transform', `translate(${innerWidth - 100}, 20)`);
 
       const legendItems = legend.selectAll('.legend-item')
         .data(data.seriesNames)
@@ -112,21 +116,28 @@ const LineChart = ({ data, config, filled = false }) => {
         .attr('class', 'legend-item')
         .attr('transform', (d, i) => `translate(0, ${i * 20})`);
 
-      legendItems.append('rect')
-        .attr('width', 12)
-        .attr('height', 12)
-        .attr('fill', (d, i) => palette ? color(i) : baseColor);
+      legendItems.append('line')
+        .attr('x1', 0)
+        .attr('x2', 15)
+        .attr('y1', 0)
+        .attr('y2', 0)
+        .attr('stroke', (d, i) => palette ? color(i) : baseColor)
+        .attr('stroke-width', 2);
 
       legendItems.append('text')
-        .attr('x', 18)
-        .attr('y', 9)
+        .attr('x', 20)
+        .attr('y', 0)
+        .attr('dy', '0.35em')
         .style('font-size', '12px')
-        .style('alignment-baseline', 'middle')
         .text(d => d);
     }
-  }, [data, config, filled]);
+  }, [data, config, filled, dimensions]);
 
-  return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default LineChart;

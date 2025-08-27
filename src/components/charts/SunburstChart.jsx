@@ -1,16 +1,18 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
 const SunburstChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { containerRef, dimensions } = useResponsiveChart();
 
     useEffect(() => {
         if (!data || !data.children) return;
         if (!config?.field_path || !config?.field_value) return;
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+        const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+        const { width, height, margin } = chartDims;
+        const { innerWidth, innerHeight } = chartDims;
         const radius = Math.min(innerWidth, innerHeight) / 2;
 
         const svg = d3.select(svgRef.current);
@@ -111,20 +113,15 @@ const SunburstChart = ({ data, config }) => {
             const offset = Math.max(0, (L - textLength) / 2 - pad);
             textEl.attr('startOffset', offset);
         });
-    }, [data, config]);
+    }, [data, config, dimensions]);
 
     if (!data || !data.children) return null;
     if (!config?.field_path || !config?.field_value) return null;
 
     return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height}`}
-            preserveAspectRatio='xMidYMid meet'
-        />
+        <div ref={containerRef} className='w-100 h-100'>
+            <svg ref={svgRef} className='w-100 h-100' />
+        </div>
     );
 };
 

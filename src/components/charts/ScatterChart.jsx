@@ -1,125 +1,109 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
-import { toNumber } from '../data/utils';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
 const ScatterChart = ({ data, config }) => {
-    const svgRef = useRef();
+  const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
-    useEffect(() => {
-        let allPoints = [];
-        
-        if (data?.hasSeries && data?.series?.length) {
-            allPoints = data.series.flatMap(s => s.values || []);
-        } else if (data?.values?.length) {
-            allPoints = data.values;
-        }
-        
-        const rows = allPoints
-            .map(d => ({ x: toNumber(d.x), y: toNumber(d.y), label: d.label }))
-            .filter(d => Number.isFinite(d.x) && Number.isFinite(d.y));
-        if (!rows.length) return;
+  useEffect(() => {
+    const series = Array.isArray(data?.series) && data.series.length
+      ? data.series
+      : Array.isArray(data?.values) && data.values.length
+        ? [{ id: 'series', values: data.values }]
+        : [];
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
-        const svg = d3.select(svgRef.current);
-        clearSvg(svg);
+    const svg = d3.select(svgRef.current);
+    clearSvg(svg);
 
-        const g = svg
-            .attr('width', width)
-            .attr('height', height)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        const xMax = d3.max(rows, d => d.x) ?? 1;
-        const yMax = d3.max(rows, d => d.y) ?? 1;
+    const allX = series.flatMap(s => s.values.map(v => Number(v?.x)));
+    const allY = series.flatMap(s => s.values.map(v => Number(v?.y)));
 
-        const x = d3.scaleLinear().domain([0, xMax > 0 ? xMax : 1]).nice().range([0, innerWidth]);
-        const y = d3.scaleLinear().domain([0, yMax > 0 ? yMax : 1]).nice().range([innerHeight, 0]);
+    const xExtent = d3.extent(allX);
+    const yExtent = d3.extent(allY);
 
-        g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(x));
-        g.append('g').call(d3.axisLeft(y));
+    const x = d3.scaleLinear()
+      .domain([xExtent[0] ?? 0, xExtent[1] ?? 0])
+      .nice()
+      .range([0, innerWidth]);
 
-        const hasMultipleSeries = data?.hasSeries && data?.seriesNames?.length > 1;
-        const pointRadius = Number(config?.pointRadius) > 0 ? Number(config.pointRadius) : 3;
-        
-        let color;
-        if (hasMultipleSeries) {
-            const colorRange = config?.palette && Array.isArray(config.palette) && config.palette.length > 0 
-                ? config.palette 
-                : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
-            color = d3.scaleOrdinal().domain(data.seriesNames).range(colorRange);
-        } else {
-            color = () => config?.color || '#5563DE';
-        }
+    const y = d3.scaleLinear()
+      .domain([yExtent[0] ?? 0, yExtent[1] ?? 0])
+      .nice()
+      .range([innerHeight, 0]);
 
-        if (hasMultipleSeries) {
-            data.series.forEach(series => {
-                const seriesPoints = series.values
-                    .map(d => ({ x: toNumber(d.x), y: toNumber(d.y), label: d.label }))
-                    .filter(d => Number.isFinite(d.x) && Number.isFinite(d.y));
-                
-                g.selectAll(`circle.ncg-point-${series.id}`)
-                    .data(seriesPoints)
-                    .join('circle')
-                    .attr('class', `ncg-point-${series.id}`)
-                    .attr('cx', d => x(d.x))
-                    .attr('cy', d => y(d.y))
-                    .attr('r', pointRadius)
-                    .attr('fill', color(series.id))
-                    .attr('opacity', 0.7)
-                    .style('pointer-events', 'none');
-            });
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(x).ticks(6));
 
-            const legend = g.append('g')
-                .attr('class', 'legend')
-                .attr('transform', `translate(${innerWidth - 120}, 20)`);
+    g.append('g')
+      .call(d3.axisLeft(y).ticks(6));
 
-            const legendItems = legend.selectAll('.legend-item')
-                .data(data.seriesNames)
-                .join('g')
-                .attr('class', 'legend-item')
-                .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+    const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
+    const baseColor = config?.color || '#222';
+    const color = palette ? d3.scaleOrdinal(palette) : () => baseColor;
 
-            legendItems.append('circle')
-                .attr('cx', 6)
-                .attr('cy', 6)
-                .attr('r', 6)
-                .attr('fill', d => color(d));
+    const hasMultipleSeries = data?.hasSeries && data?.seriesNames?.length > 1;
 
-            legendItems.append('text')
-                .attr('x', 18)
-                .attr('y', 9)
-                .style('font-size', '12px')
-                .style('alignment-baseline', 'middle')
-                .text(d => d);
-        } else {
-            g.selectAll('circle.ncg-point')
-                .data(rows)
-                .join('circle')
-                .attr('class', 'ncg-point')
-                .attr('cx', d => x(d.x))
-                .attr('cy', d => y(d.y))
-                .attr('r', pointRadius)
-                .attr('fill', color())
-                .attr('opacity', 0.7)
-                .style('pointer-events', 'none');
-        }
-    }, [data, config]);
+    series.forEach((s, i) => {
+      const col = palette ? color(i) : baseColor;
 
-    if (!data?.values?.length && !data?.series?.length) return null;
+      g.selectAll(`circle.scatter-${s.id ?? i}`)
+        .data(s.values)
+        .join('circle')
+        .attr('cx', d => x(Number(d.x)))
+        .attr('cy', d => y(Number(d.y)))
+        .attr('r', config?.pointSize || 4)
+        .attr('fill', col)
+        .attr('opacity', config?.opacity || 0.7)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1);
+    });
 
-    return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height}`}
-            preserveAspectRatio='xMidYMid meet'
-        />
-    );
+    if (hasMultipleSeries && data.seriesNames) {
+      const legend = g.append('g')
+        .attr('class', 'legend')
+        .attr('transform', `translate(${innerWidth - 100}, 20)`);
+
+      const legendItems = legend.selectAll('.legend-item')
+        .data(data.seriesNames)
+        .join('g')
+        .attr('class', 'legend-item')
+        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+
+      legendItems.append('circle')
+        .attr('cx', 6)
+        .attr('cy', 0)
+        .attr('r', config?.pointSize || 4)
+        .attr('fill', (d, i) => palette ? color(i) : baseColor)
+        .attr('opacity', config?.opacity || 0.7)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1);
+
+      legendItems.append('text')
+        .attr('x', 16)
+        .attr('y', 0)
+        .attr('dy', '0.35em')
+        .style('font-size', '12px')
+        .text(d => d);
+    }
+  }, [data, config, dimensions]);
+
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default ScatterChart;

@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { toNumber, rowsOf, resolveFieldKey, norm } from '../data/utils';
 
 const TreemapChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { containerRef, dimensions } = useResponsiveChart();
 
     useEffect(() => {
         const rows = rowsOf(data);
@@ -25,8 +26,9 @@ const TreemapChart = ({ data, config }) => {
             .filter(d => d.label !== '' && Number.isFinite(d.value) && d.value >= 0);
         if (!items.length) return;
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+        const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+        const { width, height, margin } = chartDims;
+        const { innerWidth, innerHeight } = chartDims;
 
         const svg = d3.select(svgRef.current);
         clearSvg(svg);
@@ -120,19 +122,14 @@ const TreemapChart = ({ data, config }) => {
             .attr('font-size', 12)
             .attr('font-weight', 700)
             .text(d => d.data.name);
-    }, [data, config]);
+    }, [data, config, dimensions]);
 
     if (!data) return null;
 
     return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height}`}
-            preserveAspectRatio='xMidYMid meet'
-        />
+        <div ref={containerRef} className='w-100 h-100'>
+            <svg ref={svgRef} className='w-100 h-100' />
+        </div>
     );
 };
 

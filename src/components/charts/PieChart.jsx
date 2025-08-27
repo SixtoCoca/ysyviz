@@ -1,80 +1,73 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
-const PieChart = ({ data, isDonut = false, config }) => {
+const PieChart = ({ data, config, isDonut = false }) => {
   const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
   useEffect(() => {
-    if (!data?.values?.length) {
-      return;
-    }
+    if (!data?.values?.length) return;
 
-    const { width, height } = chartDimensions;
-    const radius = Math.min(width, height) / 2;
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
     const svg = d3.select(svgRef.current);
     clearSvg(svg);
 
-    const container = svg
+    const g = svg
       .attr('width', width)
       .attr('height', height)
       .append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`);
 
+    const radius = Math.min(innerWidth, innerHeight) / 2;
+    const donutHolePercent = config?.donutHole || 55;
+    const donutHole = donutHolePercent / 100;
+    const innerRadius = isDonut ? radius * donutHole : 0;
+
+    const pie = d3.pie()
+      .value(d => d.value)
+      .sort(null);
+
+    const arc = d3.arc()
+      .innerRadius(innerRadius)
+      .outerRadius(radius);
+
     const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
-    const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
+    const color = palette ? d3.scaleOrdinal(palette) : d3.scaleOrdinal(d3.schemeCategory10);
 
-    const pie = d3.pie().value(d => d.value);
-    const holePct = typeof config?.donutHole === 'number' ? Math.max(0, Math.min(80, config.donutHole)) : 55;
-    const inner = isDonut ? radius * (holePct / 100) : 0;
-
-    const arcGen = d3.arc().outerRadius(radius - 10).innerRadius(inner);
-    const arcLabel = d3.arc().outerRadius(radius - 40).innerRadius(radius - 40);
-
-    let tooltip = d3.select('body').select('#chart-tooltip');
-    if (tooltip.empty()) {
-      tooltip = d3.select('body').append('div').attr('id', 'chart-tooltip').attr('class', 'chart-tooltip');
-    }
-
-    const pieData = pie(data.values);
-
-    const arcs = container
-      .selectAll('.arc')
-      .data(pieData)
-      .enter()
-      .append('g')
-      .attr('class', 'arc');
-
-    arcs
-      .append('path')
-      .attr('d', arcGen)
+    const arcs = g.selectAll('path')
+      .data(pie(data.values))
+      .join('path')
+      .attr('d', arc)
       .attr('fill', (d, i) => color(i))
-      .on('mouseover', (event, d) => {
-        tooltip.style('visibility', 'visible').text(`${d.data.label}: ${d.data.value}`);
-      })
-      .on('mousemove', event => {
-        tooltip.style('top', `${event.pageY + 6}px`).style('left', `${event.pageX + 8}px`);
-      })
-      .on('mouseout', () => {
-        tooltip.style('visibility', 'hidden');
-      });
+      .attr('stroke', 'white')
+      .attr('stroke-width', 2);
 
-    arcs
-      .append('text')
-      .attr('transform', d => `translate(${arcLabel.centroid(d)})`)
-      .attr('dy', '.35em')
+    const labelRadius = innerRadius + (radius - innerRadius) * 0.6;
+    const labelArc = d3.arc()
+      .innerRadius(labelRadius)
+      .outerRadius(labelRadius);
+
+    g.selectAll('text')
+      .data(pie(data.values))
+      .join('text')
+      .attr('transform', d => `translate(${labelArc.centroid(d)})`)
       .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em')
+      .style('font-size', '12px')
       .text(d => d.data.label);
-
-    return () => {
-      clearSvg(svg);
-    };
-  }, [data, isDonut, config]);
+  }, [data, config, dimensions, isDonut]);
 
   if (!data?.values?.length) return null;
 
-  return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default PieChart;

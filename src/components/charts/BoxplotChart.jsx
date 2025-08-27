@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
 const BoxplotChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { containerRef, dimensions } = useResponsiveChart();
 
     useEffect(() => {
         const rows = Array.isArray(data?.values) ? data.values : [];
@@ -36,8 +37,9 @@ const BoxplotChart = ({ data, config }) => {
             return { key, values, q1, q2, q3, lo, hi, lowFence, highFence };
         });
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+        const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+        const { width, height, margin } = chartDims;
+        const { innerWidth, innerHeight } = chartDims;
 
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
@@ -104,18 +106,15 @@ const BoxplotChart = ({ data, config }) => {
             .attr('y1', d => y(d.q2))
             .attr('y2', d => y(d.q2))
             .attr('stroke', '#111');
-    }, [data, config]);
+    }, [data, config, dimensions]);
 
     const rows = Array.isArray(data?.values) ? data.values : [];
     if (!rows.length) return null;
 
     return (
-        <svg
-            ref={svgRef}
-            className="w-100 d-block"
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-        />
+        <div ref={containerRef} className='w-100 h-100'>
+            <svg ref={svgRef} className='w-100 h-100' />
+        </div>
     );
 };
 

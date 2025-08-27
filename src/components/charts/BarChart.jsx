@@ -1,15 +1,17 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
 const BarChart = ({ data, config }) => {
   const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
   useEffect(() => {
     if (!data?.values?.length) return;
 
-    const { width, height, margin } = chartDimensions;
-    const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
     const svg = d3.select(svgRef.current);
     clearSvg(svg);
 
@@ -135,9 +137,13 @@ const BarChart = ({ data, config }) => {
         .attr('height', d => isHorizontal ? x.bandwidth() : innerHeight - y(d.value))
         .attr('fill', color);
     }
-  }, [data, config]);
+  }, [data, config, dimensions]);
 
-  return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default BarChart;

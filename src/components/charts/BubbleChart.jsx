@@ -1,125 +1,115 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 
 const BubbleChart = ({ data, config }) => {
-    const svgRef = useRef();
+  const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
-    useEffect(() => {
-        let allBubbles = [];
-        
-        if (data?.hasSeries && data?.series?.length) {
-            allBubbles = data.series.flatMap(s => s.values || []);
-        } else if (data?.values?.length) {
-            allBubbles = data.values;
-        }
-        
-        allBubbles = allBubbles.filter(d => Number.isFinite(d.x) && Number.isFinite(d.y) && Number.isFinite(d.r) && d.r >= 0);
-        if (!allBubbles.length) return;
+  useEffect(() => {
+    const series = Array.isArray(data?.series) && data.series.length
+      ? data.series
+      : Array.isArray(data?.values) && data.values.length
+        ? [{ id: 'series', values: data.values }]
+        : [];
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
-        const svg = d3.select(svgRef.current);
-        clearSvg(svg);
+    const svg = d3.select(svgRef.current);
+    clearSvg(svg);
 
-        const g = svg
-            .attr('width', width)
-            .attr('height', height)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        const xMax = d3.max(allBubbles, d => d.x) || 1;
-        const yMax = d3.max(allBubbles, d => d.y) || 1;
-        const rMax = d3.max(allBubbles, d => d.r) || 1;
+    const allX = series.flatMap(s => s.values.map(v => Number(v?.x)));
+    const allY = series.flatMap(s => s.values.map(v => Number(v?.y)));
+    const allR = series.flatMap(s => s.values.map(v => Number(v?.r)));
 
-        const x = d3.scaleLinear().domain([0, xMax]).nice().range([0, innerWidth]);
-        const y = d3.scaleLinear().domain([0, yMax]).nice().range([innerHeight, 0]);
-        const r = d3.scaleSqrt().domain([0, rMax]).range([4, 30]);
+    const xExtent = d3.extent(allX);
+    const yExtent = d3.extent(allY);
+    const rExtent = d3.extent(allR);
 
-        g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(x));
-        g.append('g').call(d3.axisLeft(y));
+    const x = d3.scaleLinear()
+      .domain([xExtent[0] ?? 0, xExtent[1] ?? 0])
+      .nice()
+      .range([0, innerWidth]);
 
-        const hasMultipleSeries = data?.hasSeries && data?.seriesNames?.length > 1;
-        
-        let color;
-        if (hasMultipleSeries) {
-            const colorRange = config?.palette && Array.isArray(config.palette) && config.palette.length > 0 
-                ? config.palette 
-                : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
-            color = d3.scaleOrdinal().domain(data.seriesNames).range(colorRange);
-        } else {
-            color = () => config?.color || '#4682b4';
-        }
+    const y = d3.scaleLinear()
+      .domain([yExtent[0] ?? 0, yExtent[1] ?? 0])
+      .nice()
+      .range([innerHeight, 0]);
 
-        if (hasMultipleSeries) {
-            data.series.forEach(series => {
-                const seriesBubbles = series.values.filter(d => Number.isFinite(d.x) && Number.isFinite(d.y) && Number.isFinite(d.r) && d.r >= 0);
-                
-                g.selectAll(`circle.ncg-bubble-${series.id}`)
-                    .data(seriesBubbles)
-                    .join('circle')
-                    .attr('class', `ncg-bubble-${series.id}`)
-                    .attr('cx', d => x(d.x))
-                    .attr('cy', d => y(d.y))
-                    .attr('r', d => r(d.r))
-                    .attr('fill', color(series.id))
-                    .attr('opacity', 0.7)
-                    .attr('stroke', config?.strokeColor || 'black')
-                    .attr('stroke-opacity', 0.4)
-                    .attr('pointer-events', 'none');
-            });
+    const r = d3.scaleLinear()
+      .domain([rExtent[0] ?? 0, rExtent[1] ?? 0])
+      .range([3, 20]);
 
-            const legend = g.append('g')
-                .attr('class', 'legend')
-                .attr('transform', `translate(${innerWidth - 120}, 20)`);
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(x).ticks(6));
 
-            const legendItems = legend.selectAll('.legend-item')
-                .data(data.seriesNames)
-                .join('g')
-                .attr('class', 'legend-item')
-                .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+    g.append('g')
+      .call(d3.axisLeft(y).ticks(6));
 
-            legendItems.append('circle')
-                .attr('cx', 6)
-                .attr('cy', 6)
-                .attr('r', 6)
-                .attr('fill', d => color(d));
+    const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
+    const baseColor = config?.color || '#222';
+    const color = palette ? d3.scaleOrdinal(palette) : () => baseColor;
 
-            legendItems.append('text')
-                .attr('x', 18)
-                .attr('y', 9)
-                .style('font-size', '12px')
-                .style('alignment-baseline', 'middle')
-                .text(d => d);
-        } else {
-            g.selectAll('circle.ncg-bubble')
-                .data(allBubbles)
-                .join('circle')
-                .attr('class', 'ncg-bubble')
-                .attr('cx', d => x(d.x))
-                .attr('cy', d => y(d.y))
-                .attr('r', d => r(d.r))
-                .attr('fill', color())
-                .attr('opacity', 0.7)
-                .attr('stroke', config?.strokeColor || 'black')
-                .attr('stroke-opacity', 0.4)
-                .attr('pointer-events', 'none');
-        }
-    }, [data, config]);
+    const hasMultipleSeries = data?.hasSeries && data?.seriesNames?.length > 1;
 
-    if (!data?.values?.length && !data?.series?.length) return null;
+    series.forEach((s, i) => {
+      const col = palette ? color(i) : baseColor;
 
-    return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height}`}
-            preserveAspectRatio='xMidYMid meet'
-        />
-    );
+      g.selectAll(`circle.bubble-${s.id ?? i}`)
+        .data(s.values)
+        .join('circle')
+        .attr('cx', d => x(Number(d.x)))
+        .attr('cy', d => y(Number(d.y)))
+        .attr('r', d => r(Number(d.r)))
+        .attr('fill', col)
+        .attr('opacity', config?.opacity || 0.7)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1);
+    });
+
+    if (hasMultipleSeries && data.seriesNames) {
+      const legend = g.append('g')
+        .attr('class', 'legend')
+        .attr('transform', `translate(${innerWidth - 100}, 20)`);
+
+      const legendItems = legend.selectAll('.legend-item')
+        .data(data.seriesNames)
+        .join('g')
+        .attr('class', 'legend-item')
+        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+
+      legendItems.append('circle')
+        .attr('cx', 8)
+        .attr('cy', 0)
+        .attr('r', 6)
+        .attr('fill', (d, i) => palette ? color(i) : baseColor)
+        .attr('opacity', config?.opacity || 0.7)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1);
+
+      legendItems.append('text')
+        .attr('x', 20)
+        .attr('y', 0)
+        .attr('dy', '0.35em')
+        .style('font-size', '12px')
+        .text(d => d);
+    }
+  }, [data, config, dimensions]);
+
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default BubbleChart;
