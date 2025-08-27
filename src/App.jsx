@@ -51,8 +51,9 @@ const App = () => {
     const req = ChartFieldRequirements?.[type]?.required || [];
     if (req.length === 0) return true;
     return req.every(key => {
-      const candidate = cfg?.[`field_${key}`] ?? cfg?.[key];
-      return isFilled(candidate);
+      if (key === 'dimensions') return isFilled(cfg?.dimensions);
+      const fieldKey = key.startsWith('field_') ? key : `field_${key}`;
+      return isFilled(cfg?.[fieldKey]);
     });
   }, [type, cfg]);
 

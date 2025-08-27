@@ -72,6 +72,8 @@ const LineChart = ({ data, config, filled = false }) => {
       .y0(() => y(0))
       .y1(d => y(Number(d.y)));
 
+    const hasMultipleSeries = data?.hasSeries && data?.seriesNames?.length > 1;
+
     series.forEach((s, i) => {
       const col = palette ? color(i) : baseColor;
 
@@ -98,6 +100,30 @@ const LineChart = ({ data, config, filled = false }) => {
         .attr('r', 3)
         .attr('fill', col);
     });
+
+    if (hasMultipleSeries) {
+      const legend = g.append('g')
+        .attr('class', 'legend')
+        .attr('transform', `translate(${innerWidth - 120}, 20)`);
+
+      const legendItems = legend.selectAll('.legend-item')
+        .data(data.seriesNames)
+        .join('g')
+        .attr('class', 'legend-item')
+        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+
+      legendItems.append('rect')
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('fill', (d, i) => palette ? color(i) : baseColor);
+
+      legendItems.append('text')
+        .attr('x', 18)
+        .attr('y', 9)
+        .style('font-size', '12px')
+        .style('alignment-baseline', 'middle')
+        .text(d => d);
+    }
   }, [data, config, filled]);
 
   return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;

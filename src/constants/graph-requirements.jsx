@@ -3,23 +3,23 @@ import { ChartTypes } from './graph-type';
 export const ChartFieldRequirements = {
     [ChartTypes.BAR]: {
         required: ['category', 'value'],
-        optional: ['title', 'color']
+        optional: ['title', 'color', 'palette', 'series']
     },
     [ChartTypes.LINE]: {
         required: ['x', 'y'],
-        optional: ['title', 'color']
+        optional: ['title', 'color', 'palette', 'series']
     },
     [ChartTypes.AREA]: {
         required: ['x', 'y'],
-        optional: ['title', 'color']
+        optional: ['title', 'color', 'palette', 'series']
     },
     [ChartTypes.SCATTER]: {
         required: ['x', 'y'],
-        optional: ['title', 'color']
+        optional: ['title', 'color', 'palette', 'series']
     },
     [ChartTypes.BUBBLE]: {
         required: ['x', 'y', 'r'],
-        optional: ['title', 'color']
+        optional: ['title', 'color', 'palette', 'series']
     },
     [ChartTypes.PIE]: {
         required: ['label', 'value'],

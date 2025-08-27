@@ -14,6 +14,7 @@ const PaletteControl = ({ value, onChange }) => {
         <div className='color-selector'>
             <Form.Label>Palette</Form.Label>
             <Select
+                isClearable
                 options={options}
                 value={current}
                 onChange={(opt) => onChange(opt?.colors || [])}
