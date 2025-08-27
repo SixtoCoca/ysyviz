@@ -130,7 +130,6 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         <>
             <Card className='mb-3'>
                 <Card.Body>
-                    <h4 className='mb-3 text-center'>Chart Type</h4>
                     <ChartTypePicker value={type} onChange={handleChartTypeChange} />
                 </Card.Body>
             </Card>
