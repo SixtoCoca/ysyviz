@@ -89,13 +89,52 @@ const App = () => {
     calendar: <CalendarHeatmapChart {...chartProps} />
   };
 
-  const handleDownload = async () => {
+  const handleDownloadPNG = async () => {
     if (!chartRef.current) return;
     const canvas = await html2canvas(chartRef.current, { backgroundColor: 'white', scale: 2 });
     const link = document.createElement('a');
     link.download = `${cfg.title || 'chart'}.png`;
     link.href = canvas.toDataURL();
     link.click();
+  };
+
+  const handleDownloadSVG = async () => {
+    if (!chartRef.current) return;
+    
+    const title = cfg.title || 'Chart';
+    
+    try {
+      const canvas = await html2canvas(chartRef.current, { 
+        backgroundColor: 'white', 
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const svgData = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+          <defs>
+            <style>
+              .title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #333; }
+            </style>
+          </defs>
+          <text x="50%" y="30" text-anchor="middle" class="title">${title}</text>
+          <image href="${canvas.toDataURL()}" width="100%" height="100%" />
+        </svg>
+      `;
+      
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const svgUrl = URL.createObjectURL(svgBlob);
+      
+      const link = document.createElement('a');
+      link.download = `${title}.svg`;
+      link.href = svgUrl;
+      link.click();
+      
+      URL.revokeObjectURL(svgUrl);
+    } catch (error) {
+      console.error('Error generating SVG:', error);
+    }
   };
 
   const hasErrors = Array.isArray(issues) && issues.some(i => i.level === 'error');
@@ -134,14 +173,24 @@ const App = () => {
                 <Tab.Pane eventKey='preview' className='h-100'>
                   <Card className='h-100 position-relative'>
                     {enableValidation && chartData && !hasErrors && (
-                      <Button
-                        variant='light'
-                        className='position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm'
-                        onClick={handleDownload}
-                      >
-                        <FontAwesomeIcon icon={faDownload} />
-                        Download
-                      </Button>
+                      <div className='position-absolute top-0 end-0 m-2 d-flex gap-2'>
+                        <Button
+                          variant='light'
+                          className='d-flex align-items-center gap-2 shadow-sm'
+                          onClick={handleDownloadPNG}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                          PNG
+                        </Button>
+                        <Button
+                          variant='light'
+                          className='d-flex align-items-center gap-2 shadow-sm'
+                          onClick={handleDownloadSVG}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                          SVG
+                        </Button>
+                      </div>
                     )}
                     <Card.Body className='h-100'>
                       <Row className='h-100'>
