@@ -8,7 +8,7 @@ const AppearancePanel = ({ optionalKeys, draft, onChange }) => {
     return <>
         <Card>
             <Card.Body>
-                <h4 className='mb-3 text-center'>Aesthetic Changes</h4>
+                <h4 className='mb-3 text-center'>Appearance Changes</h4>
                 {keys.map((k) => {
                     const Cmp = ControlRegistry[k];
                     const val = draft[k];

@@ -6,6 +6,7 @@ import { ChartPalettes, ChartColors } from '../../constants/chart-colors';
 import ChartTypePicker from './ChartTypePicker';
 import DataMappingPanel from './panels/DataMappingPanel';
 import AppearancePanel from './panels/AppearancePanel';
+import SpecificSettingsPanel from './panels/SpecificSettingsPanel';
 
 const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const [draft, setDraft] = useState(cfg);
@@ -123,6 +124,11 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         debouncedCommitRef.current(updated);
     };
 
+    const handleSpecificChange = (updated) => {
+        setDraft(updated);
+        debouncedCommitRef.current(updated);
+    };
+
     const handleDimensionsSelect = values => {
         const list = Array.isArray(values) ? values : [];
         const updated = { ...draft, dimensions: list };
@@ -178,6 +184,12 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             optionalKeys={appearanceOptionalKeys}
             draft={draft}
             onChange={handleOptionalChange}
+        />
+
+        <SpecificSettingsPanel
+            config={draft}
+            onChange={handleSpecificChange}
+            chartType={type}
         />
     </>;
 };

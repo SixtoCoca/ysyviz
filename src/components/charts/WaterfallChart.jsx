@@ -32,9 +32,9 @@ const WaterfallChart = ({ data, config }) => {
         g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(x));
         g.append('g').call(d3.axisLeft(y));
 
-        const colorPos = config?.colorPositive || '#2ca02c';
-        const colorNeg = config?.colorNegative || '#d62728';
-        const colorTot = config?.colorTotal || '#1f77b4';
+        const upColor = config?.upColor || '#28a745';
+        const downColor = config?.downColor || '#dc3545';
+        const mainColor = config?.color || '#1f77b4';
 
         g.selectAll('rect.ncg-waterfall')
             .data(data.steps)
@@ -44,7 +44,11 @@ const WaterfallChart = ({ data, config }) => {
             .attr('y', d => y(Math.max(d.y0, d.y1)))
             .attr('width', x.bandwidth())
             .attr('height', d => Math.abs(y(d.y0) - y(d.y1)))
-            .attr('fill', d => d.type === 'total' ? colorTot : d.delta >= 0 ? colorPos : colorNeg)
+            .attr('fill', d => {
+                if (d.type === 'initial') return mainColor;
+                if (d.type === 'total') return mainColor;
+                return d.delta >= 0 ? upColor : downColor;
+            })
             .attr('opacity', 0.9);
 
         g.selectAll('line.ncg-connector')
@@ -63,15 +67,26 @@ const WaterfallChart = ({ data, config }) => {
             const fmt = d3.format(config?.valueFormat || ',.2f');
 
             g.selectAll('text.ncg-waterfall-delta')
-                .data(data.steps.filter(d => d.type !== 'total'))
+                .data(data.steps.filter(d => d.type !== 'total' && d.type !== 'initial'))
                 .join('text')
                 .attr('class', 'ncg-waterfall-delta')
                 .attr('x', d => (x(d.label) ?? 0) + x.bandwidth() / 2)
                 .attr('y', d => y(Math.max(d.y0, d.y1)) - 6)
                 .attr('text-anchor', 'middle')
                 .attr('font-size', 12)
-                .attr('fill', d => d.delta >= 0 ? colorPos : colorNeg)
+                .attr('fill', d => d.delta >= 0 ? upColor : downColor)
                 .text(d => `${d.delta >= 0 ? '+' : ''}${fmt(d.delta)}`);
+
+            g.selectAll('text.ncg-waterfall-initial')
+                .data(data.steps.filter(d => d.type === 'initial'))
+                .join('text')
+                .attr('class', 'ncg-waterfall-initial')
+                .attr('x', d => (x(d.label) ?? 0) + x.bandwidth() / 2)
+                .attr('y', d => y(Math.max(d.y0, d.y1)) - 6)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', 12)
+                .attr('fill', mainColor)
+                .text(d => fmt(d.y1));
 
             g.selectAll('text.ncg-waterfall-total')
                 .data(data.steps.filter(d => d.type === 'total'))
@@ -81,7 +96,7 @@ const WaterfallChart = ({ data, config }) => {
                 .attr('y', d => y(Math.max(d.y0, d.y1)) - 6)
                 .attr('text-anchor', 'middle')
                 .attr('font-size', 12)
-                .attr('fill', colorTot)
+                .attr('fill', mainColor)
                 .text(d => fmt(d.y1));
         }
     }, [data, config, dimensions]);

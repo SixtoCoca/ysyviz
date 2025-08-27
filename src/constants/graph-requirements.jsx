@@ -67,7 +67,7 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.WATERFALL]: {
         required: ['category', 'value'],
-        optional: ['title']
+        optional: ['title', 'color', 'initialValue', 'upColor', 'downColor', 'showFinalValue']
     },
     [ChartTypes.CALENDAR]: {
         required: ['date', 'value'],
