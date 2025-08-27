@@ -3,12 +3,14 @@ import TitleControl from './controls/TitleControl';
 import SingleColorControl from './controls/SingleColorControl';
 import PaletteControl from './controls/PaletteControl';
 import DonutHoleControl from './controls/DonutHoleControl';
+import OrientationControl from './controls/OrientationControl';
 
 export const ControlRegistry = {
     title: TitleControl,
     color: SingleColorControl,
     palette: PaletteControl,
-    donutHole: DonutHoleControl
+    donutHole: DonutHoleControl,
+    orientation: OrientationControl
 };
 
 export const coerceValueForKey = (key, value) => {

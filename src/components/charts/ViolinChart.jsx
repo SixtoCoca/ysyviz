@@ -30,11 +30,18 @@ const ViolinChart = ({ data, config }) => {
         const pad = v => (v === 0 ? 1 : Math.max(1, Math.abs(v) * 0.05));
         const domainY = extY[0] === extY[1] ? [extY[0] - pad(extY[0]), extY[1] + pad(extY[1])] : extY;
 
-        const y = d3.scaleLinear().domain(domainY).nice().range([innerHeight, 0]);
-        const xBand = d3.scaleBand().domain(isCategorical ? categories : ['_single']).range([0, innerWidth]).padding(0.08);
+        const isHorizontal = config?.orientation === 'horizontal';
 
-        g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(xBand));
-        g.append('g').call(d3.axisLeft(y));
+        const y = d3.scaleLinear().domain(domainY).nice().range(isHorizontal ? [0, innerWidth] : [innerHeight, 0]);
+        const xBand = d3.scaleBand().domain(isCategorical ? categories : ['_single']).range(isHorizontal ? [0, innerHeight] : [0, innerWidth]).padding(0.08);
+
+        if (isHorizontal) {
+            g.append('g').call(d3.axisLeft(xBand));
+            g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(y));
+        } else {
+            g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(xBand));
+            g.append('g').call(d3.axisLeft(y));
+        }
 
         const thresholds = y.ticks(config?.thresholds || 40).sort(d3.ascending);
         const dev = d3.deviation(rows, d => d.y) || 1;
@@ -63,16 +70,29 @@ const ViolinChart = ({ data, config }) => {
             const minFrac = Math.max(0, Math.min(0.08, config?.minWidthFraction || 0));
             const w = d3.scaleLinear().domain([0, denMax]).range([xBand.bandwidth() * minFrac, xBand.bandwidth() / 2]);
 
-            g.append('path')
-                .datum(s.density)
-                .attr('fill', config?.color || '#69b3a2')
-                .attr('stroke', 'none')
-                .attr('d', d3.area()
-                    .x0(d => center - w(d[1]))
-                    .x1(d => center + w(d[1]))
-                    .y(d => y(d[0]))
-                    .curve(d3.curveCatmullRom)
-                );
+            if (isHorizontal) {
+                g.append('path')
+                    .datum(s.density)
+                    .attr('fill', config?.color || '#69b3a2')
+                    .attr('stroke', 'none')
+                    .attr('d', d3.area()
+                        .y0(d => center - w(d[1]))
+                        .y1(d => center + w(d[1]))
+                        .x(d => y(d[0]))
+                        .curve(d3.curveCatmullRom)
+                    );
+            } else {
+                g.append('path')
+                    .datum(s.density)
+                    .attr('fill', config?.color || '#69b3a2')
+                    .attr('stroke', 'none')
+                    .attr('d', d3.area()
+                        .x0(d => center - w(d[1]))
+                        .x1(d => center + w(d[1]))
+                        .y(d => y(d[0]))
+                        .curve(d3.curveCatmullRom)
+                    );
+            }
         });
     }, [data, config]);
 

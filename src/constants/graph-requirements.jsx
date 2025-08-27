@@ -3,7 +3,7 @@ import { ChartTypes } from './graph-type';
 export const ChartFieldRequirements = {
     [ChartTypes.BAR]: {
         required: ['category', 'value'],
-        optional: ['title', 'color', 'palette', 'series']
+        optional: ['title', 'color', 'palette', 'series', 'orientation']
     },
     [ChartTypes.LINE]: {
         required: ['x', 'y'],
@@ -43,7 +43,7 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.VIOLIN]: {
         required: ['x', 'y'],
-        optional: ['title', 'color']
+        optional: ['title', 'color', 'orientation']
     },
     [ChartTypes.BOXPLOT]: {
         required: ['group', 'value'],
