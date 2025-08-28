@@ -19,6 +19,28 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         return () => debouncedCommitRef.current.flush();
     }, [setCfg]);
 
+    useEffect(() => {
+        if (type) {
+            const resetConfig = {
+                title: '',
+                type: '',
+                color: '#4682b4',
+                field_x: '',
+                field_y: '',
+                field_r: '',
+                field_label: '',
+                field_value: '',
+                field_category: '',
+                field_group: '',
+                field_source: '',
+                field_target: '',
+                field_series: '',
+            };
+            setDraft(resetConfig);
+            debouncedCommitRef.current(resetConfig);
+        }
+    }, [type]);
+
     const req = ChartFieldRequirements[type] || { required: [], optional: [] };
     const requiredFieldsRaw = Array.isArray(req.required) ? req.required : [];
     const optionalFields = Array.isArray(req.optional) ? req.optional : [];
@@ -74,6 +96,14 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         }
         if (!appearanceOptionalKeys.includes('palette') && next.palette) {
             next.palette = undefined;
+            changed = true;
+        }
+        if (!appearanceOptionalKeys.includes('legendPosition') && next.legendPosition) {
+            next.legendPosition = undefined;
+            changed = true;
+        }
+        if (!appearanceOptionalKeys.includes('orientation') && next.orientation) {
+            next.orientation = undefined;
             changed = true;
         }
         if (appearanceOptionalKeys.includes('color') && !next.color) {

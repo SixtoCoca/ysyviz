@@ -40,6 +40,35 @@ const App = () => {
   const [issues, setIssues] = useState([]);
   const chartRef = useRef();
 
+  const resetConfiguration = () => {
+    setCfg({
+      title: '',
+      type: '',
+      color: '#4682b4',
+      field_x: '',
+      field_y: '',
+      field_r: '',
+      field_label: '',
+      field_value: '',
+      field_category: '',
+      field_group: '',
+      field_source: '',
+      field_target: '',
+      field_series: '',
+    });
+    setIssues([]);
+  };
+
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    resetConfiguration();
+  };
+
+  const handleDataChange = (newData) => {
+    setData(newData);
+    resetConfiguration();
+  };
+
   const isFilled = v => {
     if (Array.isArray(v)) return v.length > 0;
     if (typeof v === 'number') return Number.isFinite(v);
@@ -165,7 +194,7 @@ const App = () => {
                   <Card className='h-100'>
                     <Card.Body>
                       <h4 className='mb-3 text-center'>Upload CSV/XLSX</h4>
-                      <DataUploader type={type} setData={setData} />
+                      <DataUploader type={type} setData={handleDataChange} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
@@ -199,8 +228,8 @@ const App = () => {
                             cfg={cfg}
                             setCfg={setCfg}
                             type={type}
-                            setType={setType}
-                            setData={setData}
+                            setType={handleTypeChange}
+                            setData={handleDataChange}
                             data={data}
                             enableValidation={enableValidation}
                             issues={issues}

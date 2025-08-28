@@ -76,7 +76,7 @@ const ParallelCordinatesCharts = ({ data, config }) => {
     <div ref={containerRef} className='w-100 h-100'>
       <svg ref={svgRef} className='w-100 h-100' />
     </div>
-  );
+  );  
 };
 
 export default ParallelCordinatesCharts;
