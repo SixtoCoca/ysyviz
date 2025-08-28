@@ -40,8 +40,10 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         if (supportsSeriesColors && hasSeriesField) {
             keys = keys.filter(k => k !== 'color');
             if (!keys.includes('palette')) keys.push('palette');
+            if (!keys.includes('legendPosition')) keys.push('legendPosition');
         } else if (supportsSeriesColors && !hasSeriesField) {
             keys = keys.filter(k => k !== 'palette');
+            keys = keys.filter(k => k !== 'legendPosition');
             if (!keys.includes('color')) keys.push('color');
         }
         
@@ -98,9 +100,9 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         
         let updated = null;
         if (hasSeriesField && (!draft.palette || !draft.palette.length)) {
-            updated = { ...draft, palette: ChartPalettes[0].colors, color: undefined };
+            updated = { ...draft, palette: ChartPalettes[0].colors, color: undefined, legendPosition: 'top-left' };
         } else if (!hasSeriesField && !draft.color) {
-            updated = { ...draft, color: ChartColors[0], palette: undefined };
+            updated = { ...draft, color: ChartColors[0], palette: undefined, legendPosition: undefined };
         }
         
         if (updated) {
@@ -112,6 +114,11 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const handleFieldChange = (name, value) => {
         const fieldKey = name.startsWith('field_') ? name : `field_${name}`;
         const updated = { ...draft, [fieldKey]: value };
+        
+        if (name === 'series' && value && supportsSeriesColors && !updated.legendPosition) {
+            updated.legendPosition = 'top-left';
+        }
+        
         setDraft(updated);
         debouncedCommitRef.current(updated);
     };

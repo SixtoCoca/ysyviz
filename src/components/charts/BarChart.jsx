@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getLegendPosition } from './interface/legendPosition';
 
 const BarChart = ({ data, config }) => {
   const svgRef = useRef();
@@ -82,27 +83,30 @@ const BarChart = ({ data, config }) => {
         .attr('height', d => isHorizontal ? x1.bandwidth() : innerHeight - y(d.value))
         .attr('fill', d => color(d.series));
 
-      const legend = g.append('g')
-        .attr('class', 'legend')
-        .attr('transform', isHorizontal ? `translate(${innerWidth - 100}, 20)` : `translate(${innerWidth - 100}, 20)`);
+      const legendPos = getLegendPosition(config?.legendPosition, innerWidth, innerHeight);
+      if (legendPos) {
+        const legend = g.append('g')
+          .attr('class', 'legend')
+          .attr('transform', `translate(${legendPos.x}, ${legendPos.y})`);
 
-      const legendItems = legend.selectAll('.legend-item')
-        .data(data.series)
-        .join('g')
-        .attr('class', 'legend-item')
-        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+        const legendItems = legend.selectAll('.legend-item')
+          .data(data.series)
+          .join('g')
+          .attr('class', 'legend-item')
+          .attr('transform', (d, i) => `translate(0, ${i * 20})`);
 
-      legendItems.append('rect')
-        .attr('width', 12)
-        .attr('height', 12)
-        .attr('fill', d => color(d));
+        legendItems.append('rect')
+          .attr('width', 12)
+          .attr('height', 12)
+          .attr('fill', d => color(d));
 
-      legendItems.append('text')
-        .attr('x', 18)
-        .attr('y', 9)
-        .style('font-size', '12px')
-        .style('alignment-baseline', 'middle')
-        .text(d => d);
+        legendItems.append('text')
+          .attr('x', 18)
+          .attr('y', 9)
+          .style('font-size', '12px')
+          .style('alignment-baseline', 'middle')
+          .text(d => d);
+      }
 
     } else {
       const x = d3

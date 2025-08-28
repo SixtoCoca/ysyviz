@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getLegendPosition } from './interface/legendPosition';
 
 const BubbleChart = ({ data, config }) => {
   const svgRef = useRef();
@@ -77,31 +78,34 @@ const BubbleChart = ({ data, config }) => {
     });
 
     if (hasMultipleSeries && data.seriesNames) {
-      const legend = g.append('g')
-        .attr('class', 'legend')
-        .attr('transform', `translate(${innerWidth - 100}, 20)`);
+      const legendPos = getLegendPosition(config?.legendPosition, innerWidth, innerHeight);
+      if (legendPos) {
+        const legend = g.append('g')
+          .attr('class', 'legend')
+          .attr('transform', `translate(${legendPos.x}, ${legendPos.y})`);
 
-      const legendItems = legend.selectAll('.legend-item')
-        .data(data.seriesNames)
-        .join('g')
-        .attr('class', 'legend-item')
-        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+        const legendItems = legend.selectAll('.legend-item')
+          .data(data.seriesNames)
+          .join('g')
+          .attr('class', 'legend-item')
+          .attr('transform', (d, i) => `translate(0, ${i * 20})`);
 
-      legendItems.append('circle')
-        .attr('cx', 8)
-        .attr('cy', 0)
-        .attr('r', 6)
-        .attr('fill', (d, i) => palette ? color(i) : baseColor)
-        .attr('opacity', config?.opacity || 0.7)
-        .attr('stroke', 'white')
-        .attr('stroke-width', 1);
+        legendItems.append('circle')
+          .attr('cx', 8)
+          .attr('cy', 0)
+          .attr('r', 6)
+          .attr('fill', (d, i) => palette ? color(i) : baseColor)
+          .attr('opacity', config?.opacity || 0.7)
+          .attr('stroke', 'white')
+          .attr('stroke-width', 1);
 
-      legendItems.append('text')
-        .attr('x', 20)
-        .attr('y', 0)
-        .attr('dy', '0.35em')
-        .style('font-size', '12px')
-        .text(d => d);
+        legendItems.append('text')
+          .attr('x', 20)
+          .attr('y', 0)
+          .attr('dy', '0.35em')
+          .style('font-size', '12px')
+          .text(d => d);
+      }
     }
   }, [data, config, dimensions]);
 

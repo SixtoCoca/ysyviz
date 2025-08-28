@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getLegendPosition } from './interface/legendPosition';
 
 const LineChart = ({ data, config, filled = false }) => {
   const svgRef = useRef();
@@ -106,30 +107,33 @@ const LineChart = ({ data, config, filled = false }) => {
     });
 
     if (hasMultipleSeries && data.seriesNames) {
-      const legend = g.append('g')
-        .attr('class', 'legend')
-        .attr('transform', `translate(${innerWidth - 100}, 20)`);
+      const legendPos = getLegendPosition(config?.legendPosition, innerWidth, innerHeight);
+      if (legendPos) {
+        const legend = g.append('g')
+          .attr('class', 'legend')
+          .attr('transform', `translate(${legendPos.x}, ${legendPos.y})`);
 
-      const legendItems = legend.selectAll('.legend-item')
-        .data(data.seriesNames)
-        .join('g')
-        .attr('class', 'legend-item')
-        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+        const legendItems = legend.selectAll('.legend-item')
+          .data(data.seriesNames)
+          .join('g')
+          .attr('class', 'legend-item')
+          .attr('transform', (d, i) => `translate(0, ${i * 20})`);
 
-      legendItems.append('line')
-        .attr('x1', 0)
-        .attr('x2', 15)
-        .attr('y1', 0)
-        .attr('y2', 0)
-        .attr('stroke', (d, i) => palette ? color(i) : baseColor)
-        .attr('stroke-width', 2);
+        legendItems.append('line')
+          .attr('x1', 0)
+          .attr('x2', 15)
+          .attr('y1', 0)
+          .attr('y2', 0)
+          .attr('stroke', (d, i) => palette ? color(i) : baseColor)
+          .attr('stroke-width', 2);
 
-      legendItems.append('text')
-        .attr('x', 20)
-        .attr('y', 0)
-        .attr('dy', '0.35em')
-        .style('font-size', '12px')
-        .text(d => d);
+        legendItems.append('text')
+          .attr('x', 20)
+          .attr('y', 0)
+          .attr('dy', '0.35em')
+          .style('font-size', '12px')
+          .text(d => d);
+      }
     }
   }, [data, config, filled, dimensions]);
 
