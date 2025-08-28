@@ -1,9 +1,9 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
 import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 
 import BarChart from './components/charts/BarChart';
 import LineChart from './components/charts/LineChart';
@@ -169,6 +169,12 @@ const App = () => {
   };
 
   const hasErrors = Array.isArray(issues) && issues.some(i => i.level === 'error');
+
+  useEffect(() => {
+    if (hasErrors && enableValidation && type) {
+      toast.error('Error rendering chart. Check the validation panel.');
+    }
+  }, [hasErrors, enableValidation, type]);
 
   return (
     <div className='min-vh-100 d-flex flex-column'>
