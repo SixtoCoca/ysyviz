@@ -2,6 +2,7 @@ import { Card, Row, Col, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { isMappingValid } from '../utils/mappingValidation';
 import FieldInfoTooltip from '../FieldInfoTooltip';
+import ChordDataInfo from '../ChordDataInfo';
 
 const DataMappingPanel = ({ 
     columns, 
@@ -65,6 +66,7 @@ const DataMappingPanel = ({
         <Card className='mb-3'>
             <Card.Body>
                 <h4 className='mb-3 text-center'>Column Mapping</h4>
+                {chartType === 'chord' && <ChordDataInfo />}
                 {allFields.length > 0 ? (
                     <Row>
                         {allFields.map((field) => {

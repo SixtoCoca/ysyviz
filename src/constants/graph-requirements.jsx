@@ -59,7 +59,7 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.TREEMAP]: {
         required: ['label', 'value'],
-        optional: ['group', 'title', 'palette', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.SUNBURST]: {
         required: ['path', 'value'],
