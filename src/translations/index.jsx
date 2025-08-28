@@ -230,8 +230,8 @@ export const translations = {
         boxplot_chart: 'Gráfico de Cajas',
         hexbin_chart: 'Gráfico de Hexágonos',
         parallel_chart: 'Gráfico de Coordenadas Paralelas',
-        treemap_chart: 'Gráfico de Árbol',
-        sunburst_chart: 'Gráfico de Explosión Solar',
+        treemap_chart: 'Gráfico de Rectangulos',
+        sunburst_chart: 'Gráfico de Rayos de sol',
         waterfall_chart: 'Gráfico de Cascada',
         calendar_chart: 'Mapa de Calor de Calendario',
         
