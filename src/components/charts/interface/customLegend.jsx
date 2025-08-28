@@ -3,13 +3,20 @@
 export const drawCustomLegend = (g, text, x = 20, y = 20) => {
     if (!text || !text.trim()) return;
     
-    g.append('text')
-        .attr('x', x)
-        .attr('y', y)
-        .attr('class', 'custom-legend')
-        .style('font-size', '12px')
-        .style('font-weight', 'bold')
-        .text(text);
+    const lines = text.split('\n');
+    const lineHeight = 16;
+    
+    lines.forEach((line, index) => {
+        if (line.trim()) {
+            g.append('text')
+                .attr('x', x)
+                .attr('y', y + (index * lineHeight))
+                .attr('class', 'custom-legend')
+                .style('font-size', '12px')
+                .style('font-weight', 'bold')
+                .text(line.trim());
+        }
+    });
 };
 
 export const getCustomLegendPosition = (config, innerWidth, innerHeight, hasSeriesLegend = false, seriesCount = 0) => {
