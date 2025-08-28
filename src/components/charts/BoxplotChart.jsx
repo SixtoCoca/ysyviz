@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
-import { applyCustomLegend } from './interface/applyCustomLegend';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const BoxplotChart = ({ data, config }) => {
     const svgRef = useRef();
@@ -108,7 +108,10 @@ const BoxplotChart = ({ data, config }) => {
             .attr('y2', d => y(d.q2))
             .attr('stroke', '#111');
             
-        applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+          drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
+        }
     }, [data, config, dimensions]);
 
     const rows = Array.isArray(data?.values) ? data.values : [];

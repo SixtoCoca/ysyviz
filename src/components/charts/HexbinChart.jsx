@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { hexbin as d3Hexbin } from 'd3-hexbin';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
-import { applyCustomLegend } from './interface/applyCustomLegend';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const HexbinChart = ({ data, config }) => {
   const svgRef = useRef();
@@ -64,7 +64,10 @@ const HexbinChart = ({ data, config }) => {
     g.append('g')
       .call(d3.axisLeft(y));
       
-    applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+      drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
+    }
   }, [data, config, dimensions]);
 
   if (!data?.values?.length) return null;

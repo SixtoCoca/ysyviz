@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
-import { applyCustomLegend } from './interface/applyCustomLegend';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 import { toNumber, rowsOf, resolveFieldKey, norm } from '../data/utils';
 
 const TreemapChart = ({ data, config }) => {
@@ -101,7 +101,10 @@ const TreemapChart = ({ data, config }) => {
                     });
             });
             
-        applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+          drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
+        }
     }, [data, config, dimensions]);
 
     if (!data) return null;
