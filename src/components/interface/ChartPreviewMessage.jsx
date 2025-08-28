@@ -1,31 +1,33 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const ChartPreviewMessage = ({ type, hasRequiredFields, hasErrors, chartData }) => {
+    const { t } = useLanguage();
     if (!type) {
         return (
             <p className='text-muted text-center'>
-                Please select a chart type to start configuring your visualization.
+                {t('select_chart_type')}
             </p>
         );
     }
     if (!hasRequiredFields) {
         return (
             <p className='text-muted text-center'>
-                Complete the required fields to render the chart.
+                {t('complete_required_fields')}
             </p>
         );
     }
     if (hasErrors) {
         return (
             <p className='text-muted text-center'>
-                Fix the validation errors to render the chart.
+                {t('fix_validation_errors')}
             </p>
         );
     }
     if (!chartData) {
         return (
             <p className='text-muted text-center'>
-                Please upload a data file and select a chart type to see the visualization.
+                {t('upload_data_and_select_type')}
             </p>
         );
     }

@@ -1,8 +1,10 @@
 import { Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const ChordDataInfo = () => {
+    const { t } = useLanguage();
     return (
         <Alert variant='info' className='mb-3'>
             <div className='d-flex align-items-start'>
@@ -12,17 +14,17 @@ const ChordDataInfo = () => {
                     style={{ fontSize: '16px' }}
                 />
                 <div>
-                    <h6 className='mb-2 fw-bold'>Chord Chart Data Format</h6>
+                    <h6 className='mb-2 fw-bold'>{t('chord_data_format')}</h6>
                     <p className='mb-2 small'>
-                        The Chord chart requires a <strong>relationship matrix</strong> where:
+                        {t('chord_description')}
                     </p>
                     <ul className='mb-2 small'>
-                        <li>Each row represents an entity (company, country, department, etc.)</li>
-                        <li>Each column represents the same entities</li>
-                        <li>Values in the matrix represent the strength of relationships between entities</li>
+                        <li>{t('chord_entity_row')}</li>
+                        <li>{t('chord_entity_column')}</li>
+                        <li>{t('chord_values')}</li>
                     </ul>
                     <div className='small'>
-                        <strong>Example CSV format:</strong>
+                        <strong>{t('example_csv_format')}</strong>
                         <div className='bg-light p-2 rounded mt-1 font-monospace' style={{ fontSize: '11px' }}>
                             Entity,Apple,Google,Microsoft<br/>
                             Apple,0,50,30<br/>

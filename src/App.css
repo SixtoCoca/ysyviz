@@ -148,3 +148,17 @@ circle:hover {
   fill: inherit !important;
   r: inherit !important;
 }
+
+.language-toggle {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.language-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  transform: scale(1.05);
+}
+
+.language-toggle:active {
+  transform: scale(0.95);
+}

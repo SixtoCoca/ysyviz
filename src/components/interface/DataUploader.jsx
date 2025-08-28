@@ -3,8 +3,10 @@ import { useState, useCallback, useRef } from 'react';
 import * as d3 from 'd3';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-hot-toast';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const DataUploader = ({ setData, type, helpText }) => {
+    const { t } = useLanguage();
     const [error, setError] = useState('');
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -49,7 +51,7 @@ const DataUploader = ({ setData, type, helpText }) => {
                         }
                         setData({ values: res.rows, columns: res.columns });
                         setStatus('loaded');
-                        toast.success(`The file "${selectedFile.name}" was uploaded successfully.`);
+                        toast.success(t('file_uploaded_successfully', { filename: selectedFile.name }));
                         resolve();
                     } catch (e) {
                         reject(e);
@@ -63,8 +65,8 @@ const DataUploader = ({ setData, type, helpText }) => {
                 }
             });
         } catch {
-            setError('Error processing the file. Make sure it is a valid .csv or .xlsx file.');
-            toast.error('There was an error uploading the file.');
+            setError(t('error_processing_file'));
+            toast.error(t('error_uploading_file'));
         }
     };
 
@@ -98,7 +100,7 @@ const DataUploader = ({ setData, type, helpText }) => {
     return (
         <>
             <Form.Group className="mb-3">
-                <Form.Label><strong>Upload Data</strong></Form.Label>
+                <Form.Label><strong>{t('upload_data')}</strong></Form.Label>
                 <div
                     role="button"
                     tabIndex={0}
@@ -110,7 +112,7 @@ const DataUploader = ({ setData, type, helpText }) => {
                     onDrop={handleDrop}
                     style={{ cursor: 'pointer' }}
                 >
-                    <p className="mb-2">Drag & drop your file here, or click to select</p>
+                    <p className="mb-2">{t('drag_drop_message')}</p>
                     <Form.Control
                         type="file"
                         accept=".csv,.xlsx"
@@ -128,14 +130,14 @@ const DataUploader = ({ setData, type, helpText }) => {
                 <div className="mb-3">
                     <div className="mb-2">
                         <Badge bg="info" className="fs-5">
-                            Selected: {selectedFile.name} · {humanSize(selectedFile.size)}
+                            {t('selected')}: {selectedFile.name} · {humanSize(selectedFile.size)}
                         </Badge>
                     </div>
                     {status && (
                         <div>
-                            <Badge bg={status === 'loaded' ? 'success' : 'secondary'} className="fs-5">
-                                {status === 'loaded' ? 'Loaded' : 'Ready to load'}
-                            </Badge>
+                                                    <Badge bg={status === 'loaded' ? 'success' : 'secondary'} className="fs-5">
+                            {status === 'loaded' ? t('loaded') : t('ready_to_load')}
+                        </Badge>
                         </div>
                     )}
                 </div>
@@ -147,7 +149,7 @@ const DataUploader = ({ setData, type, helpText }) => {
                     onClick={handleUpload}
                     disabled={!selectedFile}
                 >
-                    Upload
+                    {t('upload')}
                 </Button>
             </div>
             {error && <Alert variant="danger">{error}</Alert>}

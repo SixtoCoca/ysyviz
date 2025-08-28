@@ -3,6 +3,7 @@ import Select from 'react-select';
 import { isMappingValid } from '../utils/mappingValidation';
 import FieldInfoTooltip from '../FieldInfoTooltip';
 import ChordDataInfo from '../ChordDataInfo';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const DataMappingPanel = ({ 
     columns, 
@@ -20,23 +21,24 @@ const DataMappingPanel = ({
     requirements,
     onValidityChange
 }) => {
+    const { t } = useLanguage();
     if (!columns.length) return null;
     
     const opts = columns.map(col => ({ value: col, label: col }));
     
     const fieldLabel = (field) => {
         const labels = {
-            category: 'Category',
-            value: 'Value',
-            x: 'X Axis',
-            y: 'Y Axis',
-            r: 'Radius',
-            label: 'Label',
-            group: 'Group',
-            source: 'Source',
-            target: 'Target',
-            series: 'Series',
-            field_series: 'Series'
+            category: t('category'),
+            value: t('value'),
+            x: t('x_axis'),
+            y: t('y_axis'),
+            r: t('radius'),
+            label: t('label'),
+            group: t('group'),
+            source: t('source'),
+            target: t('target'),
+            series: t('series'),
+            field_series: t('series')
         };
         return labels[field] || field.charAt(0).toUpperCase() + field.slice(1);
     };
@@ -65,7 +67,7 @@ const DataMappingPanel = ({
     return <>
         <Card className='mb-3'>
             <Card.Body>
-                <h4 className='mb-3 text-center'>Column Mapping</h4>
+                <h4 className='mb-3 text-center'>{t('column_mapping')}</h4>
                 {chartType === 'chord' && <ChordDataInfo />}
                 {allFields.length > 0 ? (
                     <Row>
@@ -74,8 +76,8 @@ const DataMappingPanel = ({
                                 return (
                                     <Col md={12} key={field} className='mb-3'>
                                         <Form.Label>
-                                            Dimensions
-                                            <FieldInfoTooltip fieldName='dimensions' />
+                                            {t('dimensions')}
+                                            <FieldInfoTooltip fieldName='dimensions' chartType={chartType} />
                                             {dimensionsRequired && <span className='text-danger ms-1'>*</span>}
                                         </Form.Label>
                                         <Select
@@ -85,7 +87,7 @@ const DataMappingPanel = ({
                                             value={dimensionsValues.map(v => ({ value: v, label: v }))}
                                             onChange={(selected) => onDimensionsChange(selected ? selected.map(s => s.value) : [])}
                                             classNamePrefix='ncg-select'
-                                            placeholder='Select dimensions'
+                                            placeholder={t('select_dimensions')}
                                         />
                                         {dimensionsValues.length > 0 && (
                                             <div className='mt-3'>
@@ -147,14 +149,14 @@ const DataMappingPanel = ({
                                         value={selected}
                                         onChange={(opt) => onFieldChange(key, opt?.value || '')}
                                         classNamePrefix='ncg-select'
-                                        placeholder='Select column'
+                                        placeholder={t('select_column')}
                                     />
                                 </Col>
                             );
                         })}
                     </Row>
                 ) : (
-                    <p className='text-muted text-center'>No mapping required</p>
+                    <p className='text-muted text-center'>{t('no_mapping_required')}</p>
                 )}
             </Card.Body>
         </Card>

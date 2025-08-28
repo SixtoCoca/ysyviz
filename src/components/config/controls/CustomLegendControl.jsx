@@ -1,18 +1,20 @@
 import { Form } from 'react-bootstrap';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const CustomLegendControl = ({ value, onChange }) => {
+    const { t } = useLanguage();
     return <>
         <div className='mt-3'>
-            <Form.Label>Custom Legend</Form.Label>
+            <Form.Label>{t('custom_legend')}</Form.Label>
             <Form.Control
                 as='textarea'
                 rows={3}
                 value={value || ''}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder='Enter custom legend text'
+                placeholder={t('enter_custom_legend')}
             />
             <div className='text-muted small'>
-                Add custom text to display as legend. Use Enter for multiple lines.
+                {t('add_custom_text')}
             </div>
         </div>
     </>

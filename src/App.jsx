@@ -4,6 +4,8 @@ import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Toaster, toast } from 'react-hot-toast';
+import { useLanguage } from './contexts/LanguageContext';
+import LanguageSelector from './components/interface/LanguageSelector';
 
 import BarChart from './components/charts/BarChart';
 import LineChart from './components/charts/LineChart';
@@ -34,6 +36,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 const App = () => {
+  const { t } = useLanguage();
   const [type, setType] = useState(null);
   const [data, setData] = useState(null);
   const [cfg, setCfg] = useChartConfig();
@@ -172,14 +175,19 @@ const App = () => {
 
   useEffect(() => {
     if (hasErrors && enableValidation && type) {
-      toast.error('Error rendering chart. Check the validation panel.');
+      toast.error(t('error_rendering_chart'));
     }
-  }, [hasErrors, enableValidation, type]);
+  }, [hasErrors, enableValidation, type, t]);
 
   return (
     <div className='min-vh-100 d-flex flex-column'>
       <header className='logo-header'>
-        <img src='/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' />
+        <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
+          <img src='/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' />
+          <div className='position-absolute end-0'>
+            <LanguageSelector />
+          </div>
+        </div>
       </header>
 
       <div className='flex-grow-1 d-flex'>
@@ -188,10 +196,10 @@ const App = () => {
             <Col md={3} className='sidebar px-0 d-flex flex-column'>
               <Nav variant='tabs' className='flex-column p-3 gap-2 flex-grow-1'>
                 <Nav.Item>
-                  <Nav.Link eventKey='upload' className='text-center'>Upload File</Nav.Link>
+                  <Nav.Link eventKey='upload' className='text-center'>{t('upload_file')}</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey='preview' className='text-center'>Preview & Download</Nav.Link>
+                  <Nav.Link eventKey='preview' className='text-center'>{t('preview_download')}</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
@@ -217,7 +225,7 @@ const App = () => {
                           onClick={handleDownloadPNG}
                         >
                           <FontAwesomeIcon icon={faDownload} />
-                          PNG
+                          {t('png')}
                         </Button>
                         <Button
                           variant='light'
@@ -225,7 +233,7 @@ const App = () => {
                           onClick={handleDownloadSVG}
                         >
                           <FontAwesomeIcon icon={faDownload} />
-                          SVG
+                          {t('svg')}
                         </Button>
                       </div>
                     )}
@@ -247,7 +255,7 @@ const App = () => {
                         <Col md={8} className='ps-3'>
                           <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100'>
                             <h4 className='mb-4 text-center'>
-                              {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
+                              {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
                             </h4>
                             <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
                               <ChartPreviewMessage

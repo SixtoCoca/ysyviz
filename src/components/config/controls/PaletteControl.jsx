@@ -2,8 +2,10 @@ import { useMemo } from 'react';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
 import { ChartPalettes } from '../../../constants/chart-colors';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const PaletteControl = ({ value, onChange }) => {
+    const { t } = useLanguage();
     const options = useMemo(() => ChartPalettes.map(p => ({ value: p.id, label: p.name, colors: p.colors })), []);
     const current = useMemo(() => {
         const val = Array.isArray(value) ? value : [];
@@ -12,14 +14,14 @@ const PaletteControl = ({ value, onChange }) => {
 
     return <>
         <div className='color-selector'>
-            <Form.Label>Palette</Form.Label>
+            <Form.Label>{t('palette')}</Form.Label>
             <Select
                 isClearable
                 options={options}
                 value={current}
                 onChange={(opt) => onChange(opt?.colors || [])}
                 classNamePrefix='ncg-select'
-                placeholder='Pick palette'
+                placeholder={t('pick_palette')}
                 formatOptionLabel={(opt) =>
                     <div className='d-flex align-items-center'>
                         <div className='d-flex flex-wrap gap-1 me-2' style={{ width: 72 }}>

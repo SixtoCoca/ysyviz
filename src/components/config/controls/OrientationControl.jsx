@@ -1,18 +1,20 @@
 import { Form } from 'react-bootstrap';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const OrientationControl = ({ value, onChange }) => {
+    const { t } = useLanguage();
     const isHorizontal = value === 'horizontal';
     return <>
         <div className='mt-3'>
             <Form.Check
                 type='checkbox'
                 id='orientation-checkbox'
-                label='Horizontal Orientation'
+                label={t('horizontal_orientation')}
                 checked={isHorizontal}
                 onChange={(e) => onChange(e.target.checked ? 'horizontal' : 'vertical')}
             />
             <div className='text-muted small'>
-                {isHorizontal ? 'Categories on Y-axis, values on X-axis' : 'Categories on X-axis, values on Y-axis'}
+                {isHorizontal ? t('horizontal_description') : t('vertical_description')}
             </div>
         </div>
     </>

@@ -2,18 +2,20 @@ import { Card, Row, Col, Button } from 'react-bootstrap';
 import { useMemo, useState } from 'react';
 import { ChartThumbnails } from '../../constants/chart-thumbnails';
 import { ChartTypes } from '../../constants/graph-type';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const PAGE_SIZE = 10;
 
 const ChartTypePicker = ({ value, onChange }) => {
+    const { t } = useLanguage();
     const items = useMemo(() => {
         return Object.keys(ChartTypes).map(key => {
             const typeValue = ChartTypes[key];
-            const label = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            const label = t(`${key.toLowerCase()}_chart`);
             const img = ChartThumbnails[key.toLowerCase()] || ChartThumbnails.bar;
             return { key, value: typeValue, label, img };
         });
-    }, []);
+    }, [t]);
 
     const [page, setPage] = useState(0);
     const totalPages = Math.ceil(items.length / PAGE_SIZE);
@@ -39,7 +41,7 @@ const ChartTypePicker = ({ value, onChange }) => {
                         ‹
                     </Button>
                 )}
-                <h5 className='mb-0'>Chart Type</h5>
+                <h5 className='mb-0'>{t('chart_type')}</h5>
                 {needsPagination && (
                     <Button
                         variant='light'

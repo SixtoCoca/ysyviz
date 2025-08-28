@@ -1,29 +1,31 @@
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const LegendPositionControl = ({ value, onChange }) => {
+    const { t } = useLanguage();
     const options = [
-        { value: 'top-left', label: 'Top Left' },
-        { value: 'top-right', label: 'Top Right' },
-        { value: 'bottom-left', label: 'Bottom Left' },
-        { value: 'bottom-right', label: 'Bottom Right' },
-        { value: 'disabled', label: 'Disabled' }
+        { value: 'top-left', label: t('top_left') },
+        { value: 'top-right', label: t('top_right') },
+        { value: 'bottom-left', label: t('bottom_left') },
+        { value: 'bottom-right', label: t('bottom_right') },
+        { value: 'disabled', label: t('disabled') }
     ];
 
     const current = options.find(opt => opt.value === (value || 'top-left')) || options[0];
 
     return <>
         <div className='mt-3'>
-            <Form.Label>Legend Position</Form.Label>
+            <Form.Label>{t('legend_position')}</Form.Label>
             <Select
                 options={options}
                 value={current}
                 onChange={(opt) => onChange(opt.value)}
                 classNamePrefix='ncg-select'
-                placeholder='Select legend position'
+                placeholder={t('select_legend_position')}
             />
             <div className='text-muted small'>
-                Choose where to display the legend or disable it
+                {t('choose_legend_position')}
             </div>
         </div>
     </>

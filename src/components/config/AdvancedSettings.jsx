@@ -4,11 +4,13 @@ import debounce from 'lodash.debounce';
 import { ChartFieldRequirements } from '../../constants/graph-requirements';
 import { ChartPalettes, ChartColors } from '../../constants/chart-colors';
 import ChartTypePicker from './ChartTypePicker';
+import { useLanguage } from '../../contexts/LanguageContext';
 import DataMappingPanel from './panels/DataMappingPanel';
 import AppearancePanel from './panels/AppearancePanel';
 import SpecificSettingsPanel from './panels/SpecificSettingsPanel';
 
 const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
+    const { t } = useLanguage();
     const [draft, setDraft] = useState(cfg);
     const [mappingValid, setMappingValid] = useState(true);
 
