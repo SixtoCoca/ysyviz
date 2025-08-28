@@ -1,6 +1,7 @@
 import { Card, Row, Col, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { isMappingValid } from '../utils/mappingValidation';
+import FieldInfoTooltip from '../FieldInfoTooltip';
 
 const DataMappingPanel = ({ 
     columns, 
@@ -72,6 +73,7 @@ const DataMappingPanel = ({
                                     <Col md={12} key={field} className='mb-3'>
                                         <Form.Label>
                                             Dimensions
+                                            <FieldInfoTooltip fieldName='dimensions' />
                                             {dimensionsRequired && <span className='text-danger ms-1'>*</span>}
                                         </Form.Label>
                                         <Select
@@ -134,6 +136,7 @@ const DataMappingPanel = ({
                                 <Col md={6} key={field} className='mb-3'>
                                     <Form.Label>
                                         {fieldLabel(field)}
+                                        <FieldInfoTooltip fieldName={field} />
                                         {isRequired && <span className='text-danger ms-1'>*</span>}
                                     </Form.Label>
                                     <Select
