@@ -13,14 +13,12 @@ const TreemapChart = ({ data, config }) => {
         if (!rows.length) return;
 
         const sample = rows[0] || {};
-        const groupKey = resolveFieldKey(sample, config?.field_group, ['group', 'category']);
         const labelKey = resolveFieldKey(sample, config?.field_label, ['label', 'name']);
         const valueKey = resolveFieldKey(sample, config?.field_value, ['value', 'size']);
         if (!valueKey || !labelKey) return;
 
         const items = rows
             .map(r => ({
-                group: groupKey ? norm(r?.[groupKey]) : '',
                 label: norm(r?.[labelKey]),
                 value: toNumber(r?.[valueKey])
             }))
@@ -40,23 +38,16 @@ const TreemapChart = ({ data, config }) => {
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        const groups = Array.from(new Set(items.map(d => d.group || '')));
         const rootData = {
             name: 'root',
-            children: groups.map(grp => ({
-                name: grp || 'all',
-                children: items.filter(d => (d.group || '') === grp).map(d => ({ name: d.label, value: d.value }))
-            }))
+            children: items.map(d => ({ name: d.label, value: d.value }))
         };
 
         const root = d3.hierarchy(rootData).sum(d => d.value || 0).sort((a, b) => (b.value || 0) - (a.value || 0));
-        d3.treemap().size([innerWidth, innerHeight]).paddingInner(2).paddingTop(22)(root);
+        d3.treemap().size([innerWidth, innerHeight]).paddingInner(2).paddingTop(2)(root);
 
         const palette = Array.isArray(config?.palette) && config.palette.length > 0 ? config.palette : d3.schemeTableau10;
-        const hasMultipleGroups = (root.children || []).filter(c => c.data && c.data.name !== 'all').length > 1;
-        const colorMode = config?.colorMode || (hasMultipleGroups ? 'group' : 'leaf');
-        const colorByGroup = d3.scaleOrdinal(palette).domain(groups);
-        const colorByLeaf = d3.scaleOrdinal(palette);
+        const color = d3.scaleOrdinal(palette);
 
         g.append('g')
             .selectAll('g.ncg-treemap-node')
@@ -68,10 +59,7 @@ const TreemapChart = ({ data, config }) => {
                 sel.append('rect')
                     .attr('width', d => Math.max(0, d.x1 - d.x0))
                     .attr('height', d => Math.max(0, d.y1 - d.y0))
-                    .attr('fill', d => {
-                        if (colorMode === 'group') return colorByGroup(d.parent?.data?.name || 'all');
-                        return colorByLeaf(d.data.name);
-                    })
+                    .attr('fill', d => color(d.data.name))
                     .attr('opacity', 0.9)
                     .attr('stroke', config?.strokeColor || 'white')
                     .attr('stroke-opacity', 0.6);
@@ -112,17 +100,6 @@ const TreemapChart = ({ data, config }) => {
                         }
                     });
             });
-
-        g.append('g')
-            .selectAll('text.ncg-group-title')
-            .data(root.children || [])
-            .join('text')
-            .attr('class', 'ncg-group-title')
-            .attr('x', d => d.x0 + 6)
-            .attr('y', d => d.y0 + 14)
-            .attr('font-size', 12)
-            .attr('font-weight', 700)
-            .text(d => d.data.name);
             
         applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
     }, [data, config, dimensions]);
