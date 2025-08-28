@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
 const PieChart = ({ data, config, isDonut = false }) => {
   const svgRef = useRef();
@@ -59,6 +60,11 @@ const PieChart = ({ data, config, isDonut = false }) => {
       .attr('dy', '0.35em')
       .style('font-size', '12px')
       .text(d => d.data.label);
+      
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, width, height, false, 0);
+      drawCustomLegend(g, config.customLegend, customPos.x - width/2, customPos.y - height/2);
+    }
   }, [data, config, dimensions, isDonut]);
 
   if (!data?.values?.length) return null;

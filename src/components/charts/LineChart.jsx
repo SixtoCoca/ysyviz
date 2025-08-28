@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { getLegendPosition } from './interface/legendPosition';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
 const LineChart = ({ data, config, filled = false }) => {
   const svgRef = useRef();
@@ -134,6 +135,11 @@ const LineChart = ({ data, config, filled = false }) => {
           .style('font-size', '12px')
           .text(d => d);
       }
+    }
+    
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, hasMultipleSeries && data.seriesNames, data.seriesNames?.length || 0);
+      drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
     }
   }, [data, config, filled, dimensions]);
 

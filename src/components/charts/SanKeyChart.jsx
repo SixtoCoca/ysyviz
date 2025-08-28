@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { sankey as d3Sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { applyCustomLegend } from './interface/applyCustomLegend';
 
 const SanKeyChart = ({ data, config }) => {
   const svgRef = useRef();
@@ -62,6 +63,8 @@ const SanKeyChart = ({ data, config }) => {
       .attr('text-anchor', d => d.x0 < innerWidth / 2 ? 'start' : 'end')
       .style('font-size', '12px')
       .text(d => d.name);
+      
+    applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
   }, [data, config, dimensions]);
 
   if (!data?.links?.length || !data?.nodes?.length) return null;

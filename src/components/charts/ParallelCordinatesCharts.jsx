@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { rowsOf, resolveFieldKey, toNumber } from '../data/utils';
+import { applyCustomLegend } from './interface/applyCustomLegend';
 
 const ParallelCordinatesCharts = ({ data, config }) => {
   const svgRef = useRef();
@@ -68,6 +69,8 @@ const ParallelCordinatesCharts = ({ data, config }) => {
       .attr('fill', '#333')
       .attr('pointer-events', 'none')
       .text(d => d);
+      
+    applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
   }, [data, config, dimensions]);
 
   if (!data?.rows?.length) return null;

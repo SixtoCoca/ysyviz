@@ -35,6 +35,8 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
                 field_source: '',
                 field_target: '',
                 field_series: '',
+                customLegend: '',
+                customLegendPosition: '',
             };
             setDraft(resetConfig);
             debouncedCommitRef.current(resetConfig);
@@ -116,6 +118,14 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         }
         if (!appearanceOptionalKeys.includes('donutHole') && next.donutHole) {
             next.donutHole = undefined;
+            changed = true;
+        }
+        if (!appearanceOptionalKeys.includes('customLegend') && next.customLegend) {
+            next.customLegend = undefined;
+            changed = true;
+        }
+        if (!appearanceOptionalKeys.includes('customLegendPosition') && next.customLegendPosition) {
+            next.customLegendPosition = undefined;
             changed = true;
         }
         

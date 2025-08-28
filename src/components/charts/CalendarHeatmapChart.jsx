@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { drawLinearLegend } from './interface/colorLegend';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 import { rowsOf, resolveFieldKey, toNumber } from '../data/utils';
 
 const makeColorScale = (cfg, maxVal) => {
@@ -145,6 +146,26 @@ const CalendarHeatmapChart = ({ data, config }) => {
             ticks: 4,
             gradientId: 'calendar-gradient'
         });
+        
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, width, height, false, 0);
+          let legendX = customPos.x;
+          let legendY = customPos.y;
+          
+          if (customPos.x === 20) {
+            legendX = offsetX + 20;
+          } else if (customPos.x === width - 100) {
+            legendX = offsetX + calWidth - 100;
+          }
+          
+          if (customPos.y === 20) {
+            legendY = offsetY - 30;
+          } else if (customPos.y === height - 100) {
+            legendY = offsetY + calHeight + 30;
+          }
+          
+          drawCustomLegend(svg, config.customLegend, legendX, legendY);
+        }
     }, [data, config, dimensions]);
 
     if (!data?.values?.length && !Array.isArray(data)) return null;

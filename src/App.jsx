@@ -55,6 +55,8 @@ const App = () => {
       field_source: '',
       field_target: '',
       field_series: '',
+      customLegend: '',
+      customLegendPosition: '',
     });
     setIssues([]);
   };

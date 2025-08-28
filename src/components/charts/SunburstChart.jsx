@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const SunburstChart = ({ data, config }) => {
     const svgRef = useRef();
@@ -113,6 +114,11 @@ const SunburstChart = ({ data, config }) => {
             const offset = Math.max(0, (L - textLength) / 2 - pad);
             textEl.attr('startOffset', offset);
         });
+        
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+          drawCustomLegend(g, config.customLegend, customPos.x - innerWidth / 2, customPos.y - innerHeight / 2);
+        }
     }, [data, config, dimensions]);
 
     if (!data || !data.children) return null;

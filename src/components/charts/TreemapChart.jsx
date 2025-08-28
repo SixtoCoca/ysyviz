@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { applyCustomLegend } from './interface/applyCustomLegend';
 import { toNumber, rowsOf, resolveFieldKey, norm } from '../data/utils';
 
 const TreemapChart = ({ data, config }) => {
@@ -122,6 +123,8 @@ const TreemapChart = ({ data, config }) => {
             .attr('font-size', 12)
             .attr('font-weight', 700)
             .text(d => d.data.name);
+            
+        applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
     }, [data, config, dimensions]);
 
     if (!data) return null;

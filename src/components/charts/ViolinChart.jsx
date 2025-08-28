@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { applyCustomLegend } from './interface/applyCustomLegend';
 import { toNumber } from '../data/utils';
 
 const ViolinChart = ({ data, config }) => {
@@ -96,6 +97,8 @@ const ViolinChart = ({ data, config }) => {
                     );
             }
         });
+        
+        applyCustomLegend(g, config, innerWidth, innerHeight, false, 0);
     }, [data, config, dimensions]);
 
     if (!data?.values?.length) return null;

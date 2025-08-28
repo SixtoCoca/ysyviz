@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import { chord as d3Chord, ribbon as d3Ribbon } from 'd3-chord';
 import { arc as d3Arc } from 'd3-shape';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const ChordChart = ({ data, config }) => {
   const svgRef = useRef();
@@ -74,6 +75,11 @@ const ChordChart = ({ data, config }) => {
             .style('font-size', '12px')
             .text(data.labels[d.index]);
         });
+    }
+    
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+      drawCustomLegend(g, config.customLegend, customPos.x - innerWidth / 2, customPos.y - innerHeight / 2);
     }
   }, [data, config, dimensions]);
 

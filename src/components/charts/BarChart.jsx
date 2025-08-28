@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { getLegendPosition } from './interface/legendPosition';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
 const BarChart = ({ data, config }) => {
   const svgRef = useRef();
@@ -107,7 +108,7 @@ const BarChart = ({ data, config }) => {
           .style('alignment-baseline', 'middle')
           .text(d => d);
       }
-
+      
     } else {
       const x = d3
         .scaleBand()
@@ -140,6 +141,12 @@ const BarChart = ({ data, config }) => {
         .attr('width', d => isHorizontal ? y(d.value) : x.bandwidth())
         .attr('height', d => isHorizontal ? x.bandwidth() : innerHeight - y(d.value))
         .attr('fill', color);
+    }
+    
+    if (config?.customLegend) {
+      const hasSeries = data.hasSeries && data.series && data.series.length > 0;
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, hasSeries, data.series?.length || 0);
+      drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
     }
   }, [data, config, dimensions]);
 

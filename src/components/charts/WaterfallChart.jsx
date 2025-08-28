@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
 const WaterfallChart = ({ data, config }) => {
     const svgRef = useRef();
@@ -98,6 +99,11 @@ const WaterfallChart = ({ data, config }) => {
                 .attr('font-size', 12)
                 .attr('fill', mainColor)
                 .text(d => fmt(d.y1));
+        }
+        
+        if (config?.customLegend) {
+            const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+            drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
         }
     }, [data, config, dimensions]);
 
