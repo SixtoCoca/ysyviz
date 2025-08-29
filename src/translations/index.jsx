@@ -95,6 +95,22 @@ export const translations = {
         iqr_multiplier: 'IQR Multiplier',
         y_min: 'Y Min',
         y_max: 'Y Max',
+        link_colors: 'Link Colors',
+        chord_colors: 'Chord Colors',
+        use_node_colors: 'Use Node Colors',
+        neutral_gray: 'Neutral Gray',
+        links_use_source_color: 'Links will use the same color as their source node',
+        chords_use_source_color: 'Chords will use the same color as their source node',
+        links_neutral_gray: 'All links will be displayed in neutral gray color',
+        chords_neutral_gray: 'All chords will be displayed in neutral gray color',
+        
+        // Chord chart specific
+        chord_data_format: 'Chord Chart Data Format',
+        chord_description: 'The Chord chart requires a relationship matrix where:',
+        chord_entity_row: 'Each row represents an entity (company, country, department, etc.)',
+        chord_entity_column: 'Each column represents the same entities',
+        chord_values: 'Values in the matrix represent the strength of relationships between entities',
+        example_csv_format: 'Example CSV format:',
         
         // Validation
         validation: 'Validation',
@@ -228,6 +244,22 @@ export const translations = {
         iqr_multiplier: 'Multiplicador IQR',
         y_min: 'Y Mínimo',
         y_max: 'Y Máximo',
+        link_colors: 'Colores de Enlaces',
+        chord_colors: 'Colores de Acordes',
+        use_node_colors: 'Usar Colores de Nodos',
+        neutral_gray: 'Gris Neutro',
+        links_use_source_color: 'Los enlaces usarán el mismo color que su nodo origen',
+        chords_use_source_color: 'Los acordes usarán el mismo color que su nodo origen',
+        links_neutral_gray: 'Todos los enlaces se mostrarán en color gris neutro',
+        chords_neutral_gray: 'Todos los acordes se mostrarán en color gris neutro',
+        
+        // Chord chart specific
+        chord_data_format: 'Formato de Datos del Gráfico de Cuerdas',
+        chord_description: 'El gráfico de cuerdas requiere una matriz de relaciones donde:',
+        chord_entity_row: 'Cada fila representa una entidad (empresa, país, departamento, etc.)',
+        chord_entity_column: 'Cada columna representa las mismas entidades',
+        chord_values: 'Los valores en la matriz representan la fuerza de las relaciones entre entidades',
+        example_csv_format: 'Ejemplo de formato CSV:',
         
         // Validation
         validation: 'Validación',

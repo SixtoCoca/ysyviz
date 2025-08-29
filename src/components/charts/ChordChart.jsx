@@ -43,11 +43,13 @@ const ChordChart = ({ data, config }) => {
     const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
     const color = palette ? d3.scaleOrdinal(palette) : d3.scaleOrdinal(d3.schemeCategory10);
 
+    const useNodeColors = config?.chordColors !== 'gray';
+
     g.selectAll('path')
       .data(chords)
       .join('path')
       .attr('d', ribbon)
-      .attr('fill', d => color(d.source.index))
+      .attr('fill', d => useNodeColors ? color(d.source.index) : '#808080')
       .attr('opacity', 0.7)
       .attr('stroke', 'white')
       .attr('stroke-width', 1);

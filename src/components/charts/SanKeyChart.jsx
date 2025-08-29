@@ -34,11 +34,13 @@ const SanKeyChart = ({ data, config }) => {
     const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
     const color = palette ? d3.scaleOrdinal(palette) : d3.scaleOrdinal(d3.schemeCategory10);
 
+    const useNodeColors = config?.linkColors !== 'gray';
+
     g.selectAll('path')
       .data(sankeyLinks)
       .join('path')
       .attr('d', sankeyLinkHorizontal())
-      .attr('stroke', d => color(d.source.name))
+      .attr('stroke', d => useNodeColors ? color(d.source.name) : '#808080')
       .attr('stroke-width', d => Math.max(1, d.width))
       .attr('fill', 'none')
       .attr('opacity', 0.5);
