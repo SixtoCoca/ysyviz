@@ -69,7 +69,16 @@ export const FieldDescriptions = {
         title: 'Dimensions',
         description: 'Multiple columns to create parallel coordinates. Each dimension becomes a vertical axis.',
         examples: ['Height, Weight, Age', 'Price, Rating, Sales', 'Temp, Humidity, Pressure'],
-        format: 'Multiple numerical columns'
+        format: 'Multiple numerical columns'    
+    },
+    date: {
+        title: 'Date',
+        description: 'The field containing date values. This is used for time-based charts like line charts and heatmaps.',
+        examples: ['Date: 2024-01-15', 'Date: 2024-02-20', 'Date: 2024-03-25'],
+        format: 'Dates (YYYY-MM-DD)'
+    },
+    age: {
+        title: 'Age',
     }
 };
 
