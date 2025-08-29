@@ -24,6 +24,7 @@ import TreemapChart from './components/charts/TreemapChart';
 import SunburstChart from './components/charts/SunburstChart';
 import WaterfallChart from './components/charts/WaterfallChart';
 import CalendarHeatmapChart from './components/charts/CalendarHeatmapChart';
+import PyramidChart from './components/charts/PyramidChart';
 
 import DataUploader from './components/interface/DataUploader';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
@@ -60,6 +61,8 @@ const App = () => {
       field_source: '',
       field_target: '',
       field_series: '',
+      field_pyramid_left: '',
+      field_pyramid_right: '',
       customLegend: '',
       customLegendPosition: '',
     });
@@ -122,7 +125,8 @@ const App = () => {
     treemap: <TreemapChart {...chartProps} />,
     sunburst: <SunburstChart {...chartProps} />,
     waterfall: <WaterfallChart {...chartProps} />,
-    calendar: <CalendarHeatmapChart {...chartProps} />
+    calendar: <CalendarHeatmapChart {...chartProps} />,
+    pyramid: <PyramidChart {...chartProps} />
   };
 
   const handleDownloadPNG = async () => {

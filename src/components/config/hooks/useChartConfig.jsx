@@ -15,6 +15,8 @@ export const useChartConfig = () => {
         field_source: '',
         field_target: '',
         field_series: '',
+        field_pyramid_left: '',
+        field_pyramid_right: '',
     });
 
     return [cfg, setCfg];

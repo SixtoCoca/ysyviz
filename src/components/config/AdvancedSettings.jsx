@@ -37,6 +37,8 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
                 field_source: '',
                 field_target: '',
                 field_series: '',
+                field_pyramid_left: '',
+                field_pyramid_right: '',
                 customLegend: '',
                 customLegendPosition: '',
             };
@@ -53,7 +55,7 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const requiredFields = requiredFieldsRaw.filter(f => f !== 'dimensions');
 
     const mappingOptionalKeys = useMemo(
-        () => optionalFields.filter(k => k === 'series'),
+        () => optionalFields.filter(k => k === 'series' || k === 'pyramid_left' || k === 'pyramid_right'),
         [optionalFields]
     );
 
@@ -114,6 +116,10 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             next.palette = ChartPalettes[0].colors;
             changed = true;
         }
+        if (appearanceOptionalKeys.includes('opacity') && next.opacity === undefined) {
+            next.opacity = 0.8;
+            changed = true;
+        }
         if (!appearanceOptionalKeys.includes('customLegend') && next.customLegend) {
             next.customLegend = undefined;
             changed = true;
@@ -122,6 +128,7 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             next.customLegendPosition = undefined;
             changed = true;
         }
+
         
         if (changed) {
             setDraft(next);

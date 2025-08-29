@@ -38,7 +38,9 @@ const DataMappingPanel = ({
             source: t('source'),
             target: t('target'),
             series: t('series'),
-            field_series: t('series')
+            field_series: t('series'),
+            pyramid_left: t('pyramid_left'),
+            pyramid_right: t('pyramid_right')
         };
         return labels[field] || field.charAt(0).toUpperCase() + field.slice(1);
     };

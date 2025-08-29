@@ -72,5 +72,9 @@ export const ChartFieldRequirements = {
     [ChartTypes.CALENDAR]: {
         required: ['date', 'value'],
         optional: ['title', 'color', 'customLegend', 'customLegendPosition']
+    },
+    [ChartTypes.PYRAMID]: {
+        required: ['y'],
+        optional: ['pyramid_left', 'pyramid_right', 'title', 'leftColor', 'rightColor', 'opacity', 'customLegend', 'customLegendPosition']
     }
 };

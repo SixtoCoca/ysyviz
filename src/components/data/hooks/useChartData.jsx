@@ -16,6 +16,7 @@ import { mapTreemap } from '../mappers/mapTreemap';
 import { mapSunburst } from '../mappers/mapSunburst';
 import { mapWaterfall } from '../mappers/mapWaterfall';
 import { mapCalendarHeatmap } from '../mappers/mapCalendarHeatmap';
+import { mapPyramid } from '../mappers/mapPyramid';
 
 const NullMapper = () => null;
 
@@ -37,7 +38,8 @@ const Mappers = {
     [ChartTypes.TREEMAP]: mapTreemap,
     [ChartTypes.SUNBURST]: mapSunburst,
     [ChartTypes.WATERFALL]: mapWaterfall,
-    [ChartTypes.CALENDAR]: mapCalendarHeatmap
+    [ChartTypes.CALENDAR]: mapCalendarHeatmap,
+    [ChartTypes.PYRAMID]: mapPyramid
 };
 
 const useChartData = (rawData, chartType, config) => {

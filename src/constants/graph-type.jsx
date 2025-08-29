@@ -16,5 +16,6 @@ export const ChartTypes = {
   TREEMAP: 'treemap',
   SUNBURST: 'sunburst',
   WATERFALL: 'waterfall',
-  CALENDAR: 'calendar'
+  CALENDAR: 'calendar',
+  PYRAMID: 'pyramid'
 };

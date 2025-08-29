@@ -30,6 +30,8 @@ export const translations = {
         value: 'Value',
         x_axis: 'X Axis',
         y_axis: 'Y Axis',
+        pyramid_left: 'Pyramid Left',
+        pyramid_right: 'Pyramid Right',
         radius: 'Radius',
         label: 'Label',
         group: 'Group',
@@ -58,6 +60,7 @@ export const translations = {
         sunburst_chart: 'Sunburst Chart',
         waterfall_chart: 'Waterfall Chart',
         calendar_chart: 'Calendar Heatmap Chart',
+        pyramid_chart: 'Pyramid Chart',
         
         // Appearance panel
         appearance: 'Appearance',
@@ -112,6 +115,13 @@ export const translations = {
         donut_hole_size_description: 'Size of the center hole as percentage of total radius (0-100)',
         show_percentages: 'Show Percentages',
         show_percentages_description: 'Display percentage values on each slice',
+        pyramid_settings: 'Pyramid Settings',
+        left_color: 'Left Color',
+        right_color: 'Right Color',
+        bar_colors: 'Bar Colors',
+        left_color_description: 'Color for the left side bars',
+        right_color_description: 'Color for the right side bars',
+        opacity_description: 'Transparency of the bars (0-1)',
         violin_settings: 'Violin Settings',
         smoothing: 'Smoothing',
         smoothing_description: 'Smoothing factor for violin curves (0-1)',
@@ -162,7 +172,9 @@ export const translations = {
             target: 'The field containing target nodes',
             series: 'The field for creating multiple series',
             dimensions: 'Multiple fields for hierarchical data',
-            path: 'The field containing hierarchical paths'
+            path: 'The field containing hierarchical paths',
+            pyramid_left: 'The field for left side values of the pyramid',
+            pyramid_right: 'The field for right side values of the pyramid'
         }
     },
     es: {
@@ -196,6 +208,8 @@ export const translations = {
         value: 'Valor',
         x_axis: 'Eje X',
         y_axis: 'Eje Y',
+        pyramid_left: 'Pirámide Izquierda',
+        pyramid_right: 'Pirámide Derecha',
         radius: 'Radio',
         label: 'Etiqueta',
         group: 'Grupo',
@@ -224,6 +238,7 @@ export const translations = {
         sunburst_chart: 'Gráfico de Rayos de sol',
         waterfall_chart: 'Gráfico de Cascada',
         calendar_chart: 'Mapa de Calor de Calendario',
+        pyramid_chart: 'Gráfico de Pirámide',
         
         // Appearance panel
         appearance: 'Apariencia',
@@ -278,6 +293,13 @@ export const translations = {
         donut_hole_size_description: 'Tamaño del agujero central como porcentaje del radio total (0-100)',
         show_percentages: 'Mostrar Porcentajes',
         show_percentages_description: 'Mostrar valores de porcentaje en cada porción',
+        pyramid_settings: 'Configuración de Pirámide',
+        left_color: 'Color Izquierdo',
+        right_color: 'Color Derecho',
+        bar_colors: 'Colores de Barras',
+        left_color_description: 'Color para las barras del lado izquierdo',
+        right_color_description: 'Color para las barras del lado derecho',
+        opacity_description: 'Transparencia de las barras (0-1)',
         violin_settings: 'Configuración de Violín',
         smoothing: 'Suavizado',
         smoothing_description: 'Factor de suavizado para las curvas de violín (0-1)',
@@ -328,7 +350,9 @@ export const translations = {
             target: 'El campo que contiene nodos de destino',
             series: 'El campo para crear múltiples series',
             dimensions: 'Múltiples campos para datos jerárquicos',
-            path: 'El campo que contiene rutas jerárquicas'
+            path: 'El campo que contiene rutas jerárquicas',
+            pyramid_left: 'El campo para los valores del lado izquierdo de la pirámide',
+            pyramid_right: 'El campo para los valores del lado derecho de la pirámide'
         }
     }
 };

@@ -14,6 +14,7 @@ import { validateTreemap } from '../validators/validateTreemap';
 import { validateSunburst } from '../validators/validateSunburst';
 import { validateWaterfall } from '../validators/validateWaterfall';
 import { validateCalendarHeatmap } from '../validators/validateCalendarHeatmap';
+import { validatePyramid } from '../validators/pyramidValidator';
 import useChartData from '../../data/hooks/useChartData';
 
 const NullValidator = d => ({ data: d, issues: [] });
@@ -34,7 +35,8 @@ const Validators = {
     [ChartTypes.TREEMAP]: validateTreemap,
     [ChartTypes.SUNBURST]: validateSunburst,
     [ChartTypes.WATERFALL]: validateWaterfall,
-    [ChartTypes.CALENDAR]: validateCalendarHeatmap
+    [ChartTypes.CALENDAR]: validateCalendarHeatmap,
+    [ChartTypes.PYRAMID]: validatePyramid
 };
 
 const useValidatedData = (rawData, chartType, onIssues, config) => {

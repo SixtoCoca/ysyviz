@@ -16,6 +16,7 @@ import treemap from '../assets/charts/treemap.svg';
 import sunburst from '../assets/charts/sunburst.svg';
 import waterfall from '../assets/charts/waterfall.svg';
 import calendar from '../assets/charts/calendar.svg';
+import pyramid from '../assets/charts/pyramid.svg';
 
 export const ChartThumbnails = {
     bar,
@@ -35,5 +36,6 @@ export const ChartThumbnails = {
     treemap,
     sunburst,
     waterfall,
-    calendar
+    calendar,
+    pyramid
 };

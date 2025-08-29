@@ -79,6 +79,21 @@ export const FieldDescriptions = {
     },
     age: {
         title: 'Age',
+        description: 'Age values for population pyramids or age-based analysis.',
+        examples: ['Age: 25', 'Age Group: "18-24"', 'Age: 65'],
+        format: 'Numbers or text'
+    },
+    pyramid_left: {
+        title: 'Pyramid Left',
+        description: 'Values for the left side of the pyramid chart. Usually represents one category or group.',
+        examples: ['Male: 1000', 'Before: 500', 'Group A: 250'],
+        format: 'Numbers'
+    },
+    pyramid_right: {
+        title: 'Pyramid Right',
+        description: 'Values for the right side of the pyramid chart. Usually represents another category or group.',
+        examples: ['Female: 1200', 'After: 600', 'Group B: 300'],
+        format: 'Numbers'
     }
 };
 

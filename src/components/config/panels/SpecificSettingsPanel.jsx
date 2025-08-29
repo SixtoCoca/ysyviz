@@ -5,6 +5,7 @@ import SankeySettings from './SankeySettings';
 import ChordSettings from './ChordSettings';
 import PieSettings from './PieDonutSettings';
 import ViolinSettings from './ViolinSettings';
+import PyramidSettings from './PyramidSettings';
 
 const SpecificSettingsPanel = ({ config, onChange, chartType }) => {
     const renderChartSpecificSettings = () => {
@@ -23,12 +24,14 @@ const SpecificSettingsPanel = ({ config, onChange, chartType }) => {
                 return <PieSettings config={config} onChange={onChange} isDonut={true} isSunburst={true} />;
             case ChartTypes.VIOLIN:
                 return <ViolinSettings config={config} onChange={onChange} />;
+            case ChartTypes.PYRAMID:
+                return <PyramidSettings config={config} onChange={onChange} />;
             default:
                 return null;
         }
     };
 
-    const hasSpecificSettings = [ChartTypes.WATERFALL, ChartTypes.SANKEY, ChartTypes.CHORD, ChartTypes.PIE, ChartTypes.DONUT, ChartTypes.SUNBURST, ChartTypes.VIOLIN].includes(chartType);
+    const hasSpecificSettings = [ChartTypes.WATERFALL, ChartTypes.SANKEY, ChartTypes.CHORD, ChartTypes.PIE, ChartTypes.DONUT, ChartTypes.SUNBURST, ChartTypes.VIOLIN, ChartTypes.PYRAMID].includes(chartType);
 
     if (!hasSpecificSettings) return null;
 
