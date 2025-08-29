@@ -25,8 +25,25 @@ export const useResponsiveChart = () => {
 };
 
 export const getChartDimensions = (containerWidth, containerHeight) => {
-    const width = containerWidth || 1000;
-    const height = containerHeight || 700;
+    const isMobile = window.innerWidth < 768;
+    const aspectRatio = 16 / 10;
+    
+    let width = containerWidth || 1000;
+    let height = containerHeight || 700;
+    
+    if (isMobile) {
+        const maxWidth = Math.min(width, 400);
+        const maxHeight = Math.min(height, 300);
+        
+        if (maxWidth / maxHeight > aspectRatio) {
+            width = maxHeight * aspectRatio;
+            height = maxHeight;
+        } else {
+            width = maxWidth;
+            height = maxWidth / aspectRatio;
+        }
+    }
+    
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
     
     return {

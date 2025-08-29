@@ -3,6 +3,7 @@ export const translations = {
         // Header
         upload_file: 'Upload File',
         preview_download: 'Preview & Download',
+        configuration: 'Configuration',
         
         // Upload section
         upload_data: 'Upload Data',
@@ -112,74 +113,30 @@ export const translations = {
         png: 'PNG',
         svg: 'SVG',
         
-        // Field descriptions
-        category_description: 'The category or group that each data point belongs to. This will be displayed on the X-axis for most charts.',
-        value_description: 'The numerical value to be displayed. This determines the height, size, or position of each data point.',
-        x_axis_description: 'The horizontal axis values. Can be categories, dates, or numerical values.',
-        y_axis_description: 'The vertical axis values. Usually numerical values that determine the height or position.',
-        radius_description: 'The size of bubbles or circles. Larger values create bigger visual elements.',
-        label_description: 'Text labels to display on data points, slices, or nodes.',
-        group_description: 'Groups data points together for comparison or categorization.',
-        source_description: 'The starting point in flow diagrams (Sankey). Represents where something comes from.',
-        target_description: 'The destination point in flow diagrams (Sankey). Represents where something goes to.',
-        series_description: 'Groups data into different series for comparison. Each series gets its own color.',
-        path_description: 'Hierarchical path structure for tree-like charts. Use forward slashes to separate levels.',
-        dimensions_description: 'Multiple columns to create parallel coordinates. Each dimension becomes a vertical axis.',
-        
-        // Format descriptions
-        text_values: 'Text values',
-        numbers: 'Numbers',
-        text_numbers_dates: 'Text, numbers, or dates',
-        positive_numbers: 'Numbers (positive values)',
-        path_separators: 'Path with / separators',
-        multiple_numerical: 'Multiple numerical columns',
-        
-        // Examples
-        examples: 'Examples',
-        format: 'Format',
-        
-        // Chord chart specific
-        chord_data_format: 'Chord Chart Data Format',
-        chord_description: 'The Chord chart requires a relationship matrix where:',
-        chord_entity_row: 'Each row represents an entity (company, country, department, etc.)',
-        chord_entity_column: 'Each column represents the same entities',
-        chord_values: 'Values in the matrix represent the strength of relationships between entities',
-        example_csv_format: 'Example CSV format:',
-        
-        // Help text
-        help_csv_2_columns: 'CSV with 2 columns: x and y',
-        help_csv_numeric: 'CSV with 2 numeric columns: x and y',
-        help_csv_label_value: 'CSV with 2 columns: label and value',
-        help_csv_3_numeric: 'CSV with 3 numeric columns: x, y and size',
-        help_valid_csv: 'Upload a valid CSV file',
-        
-        // Placeholders
-        select_column: 'Select column',
-        select_legend_position: 'Select legend position',
-        select_custom_legend_position: 'Select custom legend position',
-        enter_custom_legend: 'Enter custom legend text',
+        // Select dimensions
         select_dimensions: 'Select dimensions',
-        choose_legend_position: 'Choose where to display the legend or disable it',
-        choose_custom_legend_position: 'Choose where to display the custom legend text',
-        add_custom_text: 'Add custom text to display as legend',
         
-        // Language selector
-        language: 'Language',
-        english: 'English',
-        spanish: 'Spanish',
-        
-        // Additional controls
-        enter: 'Enter',
-        pick_palette: 'Pick palette',
-        horizontal_orientation: 'Horizontal Orientation',
-        horizontal_description: 'Categories on Y-axis, values on X-axis',
-        vertical_description: 'Categories on X-axis, values on Y-axis',
-        chart_type: 'Chart Type'
+        // Field descriptions
+        field_descriptions: {
+            category: 'The field containing category names',
+            value: 'The field containing numerical values',
+            x_axis: 'The field to display on the X axis',
+            y_axis: 'The field to display on the Y axis',
+            radius: 'The field determining bubble size',
+            label: 'The field containing text labels',
+            group: 'The field for grouping data',
+            source: 'The field containing source nodes',
+            target: 'The field containing target nodes',
+            series: 'The field for creating multiple series',
+            dimensions: 'Multiple fields for hierarchical data',
+            path: 'The field containing hierarchical paths'
+        }
     },
     es: {
         // Header
         upload_file: 'Subir Archivo',
         preview_download: 'Vista Previa y Descarga',
+        configuration: 'Configuración',
         
         // Upload section
         upload_data: 'Subir Datos',
@@ -289,69 +246,24 @@ export const translations = {
         png: 'PNG',
         svg: 'SVG',
         
-        // Field descriptions
-        category_description: 'La categoría o grupo al que pertenece cada punto de datos. Se mostrará en el eje X para la mayoría de gráficos.',
-        value_description: 'El valor numérico a mostrar. Determina la altura, tamaño o posición de cada punto de datos.',
-        x_axis_description: 'Los valores del eje horizontal. Pueden ser categorías, fechas o valores numéricos.',
-        y_axis_description: 'Los valores del eje vertical. Generalmente valores numéricos que determinan la altura o posición.',
-        radius_description: 'El tamaño de las burbujas o círculos. Valores más grandes crean elementos visuales más grandes.',
-        label_description: 'Etiquetas de texto para mostrar en puntos de datos, sectores o nodos.',
-        group_description: 'Agrupa puntos de datos para comparación o categorización.',
-        source_description: 'El punto de partida en diagramas de flujo (Sankey). Representa de dónde viene algo.',
-        target_description: 'El punto de destino en diagramas de flujo (Sankey). Representa hacia dónde va algo.',
-        series_description: 'Agrupa datos en diferentes series para comparación. Cada serie obtiene su propio color.',
-        path_description: 'Estructura de ruta jerárquica para gráficos tipo árbol. Usa barras diagonales para separar niveles.',
-        dimensions_description: 'Múltiples columnas para crear coordenadas paralelas. Cada dimensión se convierte en un eje vertical.',
-        
-        // Format descriptions
-        text_values: 'Valores de texto',
-        numbers: 'Números',
-        text_numbers_dates: 'Texto, números o fechas',
-        positive_numbers: 'Números (valores positivos)',
-        path_separators: 'Ruta con separadores /',
-        multiple_numerical: 'Múltiples columnas numéricas',
-        
-        // Examples
-        examples: 'Ejemplos',
-        format: 'Formato',
-        
-        // Chord chart specific
-        chord_data_format: 'Formato de Datos del Gráfico de Cuerdas',
-        chord_description: 'El gráfico de cuerdas requiere una matriz de relaciones donde:',
-        chord_entity_row: 'Cada fila representa una entidad (empresa, país, departamento, etc.)',
-        chord_entity_column: 'Cada columna representa las mismas entidades',
-        chord_values: 'Los valores en la matriz representan la fuerza de las relaciones entre entidades',
-        example_csv_format: 'Ejemplo de formato CSV:',
-        
-        // Help text
-        help_csv_2_columns: 'CSV con 2 columnas: x e y',
-        help_csv_numeric: 'CSV con 2 columnas numéricas: x e y',
-        help_csv_label_value: 'CSV con 2 columnas: etiqueta y valor',
-        help_csv_3_numeric: 'CSV con 3 columnas numéricas: x, y y tamaño',
-        help_valid_csv: 'Sube un archivo CSV válido',
-        
-        // Placeholders
-        select_column: 'Seleccionar columna',
-        select_legend_position: 'Seleccionar posición de leyenda',
-        select_custom_legend_position: 'Seleccionar posición de leyenda personalizada',
-        enter_custom_legend: 'Introducir texto de leyenda personalizada',
+        // Select dimensions
         select_dimensions: 'Seleccionar dimensiones',
-        choose_legend_position: 'Elige dónde mostrar la leyenda o desactívala',
-        choose_custom_legend_position: 'Elige dónde mostrar el texto de leyenda personalizada',
-        add_custom_text: 'Añadir texto personalizado para mostrar como leyenda',
         
-        // Language selector
-        language: 'Idioma',
-        english: 'Inglés',
-        spanish: 'Español',
-        
-        // Additional controls
-        enter: 'Introducir',
-        pick_palette: 'Elegir paleta',
-        horizontal_orientation: 'Orientación Horizontal',
-        horizontal_description: 'Categorías en eje Y, valores en eje X',
-        vertical_description: 'Categorías en eje X, valores en eje Y',
-        chart_type: 'Tipo de Gráfico'
+        // Field descriptions
+        field_descriptions: {
+            category: 'El campo que contiene nombres de categorías',
+            value: 'El campo que contiene valores numéricos',
+            x_axis: 'El campo a mostrar en el eje X',
+            y_axis: 'El campo a mostrar en el eje Y',
+            radius: 'El campo que determina el tamaño de las burbujas',
+            label: 'El campo que contiene etiquetas de texto',
+            group: 'El campo para agrupar datos',
+            source: 'El campo que contiene nodos de origen',
+            target: 'El campo que contiene nodos de destino',
+            series: 'El campo para crear múltiples series',
+            dimensions: 'Múltiples campos para datos jerárquicos',
+            path: 'El campo que contiene rutas jerárquicas'
+        }
     }
 };
 

@@ -6,6 +6,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Toaster, toast } from 'react-hot-toast';
 import { useLanguage } from './contexts/LanguageContext';
 import LanguageSelector from './components/interface/LanguageSelector';
+import useIsMobile from './hooks/useIsMobile';
 
 import BarChart from './components/charts/BarChart';
 import LineChart from './components/charts/LineChart';
@@ -37,6 +38,7 @@ import './App.css';
 
 const App = () => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [type, setType] = useState(null);
   const [data, setData] = useState(null);
   const [cfg, setCfg] = useChartConfig();
@@ -198,6 +200,11 @@ const App = () => {
                 <Nav.Item>
                   <Nav.Link eventKey='upload' className='text-center'>{t('upload_file')}</Nav.Link>
                 </Nav.Item>
+                {isMobile && (
+                  <Nav.Item>
+                    <Nav.Link eventKey='config' className='text-center'>{t('configuration')}</Nav.Link>
+                  </Nav.Item>
+                )}
                 <Nav.Item>
                   <Nav.Link eventKey='preview' className='text-center'>{t('preview_download')}</Nav.Link>
                 </Nav.Item>
@@ -215,9 +222,29 @@ const App = () => {
                   </Card>
                 </Tab.Pane>
 
+                {isMobile && (
+                  <Tab.Pane eventKey='config' className='h-100'>
+                    <Card className='h-100'>
+                      <Card.Body>
+                        <ConfigWithValidation
+                          cfg={cfg}
+                          setCfg={setCfg}
+                          type={type}
+                          setType={handleTypeChange}
+                          setData={handleDataChange}
+                          data={data}
+                          enableValidation={enableValidation}
+                          issues={issues}
+                          onClearIssues={() => setIssues([])}
+                        />
+                      </Card.Body>
+                    </Card>
+                  </Tab.Pane>
+                )}
+
                 <Tab.Pane eventKey='preview' className='h-100'>
                   <Card className='h-100 position-relative'>
-                    {enableValidation && chartData && !hasErrors && (
+                    {!isMobile && enableValidation && chartData && !hasErrors && (
                       <div className='position-absolute top-0 end-0 m-2 d-flex gap-2'>
                         <Button
                           variant='light'
@@ -238,37 +265,74 @@ const App = () => {
                       </div>
                     )}
                     <Card.Body className='h-100'>
-                      <Row className='h-100'>
-                        <Col md={4} className='border-end pe-3 d-flex flex-column'>
-                          <ConfigWithValidation
-                            cfg={cfg}
-                            setCfg={setCfg}
-                            type={type}
-                            setType={handleTypeChange}
-                            setData={handleDataChange}
-                            data={data}
-                            enableValidation={enableValidation}
-                            issues={issues}
-                            onClearIssues={() => setIssues([])}
-                          />
-                        </Col>
-                        <Col md={8} className='ps-3'>
-                          <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100'>
-                            <h4 className='mb-4 text-center'>
-                              {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
-                            </h4>
-                            <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
-                              <ChartPreviewMessage
-                                type={type}
-                                hasRequiredFields={hasRequiredFields}
-                                hasErrors={hasErrors}
-                                chartData={chartData}
-                              />
-                              {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
-                            </div>
+                      {isMobile ? (
+                        <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100 chart-container'>
+                          <h4 className='mb-4 text-center'>
+                            {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
+                          </h4>
+                          <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
+                            <ChartPreviewMessage
+                              type={type}
+                              hasRequiredFields={hasRequiredFields}
+                              hasErrors={hasErrors}
+                              chartData={chartData}
+                            />
+                            {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
                           </div>
-                        </Col>
-                      </Row>
+                          {enableValidation && chartData && !hasErrors && (
+                            <div className='mt-4 d-flex justify-content-center gap-2'>
+                              <Button
+                                variant='light'
+                                className='d-flex align-items-center gap-2 shadow-sm'
+                                onClick={handleDownloadPNG}
+                              >
+                                <FontAwesomeIcon icon={faDownload} />
+                                {t('png')}
+                              </Button>
+                              <Button
+                                variant='light'
+                                className='d-flex align-items-center gap-2 shadow-sm'
+                                onClick={handleDownloadSVG}
+                              >
+                                <FontAwesomeIcon icon={faDownload} />
+                                {t('svg')}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Row className='h-100'>
+                          <Col md={4} className='border-end pe-3 d-flex flex-column'>
+                            <ConfigWithValidation
+                              cfg={cfg}
+                              setCfg={setCfg}
+                              type={type}
+                              setType={handleTypeChange}
+                              setData={handleDataChange}
+                              data={data}
+                              enableValidation={enableValidation}
+                              issues={issues}
+                              onClearIssues={() => setIssues([])}
+                            />
+                          </Col>
+                          <Col md={8} className='ps-3'>
+                            <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100'>
+                              <h4 className='mb-4 text-center'>
+                                {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
+                              </h4>
+                              <div className='w-100 d-flex justify-content-center align-items-center min-h-400 chart-container'>
+                                <ChartPreviewMessage
+                                  type={type}
+                                  hasRequiredFields={hasRequiredFields}
+                                  hasErrors={hasErrors}
+                                  chartData={chartData}
+                                />
+                                {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
+                              </div>
+                            </div>
+                          </Col>
+                        </Row>
+                      )}
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
