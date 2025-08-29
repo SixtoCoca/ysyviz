@@ -24,12 +24,14 @@ const PieChart = ({ data, config, isDonut = false }) => {
       .attr('transform', `translate(${width / 2},${height / 2})`);
 
     const radius = Math.min(innerWidth, innerHeight) / 2;
-    const donutHolePercent = config?.donutHole || 55;
-    const donutHole = donutHolePercent / 100;
+    const donutHoleSize = config?.donutHoleSize || 50;
+    const donutHole = donutHoleSize / 100;
     const innerRadius = isDonut ? radius * donutHole : 0;
+    const startAngle = (config?.startAngle || 0) * Math.PI / 180;
 
     const pie = d3.pie()
       .value(d => d.value)
+      .startAngle(startAngle)
       .sort(null);
 
     const arc = d3.arc()
@@ -52,6 +54,8 @@ const PieChart = ({ data, config, isDonut = false }) => {
       .innerRadius(labelRadius)
       .outerRadius(labelRadius);
 
+    const total = d3.sum(data.values, d => d.value);
+
     g.selectAll('text')
       .data(pie(data.values))
       .join('text')
@@ -60,6 +64,22 @@ const PieChart = ({ data, config, isDonut = false }) => {
       .attr('dy', '0.35em')
       .style('font-size', '12px')
       .text(d => d.data.label);
+
+    if (config?.showPercentages) {
+      g.selectAll('text.percentage')
+        .data(pie(data.values))
+        .join('text')
+        .attr('class', 'percentage')
+        .attr('transform', d => `translate(${labelArc.centroid(d)})`)
+        .attr('text-anchor', 'middle')
+        .attr('dy', '1.5em')
+        .style('font-size', '10px')
+        .style('fill', '#666')
+        .text(d => {
+          const percentage = ((d.data.value / total) * 100).toFixed(1);
+          return `${percentage}%`;
+        });
+    }
       
     if (config?.customLegend) {
       const customPos = getCustomLegendPosition(config, width, height, false, 0);

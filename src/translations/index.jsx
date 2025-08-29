@@ -103,6 +103,15 @@ export const translations = {
         chords_use_source_color: 'Chords will use the same color as their source node',
         links_neutral_gray: 'All links will be displayed in neutral gray color',
         chords_neutral_gray: 'All chords will be displayed in neutral gray color',
+        pie_settings: 'Pie Settings',
+        donut_settings: 'Donut Settings',
+        sunburst_settings: 'Sunburst Settings',
+        start_angle: 'Start Angle',
+        start_angle_description: 'Angle in degrees where the first slice starts (0-360)',
+        donut_hole_size: 'Donut Hole Size',
+        donut_hole_size_description: 'Size of the center hole as percentage of total radius (0-100)',
+        show_percentages: 'Show Percentages',
+        show_percentages_description: 'Display percentage values on each slice',
         
         // Chord chart specific
         chord_data_format: 'Chord Chart Data Format',
@@ -252,6 +261,15 @@ export const translations = {
         chords_use_source_color: 'Los acordes usarán el mismo color que su nodo origen',
         links_neutral_gray: 'Todos los enlaces se mostrarán en color gris neutro',
         chords_neutral_gray: 'Todos los acordes se mostrarán en color gris neutro',
+        pie_settings: 'Configuración de Pie',
+        donut_settings: 'Configuración de Donut',
+        sunburst_settings: 'Configuración de Sunburst',
+        start_angle: 'Ángulo de Inicio',
+        start_angle_description: 'Ángulo en grados donde comienza la primera porción (0-360)',
+        donut_hole_size: 'Tamaño del Agujero del Donut',
+        donut_hole_size_description: 'Tamaño del agujero central como porcentaje del radio total (0-100)',
+        show_percentages: 'Mostrar Porcentajes',
+        show_percentages_description: 'Mostrar valores de porcentaje en cada porción',
         
         // Chord chart specific
         chord_data_format: 'Formato de Datos del Gráfico de Cuerdas',

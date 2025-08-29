@@ -102,10 +102,6 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             next.palette = undefined;
             changed = true;
         }
-        if (!appearanceOptionalKeys.includes('legendPosition') && next.legendPosition) {
-            next.legendPosition = undefined;
-            changed = true;
-        }
         if (!appearanceOptionalKeys.includes('orientation') && next.orientation) {
             next.orientation = undefined;
             changed = true;
@@ -116,10 +112,6 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         }
         if (appearanceOptionalKeys.includes('palette') && (!next.palette || !next.palette.length)) {
             next.palette = ChartPalettes[0].colors;
-            changed = true;
-        }
-        if (!appearanceOptionalKeys.includes('donutHole') && next.donutHole) {
-            next.donutHole = undefined;
             changed = true;
         }
         if (!appearanceOptionalKeys.includes('customLegend') && next.customLegend) {

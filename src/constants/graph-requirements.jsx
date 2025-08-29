@@ -23,11 +23,11 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.PIE]: {
         required: ['label', 'value'],
-        optional: ['title', 'palette', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'startAngle', 'showPercentages', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.DONUT]: {
         required: ['label', 'value'],
-        optional: ['title', 'palette', 'donutHole', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'startAngle', 'donutHoleSize', 'showPercentages', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.HEATMAP]: {
         required: ['x', 'y', 'value'],
@@ -35,11 +35,11 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.SANKEY]: {
         required: ['source', 'target', 'value'],
-        optional: ['title', 'palette', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'linkColors', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.CHORD]: {
         required: [],
-        optional: ['title', 'palette', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'chordColors', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.VIOLIN]: {
         required: ['x', 'y'],
@@ -63,7 +63,7 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.SUNBURST]: {
         required: ['path', 'value'],
-        optional: ['title', 'palette', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'startAngle', 'donutHoleSize', 'showPercentages', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.WATERFALL]: {
         required: ['category', 'value'],
