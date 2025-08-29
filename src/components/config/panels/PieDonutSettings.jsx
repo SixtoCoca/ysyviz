@@ -1,7 +1,7 @@
 import { Form } from 'react-bootstrap';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
-const PieSettings = ({ config, onChange, isDonut=false }) => {
+const PieSettings = ({ config, onChange, isDonut=false, isSunburst=false }) => {
     const { t } = useLanguage();
     
     const handleChange = (key, value) => {
@@ -50,7 +50,7 @@ const PieSettings = ({ config, onChange, isDonut=false }) => {
             </div>
         )}
         
-        <div className='mt-3'>
+        {!isSunburst && <div className='mt-3'>
             <Form.Check
                 type='checkbox'
                 id='show-percentages-checkbox'
@@ -61,7 +61,7 @@ const PieSettings = ({ config, onChange, isDonut=false }) => {
             <div className='text-muted small'>
                 {t('show_percentages_description')}
             </div>
-        </div>
+        </div>}
     </>;
 };
 

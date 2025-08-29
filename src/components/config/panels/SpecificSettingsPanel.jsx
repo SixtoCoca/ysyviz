@@ -19,7 +19,7 @@ const SpecificSettingsPanel = ({ config, onChange, chartType }) => {
             case ChartTypes.DONUT:
                 return <PieSettings config={config} onChange={onChange} isDonut={true} />;
             case ChartTypes.SUNBURST:
-                return <PieSettings config={config} onChange={onChange} isDonut={true} />;
+                return <PieSettings config={config} onChange={onChange} isDonut={true} isSunburst={true} />;
             default:
                 return null;
         }
