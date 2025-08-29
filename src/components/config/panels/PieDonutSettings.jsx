@@ -10,12 +10,16 @@ const PieSettings = ({ config, onChange, isDonut=false, isSunburst=false }) => {
 
     const getTitle = () => {
         if (isDonut) {
-            return config?.type === 'sunburst' ? t('sunburst_settings') : t('donut_settings');
+            if (isSunburst) {
+                return t('sunburst_settings');
+            }
+            return t('donut_settings');
         }
         return t('pie_settings');
     };
 
     return <>
+        {!isSunburst && 
         <div className='mt-3'>
             <h6>{getTitle()}</h6>
             
@@ -31,9 +35,9 @@ const PieSettings = ({ config, onChange, isDonut=false, isSunburst=false }) => {
             <div className='text-muted small'>
                 {t('start_angle_description')}
             </div>
-        </div>
+        </div>}
         
-        {isDonut && (
+        {isDonut && 
             <div className='mt-3'>
                 <Form.Label>{t('donut_hole_size')}</Form.Label>
                 <Form.Control
@@ -48,9 +52,9 @@ const PieSettings = ({ config, onChange, isDonut=false, isSunburst=false }) => {
                     {t('donut_hole_size_description')}
                 </div>
             </div>
-        )}
+        }
         
-        {!isSunburst && <div className='mt-3'>
+         <div className='mt-3'>
             <Form.Check
                 type='checkbox'
                 id='show-percentages-checkbox'
@@ -61,7 +65,7 @@ const PieSettings = ({ config, onChange, isDonut=false, isSunburst=false }) => {
             <div className='text-muted small'>
                 {t('show_percentages_description')}
             </div>
-        </div>}
+        </div>
     </>;
 };
 

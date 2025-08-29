@@ -63,7 +63,7 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.SUNBURST]: {
         required: ['path', 'value'],
-        optional: ['title', 'palette', 'startAngle', 'donutHoleSize', 'showPercentages', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'palette', 'donutHoleSize', 'showPercentages', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.WATERFALL]: {
         required: ['category', 'value'],
@@ -75,6 +75,6 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.PYRAMID]: {
         required: ['y'],
-        optional: ['pyramid_left', 'pyramid_right', 'title', 'leftColor', 'rightColor', 'opacity', 'customLegend', 'customLegendPosition']
+        optional: ['pyramid_left', 'pyramid_right', 'title', 'leftColor', 'rightColor', 'customLegend', 'customLegendPosition']
     }
 };
