@@ -51,16 +51,35 @@ const ViolinChart = ({ data, config }) => {
         const bwAuto = 1.06 * dev * Math.pow(rows.length, -1 / 5);
         const bandwidth = Number.isFinite(config?.bandwidth) && config.bandwidth > 0 ? config.bandwidth : bwAuto;
 
-        const epanechnikov = k => v => {
-            const u = v / k;
-            return Math.abs(u) <= 1 ? 0.75 * (1 - u * u) / k : 0;
+        const getKernel = (type) => {
+            switch (type || 'epanechnikov') {
+                case 'gaussian':
+                    return k => v => {
+                        const u = v / k;
+                        return Math.exp(-0.5 * u * u) / (k * Math.sqrt(2 * Math.PI));
+                    };
+                case 'triangular':
+                    return k => v => {
+                        const u = v / k;
+                        return Math.abs(u) <= 1 ? (1 - Math.abs(u)) / k : 0;
+                    };
+                default:
+                    return k => v => {
+                        const u = v / k;
+                        return Math.abs(u) <= 1 ? 0.75 * (1 - u * u) / k : 0;
+                    };
+            }
         };
+        
+        const kernel = getKernel(config?.kernelType);
         const kde = (kernel, ts, values) => ts.map(t => [t, d3.mean(values, v => kernel(t - v)) || 0]);
+        
+        const smoothing = config?.smoothing || 0.5;
 
         const groups = isCategorical ? categories : ['_single'];
         const series = groups.map(cat => {
             const vals = isCategorical ? rows.filter(r => r.x === cat).map(r => r.y) : rows.map(r => r.y);
-            return { cat, density: kde(epanechnikov(bandwidth || 1), thresholds, vals) };
+            return { cat, density: kde(kernel(bandwidth || 1), thresholds, vals) };
         });
 
         series.forEach(s => {
@@ -82,7 +101,7 @@ const ViolinChart = ({ data, config }) => {
                         .y0(d => center - w(d[1]))
                         .y1(d => center + w(d[1]))
                         .x(d => y(d[0]))
-                        .curve(d3.curveCatmullRom)
+                        .curve(smoothing > 0.7 ? d3.curveCatmullRom : smoothing > 0.3 ? d3.curveBasis : d3.curveLinear)
                     );
             } else {
                 g.append('path')
@@ -93,7 +112,7 @@ const ViolinChart = ({ data, config }) => {
                         .x0(d => center - w(d[1]))
                         .x1(d => center + w(d[1]))
                         .y(d => y(d[0]))
-                        .curve(d3.curveCatmullRom)
+                        .curve(smoothing > 0.7 ? d3.curveCatmullRom : smoothing > 0.3 ? d3.curveBasis : d3.curveLinear)
                     );
             }
         });

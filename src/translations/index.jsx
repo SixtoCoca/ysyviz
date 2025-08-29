@@ -112,6 +112,14 @@ export const translations = {
         donut_hole_size_description: 'Size of the center hole as percentage of total radius (0-100)',
         show_percentages: 'Show Percentages',
         show_percentages_description: 'Display percentage values on each slice',
+        violin_settings: 'Violin Settings',
+        smoothing: 'Smoothing',
+        smoothing_description: 'Smoothing factor for violin curves (0-1)',
+        kernel_type: 'Kernel Type',
+        kernel_type_description: 'Type of kernel function for density estimation',
+        epanechnikov: 'Epanechnikov',
+        gaussian: 'Gaussian',
+        triangular: 'Triangular',
         
         // Chord chart specific
         chord_data_format: 'Chord Chart Data Format',
@@ -270,6 +278,14 @@ export const translations = {
         donut_hole_size_description: 'Tamaño del agujero central como porcentaje del radio total (0-100)',
         show_percentages: 'Mostrar Porcentajes',
         show_percentages_description: 'Mostrar valores de porcentaje en cada porción',
+        violin_settings: 'Configuración de Violín',
+        smoothing: 'Suavizado',
+        smoothing_description: 'Factor de suavizado para las curvas de violín (0-1)',
+        kernel_type: 'Tipo de Kernel',
+        kernel_type_description: 'Tipo de función kernel para estimación de densidad',
+        epanechnikov: 'Epanechnikov',
+        gaussian: 'Gaussiano',
+        triangular: 'Triangular',
         
         // Chord chart specific
         chord_data_format: 'Formato de Datos del Gráfico de Cuerdas',
