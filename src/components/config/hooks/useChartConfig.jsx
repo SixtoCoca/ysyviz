@@ -17,6 +17,7 @@ export const useChartConfig = () => {
         field_series: '',
         field_pyramid_left: '',
         field_pyramid_right: '',
+        colorMode: 'color',
     });
 
     return [cfg, setCfg];

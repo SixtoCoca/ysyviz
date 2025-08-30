@@ -45,8 +45,10 @@ const BoxplotChart = ({ data, config }) => {
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
-        const color = d3.scaleOrdinal(palette || d3.schemeCategory10).domain(stats.map(s => s.key));
+        const usePalette = config?.colorMode === 'palette' && Array.isArray(config?.palette) && config.palette.length > 0;
+        const color = usePalette ? 
+            d3.scaleOrdinal(config.palette).domain(stats.map(s => s.key)) : 
+            d3.scaleOrdinal([config?.color || '#4682b4']).domain(stats.map(s => s.key));
 
         const x = d3.scaleBand().domain(stats.map(s => s.key)).range([0, innerWidth]).padding(0.3);
 

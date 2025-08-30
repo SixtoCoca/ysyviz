@@ -65,6 +65,7 @@ const App = () => {
       field_pyramid_right: '',
       customLegend: '',
       customLegendPosition: '',
+      colorMode: 'color',
     });
     setIssues([]);
   };

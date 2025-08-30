@@ -43,11 +43,11 @@ export const ChartFieldRequirements = {
     },
     [ChartTypes.VIOLIN]: {
         required: ['x', 'y'],
-        optional: ['title', 'color', 'orientation', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'color', 'palette', 'orientation', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.BOXPLOT]: {
         required: ['group', 'value'],
-        optional: ['title', 'palette', 'customLegend', 'customLegendPosition']
+        optional: ['title', 'color', 'palette', 'customLegend', 'customLegendPosition']
     },
     [ChartTypes.HEXBIN]: {
         required: ['x', 'y'],

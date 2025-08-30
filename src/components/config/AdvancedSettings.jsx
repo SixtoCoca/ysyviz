@@ -60,6 +60,7 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const hasMultipleXValues = Array.isArray(draft.field_x) && draft.field_x.length > 1;
     const hasMultipleGroupValues = Array.isArray(draft.field_group) && draft.field_group.length > 1;
     const supportsSeriesColors = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(type);
+    const supportsColorPalette = ['violin', 'boxplot'].includes(type);
 
     const mappingOptionalKeys = useMemo(
         () => {
@@ -87,8 +88,19 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             if (!keys.includes('color')) keys.push('color');
         }
         
+        if (supportsColorPalette) {
+            if (!keys.includes('colorMode')) keys.push('colorMode');
+            if (draft.colorMode === 'palette') {
+                if (!keys.includes('palette')) keys.push('palette');
+                keys = keys.filter(k => k !== 'color');
+            } else {
+                if (!keys.includes('color')) keys.push('color');
+                keys = keys.filter(k => k !== 'palette');
+            }
+        }
+        
         return keys;
-    }, [optionalFields, supportsSeriesColors, hasSeriesField, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues]);
+    }, [optionalFields, supportsSeriesColors, supportsColorPalette, hasSeriesField, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues, draft.colorMode]);
 
     const columns = useMemo(() => {
         if (!data || typeof data !== 'object') return [];
@@ -149,7 +161,7 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     }, [type, supportsSeriesColors, hasSeriesField]);
 
     useEffect(() => {
-        if (!supportsSeriesColors) return;
+        if (!supportsSeriesColors && !supportsColorPalette) return;
         
         let updated = null;
         if ((hasSeriesField || hasMultipleValues || hasMultipleYValues || hasMultipleXValues || hasMultipleGroupValues) && (!draft.palette || !draft.palette.length)) {
@@ -162,7 +174,7 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             setDraft(updated);
             debouncedCommitRef.current(updated);
         }
-    }, [hasSeriesField, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues, supportsSeriesColors]);
+    }, [hasSeriesField, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues, supportsSeriesColors, supportsColorPalette]);
 
     const handleFieldChange = (name, value) => {
         const fieldKey = name.startsWith('field_') ? name : `field_${name}`;

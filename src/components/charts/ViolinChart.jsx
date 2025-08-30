@@ -82,6 +82,9 @@ const ViolinChart = ({ data, config }) => {
             return { cat, density: kde(kernel(bandwidth || 1), thresholds, vals) };
         });
 
+        const usePalette = config?.colorMode === 'palette' && Array.isArray(config?.palette) && config.palette.length > 0;
+        const colorScale = usePalette ? d3.scaleOrdinal(config.palette).domain(groups) : null;
+
         series.forEach(s => {
             const denMax = d3.max(s.density, d => d[1]) || 0;
             if (denMax === 0) return;
@@ -92,10 +95,12 @@ const ViolinChart = ({ data, config }) => {
             const minFrac = Math.max(0, Math.min(0.08, config?.minWidthFraction || 0));
             const w = d3.scaleLinear().domain([0, denMax]).range([xBand.bandwidth() * minFrac, xBand.bandwidth() / 2]);
 
+            const fillColor = usePalette ? colorScale(key) : (config?.color || '#1f77b4');
+
             if (isHorizontal) {
                 g.append('path')
                     .datum(s.density)
-                    .attr('fill', config?.color || '#69b3a2')
+                    .attr('fill', fillColor)
                     .attr('stroke', 'none')
                     .attr('d', d3.area()
                         .y0(d => center - w(d[1]))
@@ -106,7 +111,7 @@ const ViolinChart = ({ data, config }) => {
             } else {
                 g.append('path')
                     .datum(s.density)
-                    .attr('fill', config?.color || '#69b3a2')
+                    .attr('fill', fillColor)
                     .attr('stroke', 'none')
                     .attr('d', d3.area()
                         .x0(d => center - w(d[1]))

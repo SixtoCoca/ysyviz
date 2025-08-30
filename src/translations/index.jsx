@@ -158,6 +158,11 @@ export const translations = {
         select_dimensions: 'Select dimensions',
         select_columns: 'Select columns',
         multiple_columns_selected: 'Multiple columns selected',
+        color_mode: 'Color Mode',
+        palette_mode: 'Palette Mode',
+        single_color_mode: 'Single Color Mode',
+        palette_mode_description: 'Use different colors for each series',
+        single_color_mode_description: 'Use a single color for all data',
         
         // Field descriptions
         field_descriptions: {
@@ -336,6 +341,11 @@ export const translations = {
         select_dimensions: 'Seleccionar dimensiones',
         select_columns: 'Seleccionar columnas',
         multiple_columns_selected: 'Múltiples columnas seleccionadas',
+        color_mode: 'Modo de Color',
+        palette_mode: 'Modo Paleta',
+        single_color_mode: 'Modo Color Único',
+        palette_mode_description: 'Usar diferentes colores para cada serie',
+        single_color_mode_description: 'Usar un solo color para todos los datos',
         
         // Field descriptions
         field_descriptions: {

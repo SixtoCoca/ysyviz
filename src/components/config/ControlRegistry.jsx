@@ -7,11 +7,13 @@ import OrientationControl from './controls/OrientationControl';
 import LegendPositionControl from './controls/LegendPositionControl';
 import CustomLegendControl from './controls/CustomLegendControl';
 import CustomLegendPositionControl from './controls/CustomLegendPositionControl';
+import ColorModeControl from './controls/ColorModeControl';
 
 export const ControlRegistry = {
     title: TitleControl,
     color: SingleColorControl,
     palette: PaletteControl,
+    colorMode: ColorModeControl,
     donutHole: DonutHoleControl,
     orientation: OrientationControl,
     legendPosition: LegendPositionControl,
