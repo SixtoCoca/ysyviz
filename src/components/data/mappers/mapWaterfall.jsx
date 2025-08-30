@@ -10,9 +10,9 @@ export const mapWaterfall = (raw, cfg) => {
 
     if (!catKey || !valKey) return null;
 
-    const initial = toNumber(cfg?.initialValue) || 0;
-    const includeTotal = !!cfg?.includeTotal;
-    const totalLabel = String(cfg?.totalLabel ?? 'Total');
+    const initialValue = toNumber(cfg?.initialValue);
+    const showFinalValue = cfg?.showFinalValue || false;
+    const totalLabel = 'Total';
 
     const deltas = rows
         .map(r => ({ label: norm(r?.[catKey]), delta: toNumber(r?.[valKey]) }))
@@ -20,19 +20,47 @@ export const mapWaterfall = (raw, cfg) => {
 
     if (!deltas.length) return null;
 
-    let acc = initial;
-    const steps = deltas.map((d, i) => {
+    const steps = [];
+    let acc = 0;
+
+    if (Number.isFinite(initialValue) && initialValue !== 0) {
+        steps.push({ 
+            label: 'Initial', 
+            delta: initialValue, 
+            y0: 0, 
+            y1: initialValue, 
+            type: 'initial', 
+            index: 0 
+        });
+        acc = initialValue;
+    }
+
+    deltas.forEach((d, i) => {
         const y0 = acc;
         acc += d.delta;
         const y1 = acc;
-        return { label: d.label, delta: d.delta, y0, y1, type: 'step', index: i };
+        steps.push({ 
+            label: d.label, 
+            delta: d.delta, 
+            y0, 
+            y1, 
+            type: 'step', 
+            index: steps.length 
+        });
     });
 
-    if (includeTotal) {
-        steps.push({ label: totalLabel, delta: acc, y0: 0, y1: acc, type: 'total', index: steps.length });
+    if (showFinalValue) {
+        steps.push({ 
+            label: totalLabel, 
+            delta: acc, 
+            y0: 0, 
+            y1: acc, 
+            type: 'total', 
+            index: steps.length 
+        });
     }
 
-    return { steps, initial, final: acc };
+    return { steps, initial: initialValue, final: acc };
 };
 
 export default mapWaterfall;

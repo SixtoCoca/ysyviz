@@ -1,23 +1,31 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const SunburstChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { containerRef, dimensions } = useResponsiveChart();
 
     useEffect(() => {
         if (!data || !data.children) return;
         if (!config?.field_path || !config?.field_value) return;
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+        const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+        const { width, height, margin } = chartDims;
+        const { innerWidth, innerHeight } = chartDims;
         const radius = Math.min(innerWidth, innerHeight) / 2;
 
         const svg = d3.select(svgRef.current);
         clearSvg(svg);
 
         const root = d3.hierarchy(data).sum(d => d.value || 0).sort((a, b) => (b.value || 0) - (a.value || 0));
-        const partition = d3.partition().size([2 * Math.PI, radius]);
+        
+        const donutHoleSize = config?.donutHoleSize || 50;
+        const donutHole = donutHoleSize / 100;
+        const innerRadius = radius * donutHole;
+        
+        const partition = d3.partition().size([2 * Math.PI, radius - innerRadius]);
         partition(root);
 
         const nodes = root.descendants().filter(d => d.depth > 0);
@@ -31,8 +39,8 @@ const SunburstChart = ({ data, config }) => {
             .endAngle(d => d.x1)
             .padAngle(1 / radius)
             .padRadius(radius / 2)
-            .innerRadius(d => d.y0)
-            .outerRadius(d => d.y1);
+            .innerRadius(d => d.y0 + innerRadius)
+            .outerRadius(d => d.y1 + innerRadius);
 
         const g = svg
             .attr('width', width)
@@ -54,7 +62,7 @@ const SunburstChart = ({ data, config }) => {
             .attr('stroke-opacity', 0.6);
 
         const defs = g.append('defs');
-        const rMid = d => (d.y0 + d.y1) / 2;
+        const rMid = d => (d.y0 + d.y1) / 2 + innerRadius;
         const toXY = (a, r) => [Math.cos(a - Math.PI / 2) * r, Math.sin(a - Math.PI / 2) * r];
         const sweep = (a0, a1) => (a1 - a0) % (Math.PI * 2) > Math.PI ? 1 : 0;
 
@@ -77,6 +85,7 @@ const SunburstChart = ({ data, config }) => {
 
         const fontSizeBase = typeof config?.fontSize === 'number' ? config.fontSize : 11;
         const format = d3.format(config?.valueFormat || ',');
+        const total = root.value;
 
         const textSel = g.selectAll('text.ncg-sun-text')
             .data(nodes)
@@ -93,6 +102,21 @@ const SunburstChart = ({ data, config }) => {
         tps.append('tspan')
             .attr('dx', '0.25em')
             .text(d => d.value ? ` ${format(d.value)}` : '');
+
+        if (config?.showPercentages) {
+            tps.append('tspan')
+                .attr('dx', '0.25em')
+                .attr('dy', '1.2em')
+                .style('font-size', `${fontSizeBase * 0.8}px`)
+                .style('fill', '#666')
+                .text(d => {
+                    if (d.value && total) {
+                        const percentage = ((d.value / total) * 100).toFixed(1);
+                        return `${percentage}%`;
+                    }
+                    return '';
+                });
+        }
 
         tps.each(function (_, i) {
             const path = g.select(`#sunlabel-${i}`).node();
@@ -111,20 +135,20 @@ const SunburstChart = ({ data, config }) => {
             const offset = Math.max(0, (L - textLength) / 2 - pad);
             textEl.attr('startOffset', offset);
         });
-    }, [data, config]);
+        
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+          drawCustomLegend(g, config.customLegend, customPos.x - innerWidth / 2, customPos.y - innerHeight / 2);
+        }
+    }, [data, config, dimensions]);
 
     if (!data || !data.children) return null;
     if (!config?.field_path || !config?.field_value) return null;
 
     return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height}`}
-            preserveAspectRatio='xMidYMid meet'
-        />
+        <div ref={containerRef} className='w-100 h-100'>
+            <svg ref={svgRef} className='w-100 h-100' />
+        </div>
     );
 };
 

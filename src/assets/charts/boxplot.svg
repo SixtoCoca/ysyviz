@@ -1,8 +1,1 @@
-<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="28" y="32" width="40" height="32" rx="4" fill="currentColor" fill-opacity="0.2" stroke="currentColor" stroke-width="4"/>
-  <line x1="48" y1="20" x2="48" y2="32" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-  <line x1="48" y1="64" x2="48" y2="76" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-  <line x1="34" y1="48" x2="62" y2="48" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-  <line x1="34" y1="20" x2="62" y2="20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-  <line x1="34" y1="76" x2="62" y2="76" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-</svg>
+<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'><g fill='none' stroke='#6b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='87.04' y='92.16' width='81.92' height='97.28' fill='#cdeac0'/><line x1='128.0' y1='66.56' x2='128.0' y2='92.16'/><line x1='128.0' y1='189.44' x2='128.0' y2='215.04'/><line x1='65.04' y1='66.56' x2='190.96' y2='66.56'/><line x1='65.04' y1='215.04' x2='190.96' y2='215.04'/><line x1='87.04' y1='143.36' x2='168.96' y2='143.36'/><circle cx='82.0' cy='48.56' r='3' fill='#c7d2fe' stroke='none'/><circle cx='182.0' cy='233.04' r='3' fill='#c7d2fe' stroke='none'/></g></svg>

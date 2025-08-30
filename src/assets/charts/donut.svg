@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-<circle cx="64" cy="64" r="40" fill="none" stroke="#FFA552" stroke-width="18" stroke-dasharray="120 40 60 200"/>
-<circle cx="64" cy="64" r="40" fill="none" stroke="#4DC4A6" stroke-width="18" stroke-dasharray="0 120 40 220"/>
-<circle cx="64" cy="64" r="40" fill="none" stroke="#9C8ADE" stroke-width="18" stroke-dasharray="0 160 20 200"/>
-</svg>
+<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'><g fill='none' stroke='#6b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M 178.00 128.00 A 50 50 0 0 1 128.00 178.00 L 128.00 218.00 A 90 90 0 0 0 218.00 128.00 Z' fill='#a8dadc' stroke='#6b7280'/><path d='M 128.00 178.00 A 50 50 0 0 1 87.55 157.39 L 55.19 180.90 A 90 90 0 0 0 128.00 218.00 Z' fill='#fde2b9' stroke='#6b7280'/><path d='M 87.55 157.39 A 50 50 0 0 1 87.55 98.61 L 55.19 75.10 A 90 90 0 0 0 55.19 180.90 Z' fill='#cdeac0' stroke='#6b7280'/><path d='M 87.55 98.61 A 50 50 0 0 1 112.55 80.45 L 100.19 42.40 A 90 90 0 0 0 55.19 75.10 Z' fill='#c7d2fe' stroke='#6b7280'/><path d='M 112.55 80.45 A 50 50 0 0 1 178.00 128.00 L 218.00 128.00 A 90 90 0 0 0 100.19 42.40 Z' fill='#fbcfe8' stroke='#6b7280'/></g></svg>

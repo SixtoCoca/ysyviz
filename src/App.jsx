@@ -1,9 +1,12 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { Row, Col, Card, Button, Nav, Tab } from 'react-bootstrap';
 import html2canvas from 'html2canvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
+import { useLanguage } from './contexts/LanguageContext';
+import LanguageSelector from './components/interface/LanguageSelector';
+import useIsMobile from './hooks/useIsMobile';
 
 import BarChart from './components/charts/BarChart';
 import LineChart from './components/charts/LineChart';
@@ -21,6 +24,7 @@ import TreemapChart from './components/charts/TreemapChart';
 import SunburstChart from './components/charts/SunburstChart';
 import WaterfallChart from './components/charts/WaterfallChart';
 import CalendarHeatmapChart from './components/charts/CalendarHeatmapChart';
+import PyramidChart from './components/charts/PyramidChart';
 
 import DataUploader from './components/interface/DataUploader';
 import { useChartConfig } from './components/config/hooks/useChartConfig';
@@ -34,11 +38,47 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 const App = () => {
+  const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [type, setType] = useState(null);
   const [data, setData] = useState(null);
   const [cfg, setCfg] = useChartConfig();
   const [issues, setIssues] = useState([]);
   const chartRef = useRef();
+
+  const resetConfiguration = () => {
+    setCfg({
+      title: '',
+      type: '',
+      color: '#4682b4',
+      field_x: '',
+      field_y: '',
+      field_r: '',
+      field_label: '',
+      field_value: '',
+      field_category: '',
+      field_group: '',
+      field_source: '',
+      field_target: '',
+      field_series: '',
+      field_pyramid_left: '',
+      field_pyramid_right: '',
+      customLegend: '',
+      customLegendPosition: '',
+      colorMode: 'color',
+    });
+    setIssues([]);
+  };
+
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    resetConfiguration();
+  };
+
+  const handleDataChange = (newData) => {
+    setData(newData);
+    resetConfiguration();
+  };
 
   const isFilled = v => {
     if (Array.isArray(v)) return v.length > 0;
@@ -51,8 +91,9 @@ const App = () => {
     const req = ChartFieldRequirements?.[type]?.required || [];
     if (req.length === 0) return true;
     return req.every(key => {
-      const candidate = cfg?.[`field_${key}`] ?? cfg?.[key];
-      return isFilled(candidate);
+      if (key === 'dimensions') return isFilled(cfg?.dimensions);
+      const fieldKey = key.startsWith('field_') ? key : `field_${key}`;
+      return isFilled(cfg?.[fieldKey]);
     });
   }, [type, cfg]);
 
@@ -85,10 +126,11 @@ const App = () => {
     treemap: <TreemapChart {...chartProps} />,
     sunburst: <SunburstChart {...chartProps} />,
     waterfall: <WaterfallChart {...chartProps} />,
-    calendar: <CalendarHeatmapChart {...chartProps} />
+    calendar: <CalendarHeatmapChart {...chartProps} />,
+    pyramid: <PyramidChart {...chartProps} />
   };
 
-  const handleDownload = async () => {
+  const handleDownloadPNG = async () => {
     if (!chartRef.current) return;
     const canvas = await html2canvas(chartRef.current, { backgroundColor: 'white', scale: 2 });
     const link = document.createElement('a');
@@ -97,12 +139,62 @@ const App = () => {
     link.click();
   };
 
+  const handleDownloadSVG = async () => {
+    if (!chartRef.current) return;
+    
+    const title = cfg.title || 'Chart';
+    
+    try {
+      const canvas = await html2canvas(chartRef.current, { 
+        backgroundColor: 'white', 
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const svgData = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+          <defs>
+            <style>
+              .title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #333; }
+            </style>
+          </defs>
+          <text x="50%" y="30" text-anchor="middle" class="title">${title}</text>
+          <image href="${canvas.toDataURL()}" width="100%" height="100%" />
+        </svg>
+      `;
+      
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const svgUrl = URL.createObjectURL(svgBlob);
+      
+      const link = document.createElement('a');
+      link.download = `${title}.svg`;
+      link.href = svgUrl;
+      link.click();
+      
+      URL.revokeObjectURL(svgUrl);
+    } catch (error) {
+      console.error('Error generating SVG:', error);
+    }
+  };
+
   const hasErrors = Array.isArray(issues) && issues.some(i => i.level === 'error');
+
+  useEffect(() => {
+    if (hasErrors && enableValidation && type) {
+      toast.error(t('error_rendering_chart'));
+    }
+  }, [hasErrors, enableValidation, type, t]);
 
   return (
     <div className='min-vh-100 d-flex flex-column'>
       <header className='logo-header'>
-        <img src='/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' />
+        <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
+          <img src='/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' />
+          <div className='position-absolute end-0'>
+            <LanguageSelector />
+          </div>
+        </div>
       </header>
 
       <div className='flex-grow-1 d-flex'>
@@ -111,10 +203,15 @@ const App = () => {
             <Col md={3} className='sidebar px-0 d-flex flex-column'>
               <Nav variant='tabs' className='flex-column p-3 gap-2 flex-grow-1'>
                 <Nav.Item>
-                  <Nav.Link eventKey='upload' className='text-center'>Upload File</Nav.Link>
+                  <Nav.Link eventKey='upload' className='text-center'>{t('upload_file')}</Nav.Link>
                 </Nav.Item>
+                {isMobile && (
+                  <Nav.Item>
+                    <Nav.Link eventKey='config' className='text-center'>{t('configuration')}</Nav.Link>
+                  </Nav.Item>
+                )}
                 <Nav.Item>
-                  <Nav.Link eventKey='preview' className='text-center'>Preview & Download</Nav.Link>
+                  <Nav.Link eventKey='preview' className='text-center'>{t('preview_download')}</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
@@ -125,55 +222,122 @@ const App = () => {
                   <Card className='h-100'>
                     <Card.Body>
                       <h4 className='mb-3 text-center'>Upload CSV/XLSX</h4>
-                      <DataUploader type={type} setData={setData} />
+                      <DataUploader type={type} setData={handleDataChange} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
 
+                {isMobile && (
+                  <Tab.Pane eventKey='config' className='h-100'>
+                    <Card className='h-100'>
+                      <Card.Body>
+                        <ConfigWithValidation
+                          cfg={cfg}
+                          setCfg={setCfg}
+                          type={type}
+                          setType={handleTypeChange}
+                          setData={handleDataChange}
+                          data={data}
+                          enableValidation={enableValidation}
+                          issues={issues}
+                          onClearIssues={() => setIssues([])}
+                        />
+                      </Card.Body>
+                    </Card>
+                  </Tab.Pane>
+                )}
+
                 <Tab.Pane eventKey='preview' className='h-100'>
                   <Card className='h-100 position-relative'>
-                    {enableValidation && chartData && !hasErrors && (
-                      <Button
-                        variant='light'
-                        className='position-absolute top-0 end-0 m-2 d-flex align-items-center gap-2 shadow-sm'
-                        onClick={handleDownload}
-                      >
-                        <FontAwesomeIcon icon={faDownload} />
-                        Download
-                      </Button>
+                    {!isMobile && enableValidation && chartData && !hasErrors && (
+                      <div className='position-absolute top-0 end-0 m-2 d-flex gap-2'>
+                        <Button
+                          variant='light'
+                          className='d-flex align-items-center gap-2 shadow-sm'
+                          onClick={handleDownloadPNG}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                          {t('png')}
+                        </Button>
+                        <Button
+                          variant='light'
+                          className='d-flex align-items-center gap-2 shadow-sm'
+                          onClick={handleDownloadSVG}
+                        >
+                          <FontAwesomeIcon icon={faDownload} />
+                          {t('svg')}
+                        </Button>
+                      </div>
                     )}
                     <Card.Body className='h-100'>
-                      <Row className='h-100'>
-                        <Col md={4} className='border-end pe-3 d-flex flex-column'>
-                          <ConfigWithValidation
-                            cfg={cfg}
-                            setCfg={setCfg}
-                            type={type}
-                            setType={setType}
-                            setData={setData}
-                            data={data}
-                            enableValidation={enableValidation}
-                            issues={issues}
-                            onClearIssues={() => setIssues([])}
-                          />
-                        </Col>
-                        <Col md={8} className='ps-3'>
-                          <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100'>
-                            <h4 className='mb-4 text-center'>
-                              {cfg.title || (type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Chart` : 'Chart Preview')}
-                            </h4>
-                            <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
-                              <ChartPreviewMessage
-                                type={type}
-                                hasRequiredFields={hasRequiredFields}
-                                hasErrors={hasErrors}
-                                chartData={chartData}
-                              />
-                              {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
-                            </div>
+                      {isMobile ? (
+                        <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100 chart-container'>
+                          <h4 className='mb-4 text-center'>
+                            {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
+                          </h4>
+                          <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
+                            <ChartPreviewMessage
+                              type={type}
+                              hasRequiredFields={hasRequiredFields}
+                              hasErrors={hasErrors}
+                              chartData={chartData}
+                            />
+                            {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
                           </div>
-                        </Col>
-                      </Row>
+                          {enableValidation && chartData && !hasErrors && (
+                            <div className='mt-4 d-flex justify-content-center gap-2'>
+                              <Button
+                                variant='light'
+                                className='d-flex align-items-center gap-2 shadow-sm'
+                                onClick={handleDownloadPNG}
+                              >
+                                <FontAwesomeIcon icon={faDownload} />
+                                {t('png')}
+                              </Button>
+                              <Button
+                                variant='light'
+                                className='d-flex align-items-center gap-2 shadow-sm'
+                                onClick={handleDownloadSVG}
+                              >
+                                <FontAwesomeIcon icon={faDownload} />
+                                {t('svg')}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Row className='h-100'>
+                          <Col md={4} className='border-end pe-3 d-flex flex-column'>
+                            <ConfigWithValidation
+                              cfg={cfg}
+                              setCfg={setCfg}
+                              type={type}
+                              setType={handleTypeChange}
+                              setData={handleDataChange}
+                              data={data}
+                              enableValidation={enableValidation}
+                              issues={issues}
+                              onClearIssues={() => setIssues([])}
+                            />
+                          </Col>
+                          <Col md={8} className='ps-3'>
+                            <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100'>
+                              <h4 className='mb-4 text-center'>
+                                {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
+                              </h4>
+                              <div className='w-100 d-flex justify-content-center align-items-center min-h-400 chart-container'>
+                                <ChartPreviewMessage
+                                  type={type}
+                                  hasRequiredFields={hasRequiredFields}
+                                  hasErrors={hasErrors}
+                                  chartData={chartData}
+                                />
+                                {!hasErrors && hasRequiredFields && type && chartData && chartComponents[type]}
+                              </div>
+                            </div>
+                          </Col>
+                        </Row>
+                      )}
                     </Card.Body>
                   </Card>
                 </Tab.Pane>

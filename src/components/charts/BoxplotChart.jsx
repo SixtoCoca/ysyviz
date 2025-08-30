@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const BoxplotChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { containerRef, dimensions } = useResponsiveChart();
 
     useEffect(() => {
         const rows = Array.isArray(data?.values) ? data.values : [];
@@ -36,14 +38,17 @@ const BoxplotChart = ({ data, config }) => {
             return { key, values, q1, q2, q3, lo, hi, lowFence, highFence };
         });
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+        const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+        const { width, height, margin } = chartDims;
+        const { innerWidth, innerHeight } = chartDims;
 
         const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
         clearSvg(svg);
 
-        const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
-        const color = d3.scaleOrdinal(palette || d3.schemeCategory10).domain(stats.map(s => s.key));
+        const usePalette = config?.colorMode === 'palette' && Array.isArray(config?.palette) && config.palette.length > 0;
+        const color = usePalette ? 
+            d3.scaleOrdinal(config.palette).domain(stats.map(s => s.key)) : 
+            d3.scaleOrdinal([config?.color || '#4682b4']).domain(stats.map(s => s.key));
 
         const x = d3.scaleBand().domain(stats.map(s => s.key)).range([0, innerWidth]).padding(0.3);
 
@@ -104,18 +109,20 @@ const BoxplotChart = ({ data, config }) => {
             .attr('y1', d => y(d.q2))
             .attr('y2', d => y(d.q2))
             .attr('stroke', '#111');
-    }, [data, config]);
+            
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+          drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
+        }
+    }, [data, config, dimensions]);
 
     const rows = Array.isArray(data?.values) ? data.values : [];
     if (!rows.length) return null;
 
     return (
-        <svg
-            ref={svgRef}
-            className="w-100 d-block"
-            width={chartDimensions.width}
-            height={chartDimensions.height}
-        />
+        <div ref={containerRef} className='w-100 h-100'>
+            <svg ref={svgRef} className='w-100 h-100' />
+        </div>
     );
 };
 

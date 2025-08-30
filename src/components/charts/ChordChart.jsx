@@ -2,67 +2,96 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { chord as d3Chord, ribbon as d3Ribbon } from 'd3-chord';
 import { arc as d3Arc } from 'd3-shape';
-import { chartDimensions, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
 
 const ChordChart = ({ data, config }) => {
-    const svgRef = useRef();
+  const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
-    useEffect(() => {
-        if (!data?.matrix?.length || !data?.labels?.length) return;
+  useEffect(() => {
+    if (!data?.matrix?.length) return;
 
-        const { width, height } = chartDimensions;
-        const margin = 20;
-        const innerRadius = Math.min(width, height) * 0.5 - 100;
-        const outerRadius = innerRadius + 10;
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
-        const svg = d3.select(svgRef.current).attr('width', width).attr('height', height);
-        clearSvg(svg);
+    const svg = d3.select(svgRef.current);
+    clearSvg(svg);
 
-        const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`);
+    const g = svg
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', `translate(${width / 2},${height / 2})`);
 
-        const chords = d3Chord().padAngle(0.05).sortSubgroups(d3.descending)(data.matrix);
+    const radius = Math.min(innerWidth, innerHeight) / 2 - 40;
 
-        const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
-        const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
+    const chord = d3Chord()
+      .padAngle(0.05)
+      .sortSubgroups(d3.descending);
 
-        const arc = d3Arc().innerRadius(innerRadius).outerRadius(outerRadius);
-        const ribbon = d3Ribbon().radius(innerRadius);
+    const arc = d3Arc()
+      .innerRadius(radius)
+      .outerRadius(radius + 20);
 
-        g.append('g')
-            .selectAll('path')
-            .data(chords.groups)
-            .join('path')
-            .attr('fill', d => color(d.index))
-            .attr('stroke', d => d3.rgb(color(d.index)).darker())
-            .attr('d', arc);
+    const ribbon = d3Ribbon()
+      .radius(radius);
 
-        g.append('g')
-            .selectAll('text')
-            .data(chords.groups)
-            .join('text')
-            .attr('dy', '.35em')
-            .attr('transform', d => {
-                const angle = (d.startAngle + d.endAngle) / 2;
-                const rotate = (angle * 180) / Math.PI - 90;
-                const translate = `translate(${outerRadius + 5})`;
-                return `rotate(${rotate}) ${translate} ${angle > Math.PI ? 'rotate(180)' : ''}`;
-            })
-            .attr('text-anchor', d => (d.startAngle + d.endAngle) / 2 > Math.PI ? 'end' : 'start')
-            .text(d => data.labels[d.index])
-            .style('font-size', '10px');
+    const chords = chord(data.matrix);
 
-        g.append('g')
-            .selectAll('path')
-            .data(chords)
-            .join('path')
-            .attr('d', ribbon)
-            .attr('fill', d => color(d.target.index))
-            .attr('stroke', d => d3.rgb(color(d.target.index)).darker());
-    }, [data, config]);
+    const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
+    const color = palette ? d3.scaleOrdinal(palette) : d3.scaleOrdinal(d3.schemeCategory10);
 
-    if (!data?.matrix?.length || !data?.labels?.length) return null;
+    const useNodeColors = config?.chordColors !== 'gray';
 
-    return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
+    g.selectAll('path')
+      .data(chords)
+      .join('path')
+      .attr('d', ribbon)
+      .attr('fill', d => useNodeColors ? color(d.source.index) : '#808080')
+      .attr('opacity', 0.7)
+      .attr('stroke', 'white')
+      .attr('stroke-width', 1);
+
+    g.selectAll('g')
+      .data(chords.groups)
+      .join('g')
+      .append('path')
+      .attr('d', arc)
+      .attr('fill', (d, i) => color(i))
+      .attr('stroke', 'white')
+      .attr('stroke-width', 2);
+
+    if (data.labels) {
+      g.selectAll('text')
+        .data(chords.groups)
+        .join('text')
+        .each(function(d) {
+          const centroid = arc.centroid(d);
+          d3.select(this)
+            .attr('x', centroid[0])
+            .attr('y', centroid[1])
+            .attr('dy', '0.35em')
+            .attr('text-anchor', 'middle')
+            .style('font-size', '12px')
+            .text(data.labels[d.index]);
+        });
+    }
+    
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+      drawCustomLegend(g, config.customLegend, customPos.x - innerWidth / 2, customPos.y - innerHeight / 2);
+    }
+  }, [data, config, dimensions]);
+
+  if (!data?.matrix?.length) return null;
+
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default ChordChart;

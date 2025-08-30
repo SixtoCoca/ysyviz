@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <path d="M64 12 
-           C58 24, 54 36, 60 48 
-           C52 56, 52 72, 60 80 
-           C48 92, 48 108, 64 116 
-           C80 108, 80 92, 68 80 
-           C76 72, 76 56, 68 48 
-           C74 36, 70 24, 64 12 Z" 
-        fill="#4DC4A6"/>
-</svg>
+<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'><g fill='none' stroke='#6b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M 128.00 199.68 C 58.88 162.56, 51.20 125.44, 128.00 51.20 C 204.80 125.44, 197.12 162.56, 128.00 199.68 Z' fill='#c7d2fe' stroke='#6b7280'/><line x1='128.00' y1='51.20' x2='128.00' y2='199.68'/></g></svg>

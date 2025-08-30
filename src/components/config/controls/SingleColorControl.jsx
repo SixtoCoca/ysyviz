@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { CirclePicker } from 'react-color';
 import { ChartColors } from '../../../constants/chart-colors';
+import '../ColorSelector.css';
 
-const SingleColorControl = ({ value, onChange }) => {
+const SingleColorControl = ({ value, onChange, label='Color' }) => {
     const [open, setOpen] = useState(false);
+    const [openUpward, setOpenUpward] = useState(false);
     const wrapperRef = useRef(null);
 
     const palette = useMemo(() => ChartColors, []);
@@ -19,17 +21,29 @@ const SingleColorControl = ({ value, onChange }) => {
         return () => document.removeEventListener('mousedown', handler);
     }, []);
 
+    const handleToggle = () => {
+        if (!open && wrapperRef.current) {
+            const rect = wrapperRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const popoverHeight = 200;
+            
+            setOpenUpward(spaceBelow < popoverHeight && spaceAbove > spaceBelow);
+        }
+        setOpen(v => !v);
+    };
+
     return <>
         <div ref={wrapperRef} className='color-selector'>
-            <Form.Label>Color</Form.Label>
+            <Form.Label>{label}</Form.Label>
             <div
                 className='swatch swatch--single'
-                onClick={() => setOpen(v => !v)}
+                onClick={handleToggle}
                 title='Pick color'
                 style={{ background: singleValue }}
             />
             {open &&
-                <div className='popover'>
+                <div className={`popover ${openUpward ? 'popover--upward' : ''}`}>
                     <div className='popover__content'>
                         <CirclePicker
                             colors={palette}

@@ -15,7 +15,7 @@ export const mapSankey = (raw, cfg) => {
 
     const pairTotals = new Map();
     for (const d of triples) {
-        const k = `${d.source}→${d.target}`;
+        const k = `${d.source}->${d.target}`;
         pairTotals.set(k, (pairTotals.get(k) || 0) + d.value);
     }
 
@@ -23,8 +23,8 @@ export const mapSankey = (raw, cfg) => {
     const seen = new Set();
     for (const [k, v] of pairTotals.entries()) {
         if (seen.has(k)) continue;
-        const [s, t] = k.split('→');
-        const revKey = `${t}→${s}`;
+        const [s, t] = k.split('->');
+        const revKey = `${t}->${s}`;
         const rev = pairTotals.get(revKey) || 0;
         if (rev > 0) {
             if (v > rev) {
@@ -42,12 +42,12 @@ export const mapSankey = (raw, cfg) => {
 
     if (kept.size === 0) return null;
 
-    const names = Array.from(new Set(Array.from(kept.keys()).flatMap(k => k.split('→'))));
+    const names = Array.from(new Set(Array.from(kept.keys()).flatMap(k => k.split('->'))));
     const index = new Map(names.map((n, i) => [n, i]));
 
     const nodes = names.map(n => ({ name: n }));
     const links = Array.from(kept.entries()).map(([k, v]) => {
-        const [s, t] = k.split('→');
+        const [s, t] = k.split('->');
         return { source: index.get(s), target: index.get(t), value: v };
     });
 

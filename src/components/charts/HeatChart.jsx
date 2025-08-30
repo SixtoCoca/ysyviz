@@ -1,76 +1,97 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
-import { toNumber } from '../data/utils';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { drawLinearLegend } from './interface/colorLegend';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
-const HeatmapChart = ({ data, config }) => {
-    const svgRef = useRef();
+const HeatChart = ({ data, config }) => {
+  const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
-    useEffect(() => {
-        if (!data?.values?.length) return;
+  useEffect(() => {
+    if (!data?.values?.length) return;
 
-        const { width, height, margin } = chartDimensions;
-        const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
-        const svg = d3.select(svgRef.current);
-        clearSvg(svg);
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
-        const g = svg
-            .attr('width', width)
-            .attr('height', height + 60)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
+    const svg = d3.select(svgRef.current);
+    clearSvg(svg);
 
-        const xValues = Array.from(new Set(data.values.map(d => d.x)));
-        const yValues = Array.from(new Set(data.values.map(d => d.y)));
+    const g = svg
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        const x = d3.scaleBand().domain(xValues).range([0, innerWidth]).padding(0.05);
-        const y = d3.scaleBand().domain(yValues).range([0, innerHeight]).padding(0.05);
+    const xCategories = Array.from(new Set(data.values.map(d => d.x)));
+    const yCategories = Array.from(new Set(data.values.map(d => d.y)));
 
-        const minVal = d3.min(data.values, d => toNumber(d.value)) ?? 0;
-        const maxVal = d3.max(data.values, d => toNumber(d.value)) ?? 1;
+    const x = d3.scaleBand()
+      .domain(xCategories)
+      .range([0, innerWidth])
+      .padding(0.1);
 
-        const base = config?.color || '#5563DE';
-        const color = d3.scaleSequential().domain([minVal, maxVal]).interpolator(t => d3.interpolateRgb('#ffffff', base)(t));
+    const y = d3.scaleBand()
+      .domain(yCategories)
+      .range([0, innerHeight])
+      .padding(0.1);
 
-        g.append('g').attr('transform', `translate(0,${innerHeight})`).call(d3.axisBottom(x));
-        g.append('g').call(d3.axisLeft(y));
+    const values = data.values.map(d => d.value);
+    const minVal = d3.min(values);
+    const maxVal = d3.max(values);
+    const baseColor = config?.color || '#5563DE';
+    const color = d3.scaleSequential()
+      .domain([minVal, maxVal])
+      .interpolator(t => d3.interpolateRgb('#ffffff', baseColor)(t));
 
-        g.selectAll('rect.cell')
-            .data(data.values)
-            .join('rect')
-            .attr('class', 'cell')
-            .attr('x', d => x(d.x))
-            .attr('y', d => y(d.y))
-            .attr('width', x.bandwidth())
-            .attr('height', y.bandwidth())
-            .attr('fill', d => color(toNumber(d.value)));
+    g.selectAll('rect')
+      .data(data.values)
+      .join('rect')
+      .attr('x', d => x(d.x))
+      .attr('y', d => y(d.y))
+      .attr('width', x.bandwidth())
+      .attr('height', y.bandwidth())
+      .attr('fill', d => color(d.value))
+      .attr('stroke', 'white')
+      .attr('stroke-width', 1);
 
-        const legendWidth = 200;
-        const legendHeight = 10;
-        const legendX = (width - legendWidth) / 2;
-        const legendY = height + 20;
+    g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(x));
 
-        drawLinearLegend(svg, {
-            x: legendX,
-            y: legendY,
-            width: legendWidth,
-            height: legendHeight,
-            scale: v => color(v),
-            domain: [minVal, maxVal],
-            ticks: 5,
-            gradientId: 'heatmap-gradient'
-        });
-    }, [data, config]);
+    g.append('g')
+      .call(d3.axisLeft(y));
 
-    return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height + 60}
-        />
-    );
+    const legendWidth = 200;
+    const legendHeight = 10;
+    const legendX = (innerWidth - legendWidth) / 2;
+    const legendY = innerHeight + 20;
+
+    drawLinearLegend(svg, {
+      x: margin.left + legendX,
+      y: margin.top + legendY,
+      width: legendWidth,
+      height: legendHeight,
+      scale: v => color(v),
+      domain: [minVal, maxVal],
+      ticks: 5,
+      gradientId: 'heatmap-gradient'
+    });
+    
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, false, 0);
+      drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
+    }
+  }, [data, config, dimensions]);
+
+  if (!data?.values?.length) return null;
+
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
-export default HeatmapChart;
+export default HeatChart;

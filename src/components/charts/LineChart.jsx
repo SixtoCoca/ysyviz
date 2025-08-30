@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, getInnerSize, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { getLegendPosition } from './interface/legendPosition';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
 const LineChart = ({ data, config, filled = false }) => {
   const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
   useEffect(() => {
     const series = Array.isArray(data?.series) && data.series.length
@@ -12,8 +15,9 @@ const LineChart = ({ data, config, filled = false }) => {
         ? [{ id: 'series', values: data.values }]
         : [];
 
-    const { width, height, margin } = chartDimensions;
-    const { innerWidth, innerHeight } = getInnerSize(chartDimensions);
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
     const svg = d3.select(svgRef.current);
     clearSvg(svg);
@@ -72,6 +76,8 @@ const LineChart = ({ data, config, filled = false }) => {
       .y0(() => y(0))
       .y1(d => y(Number(d.y)));
 
+    const hasMultipleSeries = data?.hasSeries && data?.seriesNames?.length > 1;
+
     series.forEach((s, i) => {
       const col = palette ? color(i) : baseColor;
 
@@ -96,11 +102,52 @@ const LineChart = ({ data, config, filled = false }) => {
         .attr('cx', d => xPos(d))
         .attr('cy', d => y(Number(d.y)))
         .attr('r', 3)
-        .attr('fill', col);
+        .attr('fill', col)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1);
     });
-  }, [data, config, filled]);
 
-  return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
+    if (hasMultipleSeries && data.seriesNames) {
+      const legendPos = getLegendPosition(config?.legendPosition, innerWidth, innerHeight);
+      if (legendPos) {
+        const legend = g.append('g')
+          .attr('class', 'legend')
+          .attr('transform', `translate(${legendPos.x}, ${legendPos.y})`);
+
+        const legendItems = legend.selectAll('.legend-item')
+          .data(data.seriesNames)
+          .join('g')
+          .attr('class', 'legend-item')
+          .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+
+        legendItems.append('line')
+          .attr('x1', 0)
+          .attr('x2', 15)
+          .attr('y1', 0)
+          .attr('y2', 0)
+          .attr('stroke', (d, i) => palette ? color(i) : baseColor)
+          .attr('stroke-width', 2);
+
+        legendItems.append('text')
+          .attr('x', 20)
+          .attr('y', 0)
+          .attr('dy', '0.35em')
+          .style('font-size', '12px')
+          .text(d => d);
+      }
+    }
+    
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, innerWidth, innerHeight, hasMultipleSeries && data.seriesNames, data.seriesNames?.length || 0);
+      drawCustomLegend(g, config.customLegend, customPos.x, customPos.y);
+    }
+  }, [data, config, filled, dimensions]);
+
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default LineChart;

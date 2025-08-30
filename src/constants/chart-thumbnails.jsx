@@ -10,5 +10,32 @@ import chord from '../assets/charts/chord.svg';
 import sankey from '../assets/charts/sankey.svg';
 import violin from '../assets/charts/violin.svg';
 import boxplot from '../assets/charts/boxplot.svg';
+import hexbin from '../assets/charts/hexbin.svg';
+import parallel from '../assets/charts/parallel.svg';
+import treemap from '../assets/charts/treemap.svg';
+import sunburst from '../assets/charts/sunburst.svg';
+import waterfall from '../assets/charts/waterfall.svg';
+import calendar from '../assets/charts/calendar.svg';
+import pyramid from '../assets/charts/pyramid.svg';
 
-export const ChartThumbnails = { bar, line, area, pie, donut, scatter, bubble, heatmap, chord, sankey, violin, boxplot };
+export const ChartThumbnails = {
+    bar,
+    line,
+    area,
+    pie,
+    donut,
+    scatter,
+    bubble,
+    heatmap,
+    chord,
+    sankey,
+    violin,
+    boxplot,
+    hexbin,
+    parallel,
+    treemap,
+    sunburst,
+    waterfall,
+    calendar,
+    pyramid
+};

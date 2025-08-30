@@ -1,80 +1,99 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, clearSvg } from './interface/chartLayout';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
+import { drawCustomLegend, getCustomLegendPosition } from './interface/customLegend';
 
-const PieChart = ({ data, isDonut = false, config }) => {
+const PieChart = ({ data, config, isDonut = false }) => {
   const svgRef = useRef();
+  const { containerRef, dimensions } = useResponsiveChart();
 
   useEffect(() => {
-    if (!data?.values?.length) {
-      return;
-    }
+    if (!data?.values?.length) return;
 
-    const { width, height } = chartDimensions;
-    const radius = Math.min(width, height) / 2;
+    const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+    const { width, height, margin } = chartDims;
+    const { innerWidth, innerHeight } = chartDims;
 
     const svg = d3.select(svgRef.current);
     clearSvg(svg);
 
-    const container = svg
+    const g = svg
       .attr('width', width)
       .attr('height', height)
       .append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`);
 
+    const radius = Math.min(innerWidth, innerHeight) / 2;
+    const donutHoleSize = config?.donutHoleSize || 50;
+    const donutHole = donutHoleSize / 100;
+    const innerRadius = isDonut ? radius * donutHole : 0;
+    const startAngle = (config?.startAngle || 0) * Math.PI / 180;
+
+    const pie = d3.pie()
+      .value(d => d.value)
+      .startAngle(startAngle)
+      .sort(null);
+
+    const arc = d3.arc()
+      .innerRadius(innerRadius)
+      .outerRadius(radius);
+
     const palette = Array.isArray(config?.palette) && config.palette.length ? config.palette : null;
-    const color = d3.scaleOrdinal(palette || d3.schemeCategory10);
+    const color = palette ? d3.scaleOrdinal(palette) : d3.scaleOrdinal(d3.schemeCategory10);
 
-    const pie = d3.pie().value(d => d.value);
-    const holePct = typeof config?.donutHole === 'number' ? Math.max(0, Math.min(80, config.donutHole)) : 55;
-    const inner = isDonut ? radius * (holePct / 100) : 0;
-
-    const arcGen = d3.arc().outerRadius(radius - 10).innerRadius(inner);
-    const arcLabel = d3.arc().outerRadius(radius - 40).innerRadius(radius - 40);
-
-    let tooltip = d3.select('body').select('#chart-tooltip');
-    if (tooltip.empty()) {
-      tooltip = d3.select('body').append('div').attr('id', 'chart-tooltip').attr('class', 'chart-tooltip');
-    }
-
-    const pieData = pie(data.values);
-
-    const arcs = container
-      .selectAll('.arc')
-      .data(pieData)
-      .enter()
-      .append('g')
-      .attr('class', 'arc');
-
-    arcs
-      .append('path')
-      .attr('d', arcGen)
+    const arcs = g.selectAll('path')
+      .data(pie(data.values))
+      .join('path')
+      .attr('d', arc)
       .attr('fill', (d, i) => color(i))
-      .on('mouseover', (event, d) => {
-        tooltip.style('visibility', 'visible').text(`${d.data.label}: ${d.data.value}`);
-      })
-      .on('mousemove', event => {
-        tooltip.style('top', `${event.pageY + 6}px`).style('left', `${event.pageX + 8}px`);
-      })
-      .on('mouseout', () => {
-        tooltip.style('visibility', 'hidden');
-      });
+      .attr('stroke', 'white')
+      .attr('stroke-width', 2);
 
-    arcs
-      .append('text')
-      .attr('transform', d => `translate(${arcLabel.centroid(d)})`)
-      .attr('dy', '.35em')
+    const labelRadius = innerRadius + (radius - innerRadius) * 0.6;
+    const labelArc = d3.arc()
+      .innerRadius(labelRadius)
+      .outerRadius(labelRadius);
+
+    const total = d3.sum(data.values, d => d.value);
+
+    g.selectAll('text')
+      .data(pie(data.values))
+      .join('text')
+      .attr('transform', d => `translate(${labelArc.centroid(d)})`)
       .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em')
+      .style('font-size', '12px')
       .text(d => d.data.label);
 
-    return () => {
-      clearSvg(svg);
-    };
-  }, [data, isDonut, config]);
+    if (config?.showPercentages) {
+      g.selectAll('text.percentage')
+        .data(pie(data.values))
+        .join('text')
+        .attr('class', 'percentage')
+        .attr('transform', d => `translate(${labelArc.centroid(d)})`)
+        .attr('text-anchor', 'middle')
+        .attr('dy', '1.5em')
+        .style('font-size', '10px')
+        .style('fill', '#666')
+        .text(d => {
+          const percentage = ((d.data.value / total) * 100).toFixed(1);
+          return `${percentage}%`;
+        });
+    }
+      
+    if (config?.customLegend) {
+      const customPos = getCustomLegendPosition(config, width, height, false, 0);
+      drawCustomLegend(g, config.customLegend, customPos.x - width/2, customPos.y - height/2);
+    }
+  }, [data, config, dimensions, isDonut]);
 
   if (!data?.values?.length) return null;
 
-  return <svg ref={svgRef} className='w-100 d-block' width={chartDimensions.width} height={chartDimensions.height} />;
+  return (
+    <div ref={containerRef} className='w-100 h-100'>
+      <svg ref={svgRef} className='w-100 h-100' />
+    </div>
+  );
 };
 
 export default PieChart;

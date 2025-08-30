@@ -41,9 +41,14 @@
 
 .popover {
     position: absolute;
-    z-index: 10;
+    z-index: 1050;
     top: 48px;
     left: 0;
+}
+
+.popover--upward {
+    top: auto;
+    bottom: 48px;
 }
 
 .popover__content {

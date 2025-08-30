@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { chartDimensions, clearSvg } from './interface/chartLayout';
-import { rowsOf, resolveFieldKey, toNumber } from '../data/utils';
+import { useResponsiveChart, getChartDimensions, clearSvg } from './interface/chartLayout';
 import { drawLinearLegend } from './interface/colorLegend';
+import { getCustomLegendPosition, drawCustomLegend } from './interface/customLegend';
+import { rowsOf, resolveFieldKey, toNumber } from '../data/utils';
 
 const makeColorScale = (cfg, maxVal) => {
     const vMax = Number.isFinite(maxVal) && maxVal > 0 ? maxVal : 1;
@@ -20,6 +21,7 @@ const keyYYYYMMDD = d3.timeFormat('%Y-%m-%d');
 
 const CalendarHeatmapChart = ({ data, config }) => {
     const svgRef = useRef();
+    const { containerRef, dimensions } = useResponsiveChart();
 
     useEffect(() => {
         const rows = rowsOf(data);
@@ -36,7 +38,8 @@ const CalendarHeatmapChart = ({ data, config }) => {
 
         if (!parsed.length) return;
 
-        const { width, height } = chartDimensions;
+        const chartDims = getChartDimensions(dimensions.width, dimensions.height);
+        const { width, height } = chartDims;
 
         const svg = d3.select(svgRef.current);
         clearSvg(svg);
@@ -68,9 +71,9 @@ const CalendarHeatmapChart = ({ data, config }) => {
         const offsetX = (width - calWidth) / 2;
         const offsetY = (height - calHeight) / 2 - 20;
 
+        svg.attr('width', width).attr('height', height);
+
         const g = svg
-            .attr('width', width)
-            .attr('height', height + 40)
             .append('g')
             .attr('transform', `translate(${offsetX},${offsetY})`);
 
@@ -143,19 +146,34 @@ const CalendarHeatmapChart = ({ data, config }) => {
             ticks: 4,
             gradientId: 'calendar-gradient'
         });
-    }, [data, config]);
+        
+        if (config?.customLegend) {
+          const customPos = getCustomLegendPosition(config, width, height, false, 0);
+          let legendX = customPos.x;
+          let legendY = customPos.y;
+          
+          if (customPos.x === 20) {
+            legendX = offsetX + 20;
+          } else if (customPos.x === width - 100) {
+            legendX = offsetX + calWidth - 100;
+          }
+          
+          if (customPos.y === 20) {
+            legendY = offsetY - 30;
+          } else if (customPos.y === height - 100) {
+            legendY = offsetY + calHeight + 30;
+          }
+          
+          drawCustomLegend(svg, config.customLegend, legendX, legendY);
+        }
+    }, [data, config, dimensions]);
 
     if (!data?.values?.length && !Array.isArray(data)) return null;
 
     return (
-        <svg
-            ref={svgRef}
-            className='w-100 d-block'
-            width={chartDimensions.width}
-            height={chartDimensions.height + 40}
-            viewBox={`0 0 ${chartDimensions.width} ${chartDimensions.height + 40}`}
-            preserveAspectRatio='xMidYMid meet'
-        />
+        <div ref={containerRef} className='w-100 h-100'>
+            <svg ref={svgRef} className='w-100 h-100' />
+        </div>
     );
 };
 
