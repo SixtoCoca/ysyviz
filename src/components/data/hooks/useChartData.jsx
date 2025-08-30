@@ -17,6 +17,7 @@ import { mapSunburst } from '../mappers/mapSunburst';
 import { mapWaterfall } from '../mappers/mapWaterfall';
 import { mapCalendarHeatmap } from '../mappers/mapCalendarHeatmap';
 import { mapPyramid } from '../mappers/mapPyramid';
+import { mapMultiValueSeries } from '../mappers/mapMultiValueSeries';
 
 const NullMapper = () => null;
 
@@ -45,6 +46,15 @@ const Mappers = {
 const useChartData = (rawData, chartType, config) => {
     return useMemo(() => {
         if (!rawData || !chartType) return null;
+        
+        const hasMultipleValues = Array.isArray(config?.field_value) && config.field_value.length > 1;
+        const hasMultipleYValues = Array.isArray(config?.field_y) && config.field_y.length > 1;
+        const supportsMultiValue = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(chartType);
+        
+        if ((hasMultipleValues || hasMultipleYValues) && supportsMultiValue) {
+            return mapMultiValueSeries(rawData, config, chartType);
+        }
+        
         const mapper = Mappers[chartType] || NullMapper;
         return mapper(rawData, config);
     }, [rawData, chartType, config]);

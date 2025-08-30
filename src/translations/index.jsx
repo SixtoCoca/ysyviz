@@ -156,6 +156,8 @@ export const translations = {
         
         // Select dimensions
         select_dimensions: 'Select dimensions',
+        select_columns: 'Select columns',
+        multiple_columns_selected: 'Multiple columns selected',
         
         // Field descriptions
         field_descriptions: {
@@ -332,6 +334,8 @@ export const translations = {
         
         // Select dimensions
         select_dimensions: 'Seleccionar dimensiones',
+        select_columns: 'Seleccionar columnas',
+        multiple_columns_selected: 'Múltiples columnas seleccionadas',
         
         // Field descriptions
         field_descriptions: {

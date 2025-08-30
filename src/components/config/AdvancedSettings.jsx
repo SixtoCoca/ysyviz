@@ -54,29 +54,39 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const showDimensions = requiredFieldsRaw.includes('dimensions');
     const requiredFields = requiredFieldsRaw.filter(f => f !== 'dimensions');
 
-    const mappingOptionalKeys = useMemo(
-        () => optionalFields.filter(k => k === 'series' || k === 'pyramid_left' || k === 'pyramid_right'),
-        [optionalFields]
-    );
-
     const hasSeriesField = Boolean(draft.field_series);
+    const hasMultipleValues = Array.isArray(draft.field_value) && draft.field_value.length > 1;
+    const hasMultipleYValues = Array.isArray(draft.field_y) && draft.field_y.length > 1;
     const supportsSeriesColors = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(type);
+
+    const mappingOptionalKeys = useMemo(
+        () => {
+            let keys = optionalFields.filter(k => k === 'series' || k === 'pyramid_left' || k === 'pyramid_right');
+            
+            if (hasMultipleValues || hasMultipleYValues) {
+                keys = keys.filter(k => k !== 'series');
+            }
+            
+            return keys;
+        },
+        [optionalFields, hasMultipleValues, hasMultipleYValues]
+    );
     
     const appearanceOptionalKeys = useMemo(() => {
         let keys = optionalFields.filter(k => k !== 'series');
         
-        if (supportsSeriesColors && hasSeriesField) {
+        if (supportsSeriesColors && (hasSeriesField || hasMultipleValues || hasMultipleYValues)) {
             keys = keys.filter(k => k !== 'color');
             if (!keys.includes('palette')) keys.push('palette');
             if (!keys.includes('legendPosition')) keys.push('legendPosition');
-        } else if (supportsSeriesColors && !hasSeriesField) {
+        } else if (supportsSeriesColors && !hasSeriesField && !hasMultipleValues && !hasMultipleYValues) {
             keys = keys.filter(k => k !== 'palette');
             keys = keys.filter(k => k !== 'legendPosition');
             if (!keys.includes('color')) keys.push('color');
         }
         
         return keys;
-    }, [optionalFields, supportsSeriesColors, hasSeriesField]);
+    }, [optionalFields, supportsSeriesColors, hasSeriesField, hasMultipleValues, hasMultipleYValues]);
 
     const columns = useMemo(() => {
         if (!data || typeof data !== 'object') return [];
@@ -140,9 +150,9 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         if (!supportsSeriesColors) return;
         
         let updated = null;
-        if (hasSeriesField && (!draft.palette || !draft.palette.length)) {
+        if ((hasSeriesField || hasMultipleValues || hasMultipleYValues) && (!draft.palette || !draft.palette.length)) {
             updated = { ...draft, palette: ChartPalettes[0].colors, color: undefined, legendPosition: 'top-left' };
-        } else if (!hasSeriesField && !draft.color) {
+        } else if (!hasSeriesField && !hasMultipleValues && !hasMultipleYValues && !draft.color) {
             updated = { ...draft, color: ChartColors[0], palette: undefined, legendPosition: undefined };
         }
         
@@ -150,13 +160,19 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             setDraft(updated);
             debouncedCommitRef.current(updated);
         }
-    }, [hasSeriesField, supportsSeriesColors]);
+    }, [hasSeriesField, hasMultipleValues, hasMultipleYValues, supportsSeriesColors]);
 
     const handleFieldChange = (name, value) => {
         const fieldKey = name.startsWith('field_') ? name : `field_${name}`;
         const updated = { ...draft, [fieldKey]: value };
         
         if (name === 'series' && value && supportsSeriesColors && !updated.legendPosition) {
+            updated.legendPosition = 'top-left';
+        }
+        
+        if ((name === 'value' || name === 'y') && Array.isArray(value) && value.length > 1 && supportsSeriesColors) {
+            updated.palette = ChartPalettes[0].colors;
+            updated.color = undefined;
             updated.legendPosition = 'top-left';
         }
         

@@ -50,6 +50,23 @@ const DataMappingPanel = ({
         return draft?.[key] || '';
     };
 
+    const isMultiValueField = (field) => {
+        const multiValueFields = ['value', 'y'];
+        const supportsMultiValue = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(chartType);
+        return supportsMultiValue && multiValueFields.includes(field);
+    };
+
+    const getMultiValueField = (field) => {
+        const key = field.startsWith('field_') ? field : `field_${field}`;
+        return Array.isArray(draft?.[key]) ? draft[key] : [];
+    };
+
+    const handleMultiValueChange = (field, selected) => {
+        const key = field.startsWith('field_') ? field : `field_${field}`;
+        const values = selected ? selected.map(s => s.value) : [];
+        onFieldChange(key, values);
+    };
+
     const allFields = [...requiredFields, ...optionalMappingKeys];
     
     if (dimensionsEnabled && !allFields.includes('dimensions')) {
@@ -136,6 +153,39 @@ const DataMappingPanel = ({
 
                             const key = field.startsWith('field_') ? field : `field_${field}`;
                             const isRequired = requiredFields.includes(field);
+                            const isMultiValue = isMultiValueField(field);
+                            
+                            if (isMultiValue) {
+                                const selectedValues = getMultiValueField(field);
+                                const selected = selectedValues.map(v => opts.find(o => o.value === v)).filter(Boolean);
+                                
+                                return (
+                                    <Col md={6} key={field} className='mb-3'>
+                                        <Form.Label>
+                                            {fieldLabel(field)}
+                                            <FieldInfoTooltip fieldName={field} />
+                                            {isRequired && <span className='text-danger ms-1'>*</span>}
+                                        </Form.Label>
+                                        <Select
+                                            isMulti
+                                            isClearable
+                                            options={opts}
+                                            value={selected}
+                                            onChange={(selected) => handleMultiValueChange(key, selected)}
+                                            classNamePrefix='ncg-select'
+                                            placeholder={t('select_columns')}
+                                        />
+                                        {selectedValues.length > 1 && (
+                                            <div className='mt-2'>
+                                                <Form.Text className='text-muted small'>
+                                                    {t('multiple_columns_selected')}: {selectedValues.length} {t('series')}
+                                                </Form.Text>
+                                            </div>
+                                        )}
+                                    </Col>
+                                );
+                            }
+                            
                             const selected = opts.find(o => o.value === valueFor(field)) || null;
                             
                             return (
