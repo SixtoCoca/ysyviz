@@ -52,8 +52,19 @@ const DataMappingPanel = ({
 
     const isMultiValueField = (field) => {
         const multiValueFields = ['value', 'y'];
+        const multiValueXFields = ['x', 'group'];
         const supportsMultiValue = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(chartType);
-        return supportsMultiValue && multiValueFields.includes(field);
+        const supportsMultiValueX = ['violin', 'boxplot'].includes(chartType);
+        
+        if (supportsMultiValue && multiValueFields.includes(field)) {
+            return true;
+        }
+        
+        if (supportsMultiValueX && multiValueXFields.includes(field)) {
+            return true;
+        }
+        
+        return false;
     };
 
     const getMultiValueField = (field) => {

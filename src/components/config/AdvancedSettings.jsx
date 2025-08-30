@@ -54,39 +54,41 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
     const showDimensions = requiredFieldsRaw.includes('dimensions');
     const requiredFields = requiredFieldsRaw.filter(f => f !== 'dimensions');
 
-    const hasSeriesField = Boolean(draft.field_series);
+        const hasSeriesField = Boolean(draft.field_series);
     const hasMultipleValues = Array.isArray(draft.field_value) && draft.field_value.length > 1;
     const hasMultipleYValues = Array.isArray(draft.field_y) && draft.field_y.length > 1;
+    const hasMultipleXValues = Array.isArray(draft.field_x) && draft.field_x.length > 1;
+    const hasMultipleGroupValues = Array.isArray(draft.field_group) && draft.field_group.length > 1;
     const supportsSeriesColors = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(type);
 
     const mappingOptionalKeys = useMemo(
         () => {
             let keys = optionalFields.filter(k => k === 'series' || k === 'pyramid_left' || k === 'pyramid_right');
             
-            if (hasMultipleValues || hasMultipleYValues) {
+            if (hasMultipleValues || hasMultipleYValues || hasMultipleXValues || hasMultipleGroupValues) {
                 keys = keys.filter(k => k !== 'series');
             }
             
             return keys;
         },
-        [optionalFields, hasMultipleValues, hasMultipleYValues]
+        [optionalFields, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues]
     );
     
     const appearanceOptionalKeys = useMemo(() => {
         let keys = optionalFields.filter(k => k !== 'series');
         
-        if (supportsSeriesColors && (hasSeriesField || hasMultipleValues || hasMultipleYValues)) {
+        if (supportsSeriesColors && (hasSeriesField || hasMultipleValues || hasMultipleYValues || hasMultipleXValues || hasMultipleGroupValues)) {
             keys = keys.filter(k => k !== 'color');
             if (!keys.includes('palette')) keys.push('palette');
             if (!keys.includes('legendPosition')) keys.push('legendPosition');
-        } else if (supportsSeriesColors && !hasSeriesField && !hasMultipleValues && !hasMultipleYValues) {
+        } else if (supportsSeriesColors && !hasSeriesField && !hasMultipleValues && !hasMultipleYValues && !hasMultipleXValues && !hasMultipleGroupValues) {
             keys = keys.filter(k => k !== 'palette');
             keys = keys.filter(k => k !== 'legendPosition');
             if (!keys.includes('color')) keys.push('color');
         }
         
         return keys;
-    }, [optionalFields, supportsSeriesColors, hasSeriesField, hasMultipleValues, hasMultipleYValues]);
+    }, [optionalFields, supportsSeriesColors, hasSeriesField, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues]);
 
     const columns = useMemo(() => {
         if (!data || typeof data !== 'object') return [];
@@ -150,9 +152,9 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         if (!supportsSeriesColors) return;
         
         let updated = null;
-        if ((hasSeriesField || hasMultipleValues || hasMultipleYValues) && (!draft.palette || !draft.palette.length)) {
+        if ((hasSeriesField || hasMultipleValues || hasMultipleYValues || hasMultipleXValues || hasMultipleGroupValues) && (!draft.palette || !draft.palette.length)) {
             updated = { ...draft, palette: ChartPalettes[0].colors, color: undefined, legendPosition: 'top-left' };
-        } else if (!hasSeriesField && !hasMultipleValues && !hasMultipleYValues && !draft.color) {
+        } else if (!hasSeriesField && !hasMultipleValues && !hasMultipleYValues && !hasMultipleXValues && !hasMultipleGroupValues && !draft.color) {
             updated = { ...draft, color: ChartColors[0], palette: undefined, legendPosition: undefined };
         }
         
@@ -160,7 +162,7 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
             setDraft(updated);
             debouncedCommitRef.current(updated);
         }
-    }, [hasSeriesField, hasMultipleValues, hasMultipleYValues, supportsSeriesColors]);
+    }, [hasSeriesField, hasMultipleValues, hasMultipleYValues, hasMultipleXValues, hasMultipleGroupValues, supportsSeriesColors]);
 
     const handleFieldChange = (name, value) => {
         const fieldKey = name.startsWith('field_') ? name : `field_${name}`;
@@ -171,6 +173,12 @@ const AdvancedSettings = ({ cfg, setCfg, type, setType, data }) => {
         }
         
         if ((name === 'value' || name === 'y') && Array.isArray(value) && value.length > 1 && supportsSeriesColors) {
+            updated.palette = ChartPalettes[0].colors;
+            updated.color = undefined;
+            updated.legendPosition = 'top-left';
+        }
+        
+        if ((name === 'x' || name === 'group') && Array.isArray(value) && value.length > 1) {
             updated.palette = ChartPalettes[0].colors;
             updated.color = undefined;
             updated.legendPosition = 'top-left';

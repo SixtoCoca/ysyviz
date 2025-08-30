@@ -18,6 +18,7 @@ import { mapWaterfall } from '../mappers/mapWaterfall';
 import { mapCalendarHeatmap } from '../mappers/mapCalendarHeatmap';
 import { mapPyramid } from '../mappers/mapPyramid';
 import { mapMultiValueSeries } from '../mappers/mapMultiValueSeries';
+import { mapMultiValueXSeries } from '../mappers/mapMultiValueXSeries';
 
 const NullMapper = () => null;
 
@@ -49,10 +50,17 @@ const useChartData = (rawData, chartType, config) => {
         
         const hasMultipleValues = Array.isArray(config?.field_value) && config.field_value.length > 1;
         const hasMultipleYValues = Array.isArray(config?.field_y) && config.field_y.length > 1;
+        const hasMultipleXValues = Array.isArray(config?.field_x) && config.field_x.length > 1;
+        const hasMultipleGroupValues = Array.isArray(config?.field_group) && config.field_group.length > 1;
         const supportsMultiValue = ['bar', 'line', 'area', 'scatter', 'bubble'].includes(chartType);
+        const supportsMultiValueX = ['violin', 'boxplot'].includes(chartType);
         
         if ((hasMultipleValues || hasMultipleYValues) && supportsMultiValue) {
             return mapMultiValueSeries(rawData, config, chartType);
+        }
+        
+        if (supportsMultiValueX && ((hasMultipleXValues && config.field_x.length > 1) || (hasMultipleGroupValues && config.field_group.length > 1))) {
+            return mapMultiValueXSeries(rawData, config, chartType);
         }
         
         const mapper = Mappers[chartType] || NullMapper;
