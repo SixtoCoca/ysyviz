@@ -1,4 +1,5 @@
 import { Card } from 'react-bootstrap';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import { ChartTypes } from '../../../constants/graph-type';
 import WaterfallSettings from './WaterfallSettings';
 import SankeySettings from './SankeySettings';
@@ -8,6 +9,7 @@ import ViolinSettings from './ViolinSettings';
 import PyramidSettings from './PyramidSettings';
 
 const SpecificSettingsPanel = ({ config, onChange, chartType }) => {
+    const { t } = useLanguage();
     const renderChartSpecificSettings = () => {
         switch (chartType) {
             case ChartTypes.WATERFALL:
@@ -38,7 +40,7 @@ const SpecificSettingsPanel = ({ config, onChange, chartType }) => {
     return <>
             <Card className='mb-4 mt-4'>
                 <Card.Body>
-                    <h6>Specific Settings</h6>
+                    <h4 className='mb-3 text-center' data-testid="specific-settings-title">{t('specific_settings')}</h4>
                     {renderChartSpecificSettings()}
                 </Card.Body>
             </Card>

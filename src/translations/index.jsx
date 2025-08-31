@@ -19,6 +19,7 @@ export const translations = {
         // Chart configuration
         chart_configuration: 'Chart Configuration',
         column_mapping: 'Column Mapping',
+        specific_settings: 'Specific Settings',
         no_mapping_required: 'No mapping required',
         complete_required_fields: 'Complete the required fields to render the chart.',
         fix_validation_errors: 'Fix the validation errors to render the chart.',
@@ -202,6 +203,7 @@ export const translations = {
         // Chart configuration
         chart_configuration: 'Configuración del Gráfico',
         column_mapping: 'Mapeo de Columnas',
+        specific_settings: 'Configuración Específica',
         no_mapping_required: 'No se requiere mapeo',
         complete_required_fields: 'Completa los campos requeridos para renderizar el gráfico.',
         fix_validation_errors: 'Corrige los errores de validación para renderizar el gráfico.',
