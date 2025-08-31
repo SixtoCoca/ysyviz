@@ -1,0 +1,13 @@
+Category1,Category2,Category3,Value
+Group A,Type 1,Region 1,25
+Group A,Type 1,Region 2,30
+Group A,Type 2,Region 1,28
+Group A,Type 2,Region 2,32
+Group B,Type 1,Region 1,35
+Group B,Type 1,Region 2,40
+Group B,Type 2,Region 1,38
+Group B,Type 2,Region 2,42
+Group C,Type 1,Region 1,45
+Group C,Type 1,Region 2,50
+Group C,Type 2,Region 1,48
+Group C,Type 2,Region 2,52

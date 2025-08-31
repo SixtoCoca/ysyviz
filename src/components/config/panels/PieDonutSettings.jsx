@@ -47,6 +47,7 @@ const PieSettings = ({ config, onChange, isDonut=false, isSunburst=false }) => {
                     value={config?.donutHoleSize || 50}
                     onChange={(e) => handleChange('donutHoleSize', parseInt(e.target.value) || 50)}
                     placeholder='50'
+                    data-testid="donut-hole-field"
                 />
                 <div className='text-muted small'>
                     {t('donut_hole_size_description')}

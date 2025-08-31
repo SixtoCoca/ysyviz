@@ -95,9 +95,9 @@ const DataMappingPanel = ({
     }
 
     return <>
-        <Card className='mb-3'>
+        <Card className='mb-3' data-testid="data-mapping-panel">
             <Card.Body>
-                <h4 className='mb-3 text-center'>{t('column_mapping')}</h4>
+                <h4 className='mb-3 text-center' data-testid="column-mapping-title">{t('column_mapping')}</h4>
                 {chartType === 'chord' && <ChordDataInfo />}
                 {allFields.length > 0 ? (
                     <Row>
@@ -105,7 +105,7 @@ const DataMappingPanel = ({
                             if (field === 'dimensions') {
                                 return (
                                     <Col md={12} key={field} className='mb-3'>
-                                        <Form.Label>
+                                        <Form.Label data-testid="dimensions-label">
                                             {t('dimensions')}
                                             <FieldInfoTooltip fieldName='dimensions' chartType={chartType} />
                                             {dimensionsRequired && <span className='text-danger ms-1'>*</span>}
@@ -118,6 +118,7 @@ const DataMappingPanel = ({
                                             onChange={(selected) => onDimensionsChange(selected ? selected.map(s => s.value) : [])}
                                             classNamePrefix='ncg-select'
                                             placeholder={t('select_dimensions')}
+                                            data-testid="dimensions-field"
                                         />
                                         {dimensionsValues.length > 0 && (
                                             <div className='mt-3'>
@@ -134,6 +135,7 @@ const DataMappingPanel = ({
                                                                     size='sm' 
                                                                     onClick={() => moveDim(i, -1)}
                                                                     disabled={i === 0}
+                                                                    data-testid={`move-dim-up-${i}`}
                                                                 >
                                                                     ↑
                                                                 </Button>
@@ -142,6 +144,7 @@ const DataMappingPanel = ({
                                                                     size='sm' 
                                                                     onClick={() => moveDim(i, 1)}
                                                                     disabled={i === dimensionsValues.length - 1}
+                                                                    data-testid={`move-dim-down-${i}`}
                                                                 >
                                                                     ↓
                                                                 </Button>
@@ -149,6 +152,7 @@ const DataMappingPanel = ({
                                                                     variant='outline-danger' 
                                                                     size='sm' 
                                                                     onClick={() => removeDim(i)}
+                                                                    data-testid={`remove-dim-${i}`}
                                                                 >
                                                                     ✕
                                                                 </Button>
@@ -172,7 +176,7 @@ const DataMappingPanel = ({
                                 
                                 return (
                                     <Col md={6} key={field} className='mb-3'>
-                                        <Form.Label>
+                                        <Form.Label data-testid={`${field}-label`}>
                                             {fieldLabel(field)}
                                             <FieldInfoTooltip fieldName={field} />
                                             {isRequired && <span className='text-danger ms-1'>*</span>}
@@ -185,6 +189,7 @@ const DataMappingPanel = ({
                                             onChange={(selected) => handleMultiValueChange(key, selected)}
                                             classNamePrefix='ncg-select'
                                             placeholder={t('select_columns')}
+                                            data-testid={`${field}-field`}
                                         />
                                         {selectedValues.length > 1 && (
                                             <div className='mt-2'>
@@ -201,25 +206,27 @@ const DataMappingPanel = ({
                             
                             return (
                                 <Col md={6} key={field} className='mb-3'>
-                                    <Form.Label>
+                                    <Form.Label data-testid={`${field}-label`}>
                                         {fieldLabel(field)}
                                         <FieldInfoTooltip fieldName={field} />
                                         {isRequired && <span className='text-danger ms-1'>*</span>}
                                     </Form.Label>
-                                    <Select
-                                        isClearable
-                                        options={opts}
-                                        value={selected}
-                                        onChange={(opt) => onFieldChange(key, opt?.value || '')}
-                                        classNamePrefix='ncg-select'
-                                        placeholder={t('select_column')}
-                                    />
+                                    <div data-testid={`${field}-field`}>
+                                        <Select
+                                            isClearable
+                                            options={opts}
+                                            value={selected}
+                                            onChange={(opt) => onFieldChange(key, opt?.value || '')}
+                                            classNamePrefix='ncg-select'
+                                            placeholder={t('select_column')}
+                                        />
+                                    </div>
                                 </Col>
                             );
                         })}
                     </Row>
                 ) : (
-                    <p className='text-muted text-center'>{t('no_mapping_required')}</p>
+                    <p className='text-muted text-center' data-testid="no-mapping-required">{t('no_mapping_required')}</p>
                 )}
             </Card.Body>
         </Card>

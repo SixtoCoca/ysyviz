@@ -1,6 +1,6 @@
 export const validateBar = (mapped, config) => {
     const issues = [];
-    if (!config?.field_category || !config?.field_value) {
+    if (!config?.field_category || (!config?.field_value && !config?.field_series)) {
         issues.push({ level: 'error', code: 'missing_fields', message: 'Required fields are not set' });
     }
     if (!mapped?.values?.length) {

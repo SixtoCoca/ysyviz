@@ -98,9 +98,9 @@ const DataUploader = ({ setData, type, helpText }) => {
     };
 
     return (
-        <>
+        <div data-testid="data-uploader">
             <Form.Group className="mb-3">
-                <Form.Label><strong>{t('upload_data')}</strong></Form.Label>
+                <Form.Label data-testid="upload-data-label"><strong>{t('upload_data')}</strong></Form.Label>
                 <div
                     role="button"
                     tabIndex={0}
@@ -111,33 +111,35 @@ const DataUploader = ({ setData, type, helpText }) => {
                     onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
                     onDrop={handleDrop}
                     style={{ cursor: 'pointer' }}
+                    data-testid="file-drop-zone"
                 >
-                    <p className="mb-2">{t('drag_drop_message')}</p>
+                    <p className="mb-2" data-testid="drag-drop-message">{t('drag_drop_message')}</p>
                     <Form.Control
                         type="file"
                         accept=".csv,.xlsx"
                         onChange={handleFileChange}
                         ref={inputRef}
                         className="d-none"
+                        data-testid="file-input"
                     />
                 </div>
                 {helpText && (
-                    <Form.Text className="text-muted d-block mt-2">{helpText}</Form.Text>
+                    <Form.Text className="text-muted d-block mt-2" data-testid="help-text">{helpText}</Form.Text>
                 )}
             </Form.Group>
 
             {selectedFile && (
-                <div className="mb-3">
+                <div className="mb-3" data-testid="file-info">
                     <div className="mb-2">
-                        <Badge bg="info" className="fs-5">
+                        <Badge bg="info" className="fs-5" data-testid="selected-file-badge">
                             {t('selected')}: {selectedFile.name} · {humanSize(selectedFile.size)}
                         </Badge>
                     </div>
                     {status && (
                         <div>
-                                                    <Badge bg={status === 'loaded' ? 'success' : 'secondary'} className="fs-5">
-                            {status === 'loaded' ? t('loaded') : t('ready_to_load')}
-                        </Badge>
+                            <Badge bg={status === 'loaded' ? 'success' : 'secondary'} className="fs-5" data-testid="file-status-badge">
+                                {status === 'loaded' ? t('loaded') : t('ready_to_load')}
+                            </Badge>
                         </div>
                     )}
                 </div>
@@ -148,12 +150,13 @@ const DataUploader = ({ setData, type, helpText }) => {
                     variant="primary"
                     onClick={handleUpload}
                     disabled={!selectedFile}
+                    data-testid="upload-button"
                 >
                     {t('upload')}
                 </Button>
             </div>
-            {error && <Alert variant="danger">{error}</Alert>}
-        </>
+            {error && <Alert variant="danger" data-testid="upload-error">{error}</Alert>}
+        </div>
     );
 };
 

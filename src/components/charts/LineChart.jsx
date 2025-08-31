@@ -94,7 +94,8 @@ const LineChart = ({ data, config, filled = false }) => {
         .attr('d', line)
         .attr('fill', 'none')
         .attr('stroke', col)
-        .attr('stroke-width', 2);
+        .attr('stroke-width', 2)
+        .attr('data-testid', 'line-path');
 
       g.selectAll(`circle.dot-${s.id ?? i}`)
         .data(s.values)
@@ -144,7 +145,7 @@ const LineChart = ({ data, config, filled = false }) => {
   }, [data, config, filled, dimensions]);
 
   return (
-    <div ref={containerRef} className='w-100 h-100'>
+    <div ref={containerRef} className='w-100 h-100' data-testid="line-chart">
       <svg ref={svgRef} className='w-100 h-100' />
     </div>
   );

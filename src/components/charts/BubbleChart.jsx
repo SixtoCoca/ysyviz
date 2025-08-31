@@ -75,7 +75,8 @@ const BubbleChart = ({ data, config }) => {
         .attr('fill', col)
         .attr('opacity', config?.opacity || 0.7)
         .attr('stroke', 'white')
-        .attr('stroke-width', 1);
+        .attr('stroke-width', 1)
+        .attr('data-testid', 'bubble-circle');
     });
 
     if (hasMultipleSeries && data.seriesNames) {
@@ -116,7 +117,7 @@ const BubbleChart = ({ data, config }) => {
   }, [data, config, dimensions]);
 
   return (
-    <div ref={containerRef} className='w-100 h-100'>
+    <div ref={containerRef} className='w-100 h-100' data-testid="bubble-chart">
       <svg ref={svgRef} className='w-100 h-100' />
     </div>
   );

@@ -15,7 +15,7 @@ const LegendPositionControl = ({ value, onChange }) => {
     const current = options.find(opt => opt.value === (value || 'top-left')) || options[0];
 
     return <>
-        <div className='mt-3'>
+        <div className='mt-3' data-testid="legend-position-control">
             <Form.Label>{t('legend_position')}</Form.Label>
             <Select
                 options={options}
@@ -23,6 +23,7 @@ const LegendPositionControl = ({ value, onChange }) => {
                 onChange={(opt) => onChange(opt.value)}
                 classNamePrefix='ncg-select'
                 placeholder={t('select_legend_position')}
+                data-testid="legend-position-field"
             />
             <div className='text-muted small'>
                 {t('choose_legend_position')}

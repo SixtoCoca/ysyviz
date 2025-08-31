@@ -102,6 +102,7 @@ const ViolinChart = ({ data, config }) => {
                     .datum(s.density)
                     .attr('fill', fillColor)
                     .attr('stroke', 'none')
+                    .attr('data-testid', 'violin-path')
                     .attr('d', d3.area()
                         .y0(d => center - w(d[1]))
                         .y1(d => center + w(d[1]))
@@ -113,6 +114,7 @@ const ViolinChart = ({ data, config }) => {
                     .datum(s.density)
                     .attr('fill', fillColor)
                     .attr('stroke', 'none')
+                    .attr('data-testid', 'violin-path')
                     .attr('d', d3.area()
                         .x0(d => center - w(d[1]))
                         .x1(d => center + w(d[1]))
@@ -131,7 +133,7 @@ const ViolinChart = ({ data, config }) => {
     if (!data?.values?.length) return null;
 
     return (
-        <div ref={containerRef} className='w-100 h-100'>
+        <div ref={containerRef} className='w-100 h-100' data-testid="violin-chart">
             <svg ref={svgRef} className='w-100 h-100' />
         </div>
     );
