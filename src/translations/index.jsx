@@ -4,7 +4,7 @@ export const translations = {
         upload_file: 'Upload File',
         preview_download: 'Preview & Download',
         configuration: 'Configuration',
-        
+
         // Upload section
         upload_data: 'Upload Data',
         drag_drop_message: 'Drag & drop your file here, or click to select',
@@ -15,17 +15,16 @@ export const translations = {
         error_processing_file: 'Error processing the file. Make sure it is a valid .csv or .xlsx file.',
         error_uploading_file: 'There was an error uploading the file.',
         file_uploaded_successfully: 'The file "{filename}" was uploaded successfully.',
-        
+
         // Chart configuration
         chart_configuration: 'Chart Configuration',
         column_mapping: 'Column Mapping',
-        specific_settings: 'Specific Settings',
         no_mapping_required: 'No mapping required',
         complete_required_fields: 'Complete the required fields to render the chart.',
         fix_validation_errors: 'Fix the validation errors to render the chart.',
         upload_data_and_select_type: 'Please upload a data file and select a chart type to see the visualization.',
         select_chart_type: 'Please select a chart type to start configuring your visualization.',
-        
+
         // Field labels
         category: 'Category',
         value: 'Value',
@@ -41,7 +40,7 @@ export const translations = {
         series: 'Series',
         dimensions: 'Dimensions',
         path: 'Path',
-        
+
         // Chart types
         bar_chart: 'Bar Chart',
         line_chart: 'Line Chart',
@@ -62,7 +61,7 @@ export const translations = {
         waterfall_chart: 'Waterfall Chart',
         calendar_chart: 'Calendar Heatmap Chart',
         pyramid_chart: 'Pyramid Chart',
-        
+
         // Appearance panel
         appearance: 'Appearance',
         title: 'Title',
@@ -79,7 +78,7 @@ export const translations = {
         bottom_left: 'Bottom Left',
         bottom_right: 'Bottom Right',
         disabled: 'Disabled',
-        
+
         // Specific settings
         specific_settings: 'Specific Settings',
         donut_hole: 'Donut Hole',
@@ -129,7 +128,7 @@ export const translations = {
         epanechnikov: 'Epanechnikov',
         gaussian: 'Gaussian',
         triangular: 'Triangular',
-        
+
         // Chord chart specific
         chord_data_format: 'Chord Chart Data Format',
         chord_description: 'The Chord chart requires a relationship matrix where:',
@@ -137,7 +136,7 @@ export const translations = {
         chord_entity_column: 'Each column represents the same entities',
         chord_values: 'Values in the matrix represent the strength of relationships between entities',
         example_csv_format: 'Example CSV format:',
-        
+
         // Validation
         validation: 'Validation',
         errors: 'errors',
@@ -145,16 +144,16 @@ export const translations = {
         info: 'info',
         clear: 'Clear',
         unknown_issue: 'Unknown issue',
-        
+
         // Chart preview
         chart_preview: 'Chart Preview',
         error_rendering_chart: 'Error rendering chart. Check the validation panel.',
-        
+
         // Download
         download: 'Download',
         png: 'PNG',
         svg: 'SVG',
-        
+
         // Select dimensions
         select_dimensions: 'Select dimensions',
         select_columns: 'Select columns',
@@ -164,7 +163,7 @@ export const translations = {
         single_color_mode: 'Single Color Mode',
         palette_mode_description: 'Use different colors for each series',
         single_color_mode_description: 'Use a single color for all data',
-        
+
         // Field descriptions
         field_descriptions: {
             category: 'The field containing category names',
@@ -188,7 +187,7 @@ export const translations = {
         upload_file: 'Subir Archivo',
         preview_download: 'Vista Previa y Descarga',
         configuration: 'Configuración',
-        
+
         // Upload section
         upload_data: 'Subir Datos',
         drag_drop_message: 'Arrastra y suelta tu archivo aquí, o haz clic para seleccionar',
@@ -199,17 +198,16 @@ export const translations = {
         error_processing_file: 'Error al procesar el archivo. Asegúrate de que sea un archivo .csv o .xlsx válido.',
         error_uploading_file: 'Hubo un error al subir el archivo.',
         file_uploaded_successfully: 'El archivo "{filename}" se subió correctamente.',
-        
+
         // Chart configuration
         chart_configuration: 'Configuración del Gráfico',
         column_mapping: 'Mapeo de Columnas',
-        specific_settings: 'Configuración Específica',
         no_mapping_required: 'No se requiere mapeo',
         complete_required_fields: 'Completa los campos requeridos para renderizar el gráfico.',
         fix_validation_errors: 'Corrige los errores de validación para renderizar el gráfico.',
         upload_data_and_select_type: 'Por favor sube un archivo de datos y selecciona un tipo de gráfico para ver la visualización.',
         select_chart_type: 'Por favor selecciona un tipo de gráfico para comenzar a configurar tu visualización.',
-        
+
         // Field labels
         category: 'Categoría',
         value: 'Valor',
@@ -225,7 +223,7 @@ export const translations = {
         series: 'Serie',
         dimensions: 'Dimensiones',
         path: 'Ruta',
-        
+
         // Chart types
         bar_chart: 'Gráfico de Barras',
         line_chart: 'Gráfico de Líneas',
@@ -246,7 +244,7 @@ export const translations = {
         waterfall_chart: 'Gráfico de Cascada',
         calendar_chart: 'Mapa de Calor de Calendario',
         pyramid_chart: 'Gráfico de Pirámide',
-        
+
         // Appearance panel
         appearance: 'Apariencia',
         title: 'Título',
@@ -263,7 +261,7 @@ export const translations = {
         bottom_left: 'Abajo Izquierda',
         bottom_right: 'Abajo Derecha',
         disabled: 'Deshabilitado',
-        
+
         // Specific settings
         specific_settings: 'Configuración Específica',
         donut_hole: 'Agujero del Donut',
@@ -313,7 +311,7 @@ export const translations = {
         epanechnikov: 'Epanechnikov',
         gaussian: 'Gaussiano',
         triangular: 'Triangular',
-        
+
         // Chord chart specific
         chord_data_format: 'Formato de Datos del Gráfico de Cuerdas',
         chord_description: 'El gráfico de cuerdas requiere una matriz de relaciones donde:',
@@ -321,7 +319,7 @@ export const translations = {
         chord_entity_column: 'Cada columna representa las mismas entidades',
         chord_values: 'Los valores en la matriz representan la fuerza de las relaciones entre entidades',
         example_csv_format: 'Ejemplo de formato CSV:',
-        
+
         // Validation
         validation: 'Validación',
         errors: 'errores',
@@ -329,16 +327,16 @@ export const translations = {
         info: 'información',
         clear: 'Limpiar',
         unknown_issue: 'Problema desconocido',
-        
+
         // Chart preview
         chart_preview: 'Vista Previa del Gráfico',
         error_rendering_chart: 'Error al renderizar el gráfico. Revisa el panel de validación.',
-        
+
         // Download
         download: 'Descargar',
         png: 'PNG',
         svg: 'SVG',
-        
+
         // Select dimensions
         select_dimensions: 'Seleccionar dimensiones',
         select_columns: 'Seleccionar columnas',
@@ -348,7 +346,7 @@ export const translations = {
         single_color_mode: 'Modo Color Único',
         palette_mode_description: 'Usar diferentes colores para cada serie',
         single_color_mode_description: 'Usar un solo color para todos los datos',
-        
+
         // Field descriptions
         field_descriptions: {
             category: 'El campo que contiene nombres de categorías',
@@ -371,11 +369,11 @@ export const translations = {
 
 export const getTranslation = (key, language = 'en', params = {}) => {
     let text = translations[language]?.[key] || translations['en'][key] || key;
-    
+
     // Replace parameters in the text
     Object.keys(params).forEach(param => {
         text = text.replace(`{${param}}`, params[param]);
     });
-    
+
     return text;
 };
