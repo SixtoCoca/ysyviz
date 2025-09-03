@@ -1,0 +1,1 @@
+import{_ as i,c as e,o as s,ae as o}from"./chunks/framework.Bi6zybwU.js";const h=JSON.parse('{"title":"Ysyviz","description":"","frontmatter":{},"headers":[],"relativePath":"index.md","filePath":"index.md"}'),r={name:"index.md"};function t(n,a,c,l,d,u){return s(),e("div",null,[...a[0]||(a[0]=[o("",8)])])}const v=i(r,[["render",t]]);export{h as __pageData,v as default};
