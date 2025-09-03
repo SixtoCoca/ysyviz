@@ -1,28 +1,30 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Ysyviz",
-  description: "A lightweight, fast, and professional web app to create charts without writing any code. Upload your data, configure the visuals, and export a high‑quality image in seconds.",
+  description: "Crear gráficos profesionales sin escribir código",
+  
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: 'Inicio', link: '/' },
+      { text: 'Manual de Usuario', link: '/guide/' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: 'Manual de Usuario',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
+          { text: 'Introducción', link: '/guide/' },
+          { text: 'Flujo de Trabajo', link: '/guide/workflow' },
+          { text: 'Configuraciones por Tipo', link: '/guide/chart-configs' },
+          { text: 'Preparación de Datos CSV', link: '/guide/csv' },
+          { text: 'Exportación', link: '/guide/export' }
         ]
       }
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/SixtoCoca/ysyviz' }
     ]
   }
 })
