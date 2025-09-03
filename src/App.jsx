@@ -92,13 +92,13 @@ const App = () => {
     if (req.length === 0) return true;
     return req.every(key => {
       if (key === 'dimensions') return isFilled(cfg?.dimensions);
-      
+
       const fieldKey = key.startsWith('field_') ? key : `field_${key}`;
-      
+
       if (key === 'value' && ['bar', 'line', 'area', 'scatter', 'bubble'].includes(type)) {
         return isFilled(cfg?.[fieldKey]) || isFilled(cfg?.field_series);
       }
-      
+
       return isFilled(cfg?.[fieldKey]);
     });
   }, [type, cfg]);
@@ -147,17 +147,17 @@ const App = () => {
 
   const handleDownloadSVG = async () => {
     if (!chartRef.current) return;
-    
+
     const title = cfg.title || 'Chart';
-    
+
     try {
-      const canvas = await html2canvas(chartRef.current, { 
-        backgroundColor: 'white', 
+      const canvas = await html2canvas(chartRef.current, {
+        backgroundColor: 'white',
         scale: 2,
         useCORS: true,
         allowTaint: true
       });
-      
+
       const svgData = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
           <defs>
@@ -169,15 +169,15 @@ const App = () => {
           <image href="${canvas.toDataURL()}" width="100%" height="100%" />
         </svg>
       `;
-      
+
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const svgUrl = URL.createObjectURL(svgBlob);
-      
+
       const link = document.createElement('a');
       link.download = `${title}.svg`;
       link.href = svgUrl;
       link.click();
-      
+
       URL.revokeObjectURL(svgUrl);
     } catch (error) {
       console.error('Error generating SVG:', error);
@@ -196,7 +196,7 @@ const App = () => {
     <div className='min-vh-100 d-flex flex-column' data-testid="app">
       <header className='logo-header' data-testid="app-header">
         <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
-          <img src='/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
+          <img src='./src/assets/logo/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
           <div className='position-absolute end-0'>
             <LanguageSelector />
           </div>
