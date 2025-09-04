@@ -25,6 +25,10 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/SixtoCoca/ysyviz' }
-    ]
+    ],
+
+    footer: {
+      copyright: '© 2025 Ysyviz'
+    }
   }
 })
