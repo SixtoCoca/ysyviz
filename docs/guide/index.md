@@ -1,88 +1,24 @@
-# Flujo de Trabajo
+# Manual de Usuario - Ysyviz
 
-  
+Bienvenido al manual completo de **Ysyviz**, una herramienta de visualización de datos diseñada para usuarios sin conocimientos de programación.
 
-Ysyviz sigue un flujo de trabajo simple y intuitivo dividido en 4 pasos principales, en esta sección los iremos desgranando 1 a 1
+## ¿Qué es Ysyviz?
 
-  
+**Ysyviz** es una aplicación web que permite convertir archivos de datos en gráficos totalmente configurables y profesionales. La herramienta está diseñada para cualquier tipo de persona, tenga conocimientos técnicos o no.
 
-## 1. Subida de Fichero
+## Contenido del Manual
 
-Al abrir la aplicación nos aparecera un recuador donde nos indica donde tenemos que subir el fichero. Una vez subamos el fichero nos indicará cual es el fichero que hemos subido y luego tendremos que darle a el botón de subida.
+### Guías Prácticas
+- **[Flujo de Trabajo](./workflow)** - Proceso completo de creación paso a paso
+- **[Configuraciones por Tipo](./chart-configs)** - Opciones específicas para cada tipo de gráfico
+- **[Preparación de Datos CSV](./csv)** - Formato y estructura de datos requeridos
+- **[Exportación](./export)** - Guardado y distribución de visualizaciones
 
-### Formatos Soportados
+## Recursos Adicionales
 
--  **CSV**: Archivos de texto separado por comas
+- **[Página Principal](../)** - Volver al inicio de la documentación
+- **[Repositorio GitHub](https://github.com/SixtoCoca/ysyviz)** - Código fuente y contribuciones
 
--  **XLSX**: Archivos de Excel
+---
 
-  
-
-### Métodos de Carga
-
--  **Drag & Drop**: Arrastra el archivo directamente a la zona de carga
-
--  **Selección Manual**: Haz clic en "Seleccionar archivo" y navega hasta tu archivo
-
-  
-
-### Validación Automática
-
-- Verificación de formato de archivo
-
-- Detección de estructura de datos
-
-- Identificación de columnas disponibles
-
-- Mensajes de confirmación o error
-
-  
-
-## 📊 2. Selección de Gráfico
-
-  Una vez que hayamos seleccionado el gráfico, nos desplazaremos a la sección 'Vista previa y descarga' para poder seleccionar el gráfico deseado, en esta vista nos encontraremos a la izquierda una menú donde podremos seleccionar que tipo de gráfico queremos pintar, en la zona de la derecha encontraremos la zona donde se renderizará el gráfico, este menú tiene paginación por lo que hay varias páginas para mostrar todos los gráficos. Una vez clickado el gráfico nos aparecer el borde azul indicando que lo tenemos seleccionado.
-Borrador Añadir Foto
-
-## ⚙️ 3. Configuración de Datos
-
-  Cuando tengamos tanto el gráfico seleccionado como el tipo de gráfico que queramos, nos aparecerán los paneles de configuración personalziados de cada gráfico
-
-### Mapeo de columnas
-
-Panel donde aparecen los campos para representar los datos de los ejes, en el podremos elegir que tipo de dato queremos representar en nuestro gráfico
-
--  **Campos Obligatorios**: Marcados claramente con un asterisco rojo
-
--  **Campos Opcionales**: Para añadir más información a los gráficos pero no son necesarios 
-
--  **Validación en Tiempo Real**: Errores inmediatos
-  
-
-### Opciones de apariencia
-
-Panel donde aparecen los campos para representa la estética que le queremos dar a nuestro gráfico
-
-- Colores y paletas
-
-- Títulos y etiquetas
-
-- Leyendas y posicionamiento
-
-### Opciones de Personalización
-
-Panel donde aparecen las configuraciones específicas para el tipo de gráfico que hayamos elegido
-
-  
-
-## 🎨 4. Renderizado
-
-Si hemos completado correctamente los demás pasos nos aparecerá el gráfico ya renderizamos, si modificamos cualquiera de estos  cambios los cambios se aplicarán en tiempo real y cambiará el gráfico. Próximo al gráfico nos aparecerán los botones para descargar nuestro gráfico en PNG o SVG.
-
-Añadir foto
-### Resultado Final
-
-- Gráfico que cambia en tiempo real
-- Listo para exportación en PNG o SVG
-  
-
-[← Volver al Manual](./) | [→ Configuraciones por Tipo](./chart-configs)
+*Ysyviz proporciona una solución completa para la visualización de datos, permitiendo a los usuarios a crear gráficos sin necesidad de añadir una línea de códiga.*

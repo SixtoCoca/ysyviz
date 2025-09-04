@@ -8,6 +8,8 @@ Ysyviz sigue un flujo de trabajo simple y intuitivo dividido en 4 pasos principa
 
 ## 1. Subida de Fichero
 
+![Interfaz de carga de archivos](../.vitepress/public/subidafichero.png)
+
 Al abrir la aplicación nos aparecera un recuador donde nos indica donde tenemos que subir el fichero. Una vez subamos el fichero nos indicará cual es el fichero que hemos subido y luego tendremos que darle a el botón de subida.
 
 ### Formatos Soportados
@@ -38,14 +40,18 @@ Al abrir la aplicación nos aparecera un recuador donde nos indica donde tenemos
 
   
 
-## 📊 2. Selección de Gráfico
+## 2. Selección de Gráfico
 
-  Una vez que hayamos seleccionado el gráfico, nos desplazaremos a la sección 'Vista previa y descarga' para poder seleccionar el gráfico deseado, en esta vista nos encontraremos a la izquierda una menú donde podremos seleccionar que tipo de gráfico queremos pintar, en la zona de la derecha encontraremos la zona donde se renderizará el gráfico, este menú tiene paginación por lo que hay varias páginas para mostrar todos los gráficos. Una vez clickado el gráfico nos aparecer el borde azul indicando que lo tenemos seleccionado.
-Borrador Añadir Foto
 
-## ⚙️ 3. Configuración de Datos
+Una vez que hayamos seleccionado el gráfico, nos desplazaremos a la sección 'Vista previa y descarga' para poder seleccionar el gráfico deseado, en esta vista nos encontraremos a la izquierda una menú donde podremos seleccionar que tipo de gráfico queremos pintar, en la zona de la derecha encontraremos la zona donde se renderizará el gráfico, este menú tiene paginación por lo que hay varias páginas para mostrar todos los gráficos. Una vez clickado el gráfico nos aparecer el borde azul indicando que lo tenemos seleccionado.
 
-  Cuando tengamos tanto el gráfico seleccionado como el tipo de gráfico que queramos, nos aparecerán los paneles de configuración personalziados de cada gráfico
+![Selector de tipos de gráfico](../.vitepress/public/selecciongraficos.png)
+
+## 3. Configuración de Datos
+
+![Panel de configuración](../.vitepress/public/configuracion.png)
+
+Cuando tengamos tanto el gráfico seleccionado como el tipo de gráfico que queramos, nos aparecerán los paneles de configuración personalziados de cada gráfico
 
 ### Mapeo de columnas
 
@@ -72,12 +78,19 @@ Panel donde aparecen los campos para representa la estética que le queremos dar
 
 - Configuraciones específicas por tipo
 
-  
 
-## 🎨 4. Renderizado
 
-  
-Una vez que hayamos rellenado las configuraciones con éxito, nos aparecerá automáticamente el gráfico a la izquierda y podremos cambiar las configuraciones en tiempo real y exportarlo
+## 4. Renderizado
+
+Si hemos completado correctamente los demás pasos nos aparecerá el gráfico ya renderizamos, si modificamos cualquiera de estos  cambios los cambios se aplicarán en tiempo real y cambiará el gráfico. Próximo al gráfico nos aparecerán los botones para descargar nuestro gráfico en PNG o SVG.
+
+
+![Gráfico renderizado con controles](../.vitepress/public/render.png)
+
+### Resultado Final
+
+- Gráfico que cambia en tiempo real
+- Listo para exportación en PNG o SVG
   
 
   
