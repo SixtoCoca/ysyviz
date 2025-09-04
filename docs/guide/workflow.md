@@ -77,46 +77,8 @@ Panel donde aparecen los campos para representa la estética que le queremos dar
 ## 🎨 4. Renderizado
 
   
-
-### Generación Automática
-
--  **Renderizado instantáneo** al completar campos obligatorios
-
--  **Actualización en tiempo real** ante cambios
-
--  **Indicadores de estado** del proceso
-
--  **Mensajes de confirmación** de éxito
-
+Una vez que hayamos rellenado las configuraciones con éxito, nos aparecerá automáticamente el gráfico a la izquierda y podremos cambiar las configuraciones en tiempo real y exportarlo
   
-
-### Resultado Final
-
-- Gráfico interactivo y responsive
-
-- Adaptable a diferentes tamaños de pantalla
-
-- Listo para exportación en PNG o SVG
-
-  
-
-## 💡 Consejos para un Flujo Eficiente
-
-  
-
-1.  **Prepara tus datos** antes de empezar
-
-2.  **Usa nombres descriptivos** para las columnas
-
-3.  **Experimenta** con diferentes tipos de gráficos
-
-4.  **Guarda configuraciones** que funcionen bien
-
-5.  **Exporta** tus mejores resultados
-
-  
-
----
 
   
 
