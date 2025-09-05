@@ -196,7 +196,7 @@ const App = () => {
     <div className='min-vh-100 d-flex flex-column' data-testid="app">
       <header className='logo-header' data-testid="app-header">
         <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
-          <img src='./src/assets/logo/icono-app.png' alt='YsyViz Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
+          <img src='/icono-app.png' alt='YsyViz Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
           <div className='position-absolute end-0'>
             <LanguageSelector />
           </div>
