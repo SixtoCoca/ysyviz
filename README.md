@@ -1,4 +1,4 @@
-# No-Code Graphs
+# YsyViz
 
 A lightweight, fast, and professional web app to create charts without writing any code. Upload your data, configure the visuals, and export a high‑quality image in seconds.
 

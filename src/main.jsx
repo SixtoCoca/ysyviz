@@ -4,12 +4,15 @@ import './index.css'
 import App from './App.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { CustomPaletteProvider } from './contexts/CustomPaletteContext';
 
 
-createRoot(document.getElementById('no-code-graphs')).render(
+createRoot(document.getElementById('ysyviz')).render(
   <StrictMode>
     <LanguageProvider>
-      <App />
+      <CustomPaletteProvider>
+        <App />
+      </CustomPaletteProvider>
     </LanguageProvider>
   </StrictMode>,
 )

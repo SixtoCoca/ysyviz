@@ -196,7 +196,7 @@ const App = () => {
     <div className='min-vh-100 d-flex flex-column' data-testid="app">
       <header className='logo-header' data-testid="app-header">
         <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
-          <img src='./src/assets/logo/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
+          <img src='./src/assets/logo/icono-app.png' alt='YsyViz Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
           <div className='position-absolute end-0'>
             <LanguageSelector />
           </div>
@@ -219,6 +219,18 @@ const App = () => {
                 <Nav.Item>
                   <Nav.Link eventKey='preview' className='text-center' data-testid="preview-tab">{t('preview_download')}</Nav.Link>
                 </Nav.Item>
+                {!isMobile && (
+                  <Nav.Item className='mt-auto'>
+                    <Button 
+                      variant='outline-primary' 
+                      className='w-100 text-center' 
+                      onClick={() => window.open('https://sixtococa.github.io/ysyviz-doc/', '_blank')}
+                      data-testid="user-manual-btn"
+                    >
+                      {t('user_manual')}
+                    </Button>
+                  </Nav.Item>
+                )}
               </Nav>
             </Col>
 
@@ -227,7 +239,7 @@ const App = () => {
                 <Tab.Pane eventKey='upload' className='h-100' data-testid="upload-pane">
                   <Card className='h-100'>
                     <Card.Body>
-                      <h4 className='mb-3 text-center' data-testid="upload-title">Upload CSV/XLSX</h4>
+                      <h4 className='mb-3 text-center' data-testid="upload-title">{t('upload_csv_xlsx')}</h4>
                       <DataUploader type={type} setData={handleDataChange} />
                     </Card.Body>
                   </Card>

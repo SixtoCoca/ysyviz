@@ -1,16 +1,30 @@
-import { useMemo } from 'react';
-import { Form } from 'react-bootstrap';
+import { useMemo, useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { ChartPalettes } from '../../../constants/chart-colors';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import { useCustomPalettes } from '../../../contexts/CustomPaletteContext';
+import CustomPaletteModal from './CustomPaletteModal';
 
 const PaletteControl = ({ value, onChange }) => {
     const { t } = useLanguage();
-    const options = useMemo(() => ChartPalettes.map(p => ({ value: p.id, label: p.name, colors: p.colors })), []);
+    const { customPalettes } = useCustomPalettes();
+    const [showModal, setShowModal] = useState(false);
+    
+    const options = useMemo(() => {
+        const defaultOptions = ChartPalettes.map(p => ({ value: p.id, label: p.name, colors: p.colors }));
+        const customOptions = customPalettes.map(p => ({ value: p.id, label: p.name, colors: p.colors, isCustom: true }));
+        return [...defaultOptions, ...customOptions];
+    }, [customPalettes]);
+    
     const current = useMemo(() => {
         const val = Array.isArray(value) ? value : [];
         return options.find(o => JSON.stringify(o.colors) === JSON.stringify(val)) || null;
     }, [value, options]);
+
+    const handleCustomPaletteSave = (newPalette) => {
+        onChange(newPalette.colors);
+    };
 
     return <>
         <div className='color-selector'>
@@ -30,10 +44,25 @@ const PaletteControl = ({ value, onChange }) => {
                             )}
                         </div>
                         <span>{opt.label}</span>
+                        {opt.isCustom && <span className='ms-2 text-muted small'>(Custom)</span>}
                     </div>
                 }
             />
+            <Button 
+                variant="outline-primary" 
+                size="sm" 
+                className="mt-2 w-100"
+                onClick={() => setShowModal(true)}
+            >
+                {t('add_custom_palette')}
+            </Button>
         </div>
+        
+        <CustomPaletteModal
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            onSave={handleCustomPaletteSave}
+        />
     </>
 };
 

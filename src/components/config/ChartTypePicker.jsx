@@ -70,12 +70,26 @@ const ChartTypePicker = ({ value, onChange }) => {
                                 className={selected ? 'border-primary shadow-sm' : 'border-200'}
                                 data-testid={`chart-type-${item.value}`}
                                 data-selected={selected}
+                                style={{ height: '140px' }}
                             >
-                                <div className='d-flex align-items-center justify-content-center p-3'>
-                                    <img src={item.img} alt={item.label} className='img-fluid' />
+                                <div className='d-flex align-items-center justify-content-center p-3' style={{ height: '80px' }}>
+                                    <img src={item.img} alt={item.label} className='img-fluid' style={{ maxHeight: '50px', maxWidth: '50px' }} />
                                 </div>
-                                <Card.Body className='py-2'>
-                                    <div className='text-center fw-medium' data-testid={`chart-type-label-${item.value}`}>{item.label}</div>
+                                <Card.Body className='py-2 d-flex align-items-center justify-content-center' style={{ height: '60px' }}>
+                                    <div 
+                                        className='text-center fw-medium' 
+                                        data-testid={`chart-type-label-${item.value}`}
+                                        style={{ 
+                                            fontSize: '0.85rem',
+                                            lineHeight: '1.2',
+                                            overflow: 'hidden',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical'
+                                        }}
+                                    >
+                                        {item.label}
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -85,7 +99,9 @@ const ChartTypePicker = ({ value, onChange }) => {
 
             {needsPagination && (
                 <div className='d-flex justify-content-center mt-2'>
-                    <span className='text-muted small' data-testid="chart-type-pagination">{page + 1} / {totalPages}</span>
+                    <span className='text-muted small' data-testid="chart-type-pagination">
+                        {t('page_of', { current: page + 1, total: totalPages })}
+                    </span>
                 </div>
             )}
         </div>
