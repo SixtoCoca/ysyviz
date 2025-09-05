@@ -7,6 +7,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import { useLanguage } from './contexts/LanguageContext';
 import LanguageSelector from './components/interface/LanguageSelector';
 import useIsMobile from './hooks/useIsMobile';
+import logoIcon from './assets/logo/icono-app.svg';
 
 import BarChart from './components/charts/BarChart';
 import LineChart from './components/charts/LineChart';
@@ -196,7 +197,7 @@ const App = () => {
     <div className='min-vh-100 d-flex flex-column' data-testid="app">
       <header className='logo-header' data-testid="app-header">
         <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
-          <img src='./src/assets/logo/icono-app.png' alt='YsyViz Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
+          <img src={logoIcon} alt='YsyViz Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
           <div className='position-absolute end-0'>
             <LanguageSelector />
           </div>
