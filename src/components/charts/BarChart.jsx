@@ -78,6 +78,7 @@ const BarChart = ({ data, config }) => {
       categoryGroups.selectAll('rect')
         .data(d => d.values || [])
         .join('rect')
+        .attr('data-testid', 'bar-rect')
         .attr('x', d => isHorizontal ? 0 : (x1(d.series) || 0))
         .attr('y', d => isHorizontal ? (x1(d.series) || 0) : y(d.value))
         .attr('width', d => isHorizontal ? y(d.value) : x1.bandwidth())
@@ -136,6 +137,7 @@ const BarChart = ({ data, config }) => {
         .data(data.values)
         .join('rect')
         .attr('class', 'bar')
+        .attr('data-testid', 'bar-rect')
         .attr('x', d => isHorizontal ? 0 : (x(d.key) || 0))
         .attr('y', d => isHorizontal ? (x(d.key) || 0) : y(d.value))
         .attr('width', d => isHorizontal ? y(d.value) : x.bandwidth())
@@ -151,7 +153,7 @@ const BarChart = ({ data, config }) => {
   }, [data, config, dimensions]);
 
   return (
-    <div ref={containerRef} className='w-100 h-100'>
+    <div ref={containerRef} className='w-100 h-100' data-testid="bar-chart">
       <svg ref={svgRef} className='w-100 h-100' />
     </div>
   );

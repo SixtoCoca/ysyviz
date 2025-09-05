@@ -6,7 +6,7 @@ export const mapBar = (raw, cfg) => {
     const vKey = cfg?.field_value || '';
     const sKey = cfg?.field_series || '';
     
-    if (!cKey || !vKey) return null;
+    if (!cKey || (!vKey && !sKey)) return null;
 
     if (!sKey) {
         const values = rows

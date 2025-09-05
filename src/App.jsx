@@ -92,7 +92,13 @@ const App = () => {
     if (req.length === 0) return true;
     return req.every(key => {
       if (key === 'dimensions') return isFilled(cfg?.dimensions);
+
       const fieldKey = key.startsWith('field_') ? key : `field_${key}`;
+
+      if (key === 'value' && ['bar', 'line', 'area', 'scatter', 'bubble'].includes(type)) {
+        return isFilled(cfg?.[fieldKey]) || isFilled(cfg?.field_series);
+      }
+
       return isFilled(cfg?.[fieldKey]);
     });
   }, [type, cfg]);
@@ -141,17 +147,17 @@ const App = () => {
 
   const handleDownloadSVG = async () => {
     if (!chartRef.current) return;
-    
+
     const title = cfg.title || 'Chart';
-    
+
     try {
-      const canvas = await html2canvas(chartRef.current, { 
-        backgroundColor: 'white', 
+      const canvas = await html2canvas(chartRef.current, {
+        backgroundColor: 'white',
         scale: 2,
         useCORS: true,
         allowTaint: true
       });
-      
+
       const svgData = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
           <defs>
@@ -163,15 +169,15 @@ const App = () => {
           <image href="${canvas.toDataURL()}" width="100%" height="100%" />
         </svg>
       `;
-      
+
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const svgUrl = URL.createObjectURL(svgBlob);
-      
+
       const link = document.createElement('a');
       link.download = `${title}.svg`;
       link.href = svgUrl;
       link.click();
-      
+
       URL.revokeObjectURL(svgUrl);
     } catch (error) {
       console.error('Error generating SVG:', error);
@@ -187,48 +193,60 @@ const App = () => {
   }, [hasErrors, enableValidation, type, t]);
 
   return (
-    <div className='min-vh-100 d-flex flex-column'>
-      <header className='logo-header'>
+    <div className='min-vh-100 d-flex flex-column' data-testid="app">
+      <header className='logo-header' data-testid="app-header">
         <div className='d-flex justify-content-center align-items-center w-100 position-relative'>
-          <img src='/icono-app.png' alt='No-Code Graphs Logo' className='img-fluid' width='150' height='auto' />
+          <img src='./src/assets/logo/icono-app.png' alt='YsyViz Logo' className='img-fluid' width='150' height='auto' data-testid="app-logo" />
           <div className='position-absolute end-0'>
             <LanguageSelector />
           </div>
         </div>
       </header>
 
-      <div className='flex-grow-1 d-flex'>
+      <div className='flex-grow-1 d-flex' data-testid="app-content">
         <Tab.Container defaultActiveKey='upload'>
           <Row className='flex-grow-1 w-100 m-0'>
             <Col md={3} className='sidebar px-0 d-flex flex-column'>
-              <Nav variant='tabs' className='flex-column p-3 gap-2 flex-grow-1'>
+              <Nav variant='tabs' className='flex-column p-3 gap-2 flex-grow-1' data-testid="app-navigation">
                 <Nav.Item>
-                  <Nav.Link eventKey='upload' className='text-center'>{t('upload_file')}</Nav.Link>
+                  <Nav.Link eventKey='upload' className='text-center' data-testid="upload-tab">{t('upload_file')}</Nav.Link>
                 </Nav.Item>
                 {isMobile && (
                   <Nav.Item>
-                    <Nav.Link eventKey='config' className='text-center'>{t('configuration')}</Nav.Link>
+                    <Nav.Link eventKey='config' className='text-center' data-testid="config-tab">{t('configuration')}</Nav.Link>
                   </Nav.Item>
                 )}
                 <Nav.Item>
-                  <Nav.Link eventKey='preview' className='text-center'>{t('preview_download')}</Nav.Link>
+                  <Nav.Link eventKey='preview' className='text-center' data-testid="preview-tab">{t('preview_download')}</Nav.Link>
                 </Nav.Item>
+                {!isMobile && (
+                  <Nav.Item className='mt-auto'>
+                    <Button 
+                      variant='outline-primary' 
+                      className='w-100 text-center' 
+                      onClick={() => window.open('https://sixtococa.github.io/ysyviz-doc/', '_blank')}
+                      data-testid="user-manual-btn"
+                    >
+                      {t('user_manual')}
+                    </Button>
+                  </Nav.Item>
+                )}
               </Nav>
             </Col>
 
             <Col md={10} className='p-4 content'>
               <Tab.Content className='h-100'>
-                <Tab.Pane eventKey='upload' className='h-100'>
+                <Tab.Pane eventKey='upload' className='h-100' data-testid="upload-pane">
                   <Card className='h-100'>
                     <Card.Body>
-                      <h4 className='mb-3 text-center'>Upload CSV/XLSX</h4>
+                      <h4 className='mb-3 text-center' data-testid="upload-title">{t('upload_csv_xlsx')}</h4>
                       <DataUploader type={type} setData={handleDataChange} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
 
                 {isMobile && (
-                  <Tab.Pane eventKey='config' className='h-100'>
+                  <Tab.Pane eventKey='config' className='h-100' data-testid="config-pane">
                     <Card className='h-100'>
                       <Card.Body>
                         <ConfigWithValidation
@@ -247,14 +265,15 @@ const App = () => {
                   </Tab.Pane>
                 )}
 
-                <Tab.Pane eventKey='preview' className='h-100'>
+                <Tab.Pane eventKey='preview' className='h-100' data-testid="preview-pane">
                   <Card className='h-100 position-relative'>
                     {!isMobile && enableValidation && chartData && !hasErrors && (
-                      <div className='position-absolute top-0 end-0 m-2 d-flex gap-2'>
+                      <div className='position-absolute top-0 end-0 m-2 d-flex gap-2' data-testid="download-buttons">
                         <Button
                           variant='light'
                           className='d-flex align-items-center gap-2 shadow-sm'
                           onClick={handleDownloadPNG}
+                          data-testid="download-png-btn"
                         >
                           <FontAwesomeIcon icon={faDownload} />
                           {t('png')}
@@ -263,6 +282,7 @@ const App = () => {
                           variant='light'
                           className='d-flex align-items-center gap-2 shadow-sm'
                           onClick={handleDownloadSVG}
+                          data-testid="download-svg-btn"
                         >
                           <FontAwesomeIcon icon={faDownload} />
                           {t('svg')}
@@ -271,8 +291,8 @@ const App = () => {
                     )}
                     <Card.Body className='h-100'>
                       {isMobile ? (
-                        <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100 chart-container'>
-                          <h4 className='mb-4 text-center'>
+                        <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100 chart-container' data-testid="chart-container">
+                          <h4 className='mb-4 text-center' data-testid="chart-title">
                             {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
                           </h4>
                           <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
@@ -290,6 +310,7 @@ const App = () => {
                                 variant='light'
                                 className='d-flex align-items-center gap-2 shadow-sm'
                                 onClick={handleDownloadPNG}
+                                data-testid="mobile-download-png-btn"
                               >
                                 <FontAwesomeIcon icon={faDownload} />
                                 {t('png')}
@@ -298,6 +319,7 @@ const App = () => {
                                 variant='light'
                                 className='d-flex align-items-center gap-2 shadow-sm'
                                 onClick={handleDownloadSVG}
+                                data-testid="mobile-download-svg-btn"
                               >
                                 <FontAwesomeIcon icon={faDownload} />
                                 {t('svg')}
@@ -321,11 +343,11 @@ const App = () => {
                             />
                           </Col>
                           <Col md={8} className='ps-3'>
-                            <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100'>
-                              <h4 className='mb-4 text-center'>
+                            <div ref={chartRef} className='d-flex flex-column justify-content-center align-items-center h-100 chart-container' data-testid="chart-container">
+                              <h4 className='mb-4 text-center' data-testid="chart-title">
                                 {cfg.title || (type ? t(`${type}_chart`) : t('chart_preview'))}
                               </h4>
-                              <div className='w-100 d-flex justify-content-center align-items-center min-h-400 chart-container'>
+                              <div className='w-100 d-flex justify-content-center align-items-center min-h-400'>
                                 <ChartPreviewMessage
                                   type={type}
                                   hasRequiredFields={hasRequiredFields}

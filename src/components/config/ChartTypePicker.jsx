@@ -28,7 +28,7 @@ const ChartTypePicker = ({ value, onChange }) => {
     const goNext = () => setPage(p => Math.min(totalPages - 1, p + 1));
 
     return (
-        <div>
+        <div data-testid="chart-type-picker">
             <div className='d-flex align-items-center justify-content-center mb-3'>
                 {needsPagination && (
                     <Button
@@ -37,11 +37,12 @@ const ChartTypePicker = ({ value, onChange }) => {
                         onClick={goPrev}
                         disabled={page === 0}
                         aria-label='Previous'
+                        data-testid="chart-type-prev-btn"
                     >
                         ‹
                     </Button>
                 )}
-                <h5 className='mb-0'>{t('chart_type')}</h5>
+                <h5 className='mb-0' data-testid="chart-type-title">{t('chart_type')}</h5>
                 {needsPagination && (
                     <Button
                         variant='light'
@@ -49,13 +50,14 @@ const ChartTypePicker = ({ value, onChange }) => {
                         onClick={goNext}
                         disabled={page >= totalPages - 1}
                         aria-label='Next'
+                        data-testid="chart-type-next-btn"
                     >
                         ›
                     </Button>
                 )}
             </div>
 
-            <Row xs={2} sm={3} md={4} lg={5} className='g-3'>
+            <Row xs={2} sm={3} md={4} lg={5} className='g-3' data-testid="chart-type-grid">
                 {pageItems.map(item => {
                     const selected = value === item.value;
                     return (
@@ -66,12 +68,28 @@ const ChartTypePicker = ({ value, onChange }) => {
                                 tabIndex={0}
                                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onChange(item.value); }}
                                 className={selected ? 'border-primary shadow-sm' : 'border-200'}
+                                data-testid={`chart-type-${item.value}`}
+                                data-selected={selected}
+                                style={{ height: '140px' }}
                             >
-                                <div className='d-flex align-items-center justify-content-center p-3'>
-                                    <img src={item.img} alt={item.label} className='img-fluid' />
+                                <div className='d-flex align-items-center justify-content-center p-3' style={{ height: '80px' }}>
+                                    <img src={item.img} alt={item.label} className='img-fluid' style={{ maxHeight: '50px', maxWidth: '50px' }} />
                                 </div>
-                                <Card.Body className='py-2'>
-                                    <div className='text-center fw-medium'>{item.label}</div>
+                                <Card.Body className='py-2 d-flex align-items-center justify-content-center' style={{ height: '60px' }}>
+                                    <div 
+                                        className='text-center fw-medium' 
+                                        data-testid={`chart-type-label-${item.value}`}
+                                        style={{ 
+                                            fontSize: '0.85rem',
+                                            lineHeight: '1.2',
+                                            overflow: 'hidden',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical'
+                                        }}
+                                    >
+                                        {item.label}
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -81,7 +99,9 @@ const ChartTypePicker = ({ value, onChange }) => {
 
             {needsPagination && (
                 <div className='d-flex justify-content-center mt-2'>
-                    <span className='text-muted small'>{page + 1} / {totalPages}</span>
+                    <span className='text-muted small' data-testid="chart-type-pagination">
+                        {t('page_of', { current: page + 1, total: totalPages })}
+                    </span>
                 </div>
             )}
         </div>

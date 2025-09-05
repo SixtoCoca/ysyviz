@@ -47,7 +47,8 @@ const PieChart = ({ data, config, isDonut = false }) => {
       .attr('d', arc)
       .attr('fill', (d, i) => color(i))
       .attr('stroke', 'white')
-      .attr('stroke-width', 2);
+      .attr('stroke-width', 2)
+      .attr('data-testid', isDonut ? 'donut-path' : 'pie-path');
 
     const labelRadius = innerRadius + (radius - innerRadius) * 0.6;
     const labelArc = d3.arc()
@@ -90,7 +91,7 @@ const PieChart = ({ data, config, isDonut = false }) => {
   if (!data?.values?.length) return null;
 
   return (
-    <div ref={containerRef} className='w-100 h-100'>
+    <div ref={containerRef} className='w-100 h-100' data-testid={isDonut ? 'donut-chart' : 'pie-chart'}>
       <svg ref={svgRef} className='w-100 h-100' />
     </div>
   );

@@ -1,0 +1,51 @@
+departamento,destino,value
+Agricultural 'waste',Bio-conversion,124.729
+Bio-conversion,Losses,0.597
+Bio-conversion,Solid,26.862
+Bio-conversion,Gaseous,0.129
+Bio-conversion,Liquid,280.322
+Coal imports,Solid,11.606
+Coal,Solid,498.76
+Coal reserves,Solid,30.328
+District heating,Heating and cooling - commercial,10.639
+District heating,Heating and cooling - homes,22.505
+Electricity grid,Over generation / exports,104.453
+Electricity grid,Heating and cooling - homes,113.726
+Electricity grid,H2 conversion,27.14
+Electricity grid,Industry,342.165
+Electricity grid,Transport,4.413
+Electricity grid,Agriculture,6.752
+Electricity grid,Services,40.858
+Electricity grid,Lighting & appliances - commercial,90.008
+Electricity grid,Lighting & appliances - homes,93.494
+Gas imports,Gaseous,40.719
+Gas,Gas reserves,82.233
+Gas,Gaseous,63.965
+Gas reserves,Gaseous,0.034
+H2 conversion,H2,20.897
+H2 conversion,Losses,6.242
+Heating and cooling - commercial,Commercial,46.477
+Heating and cooling - homes,Homes,113.726
+Hydro,Electricity grid,19.013
+Liquid,Losses,242.504
+Liquid,Transport,197.026
+Liquid,Industry,10.896
+Liquid,Agriculture,3.64
+Liquid,Services,3.414
+Marine algae,Bio-conversion,4.375
+Nuclear,Electricity grid,413.004
+Oil imports,Liquid,504.287
+Oil reserves,Liquid,107.703
+Other waste,Bio-conversion,56.587
+Other waste,Electricity grid,7.39
+Petroleum,Losses,121.068
+Solar PV,Electricity grid,59.901
+Solar Thermal,Heating and cooling - homes,19.263
+Solid,Losses,343.258
+Solid,Electricity grid,96.457
+Thermal generation,Electricity grid,400.12
+Thermal generation,Losses,46.477
+Tidal,Electricity grid,9.452
+UK land based bioenergy,Bio-conversion,182.01
+Wave,Electricity grid,19.013
+Wind,Electricity grid,289.366

@@ -33,22 +33,6 @@ const PyramidSettings = ({ config, onChange }) => {
                     {t('right_color_description')}
                 </div>
             </div>
-            
-            <div className='mt-3'>
-                <Form.Label>{t('opacity')}</Form.Label>
-                <Form.Control
-                    type='number'
-                    min='0'
-                    max='1'
-                    step='0.1'
-                    value={config?.opacity !== undefined ? config.opacity : 0.8}
-                    onChange={(e) => handleChange('opacity', e.target.value === '' ? 0.8 : parseFloat(e.target.value))}
-                    placeholder='0.8'
-                />
-                <div className='text-muted small'>
-                    {t('opacity_description')}
-                </div>
-            </div>
         </div>
     </>;
 };

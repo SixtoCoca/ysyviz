@@ -84,6 +84,7 @@ const BoxplotChart = ({ data, config }) => {
             .attr('fill', d => color(d.key))
             .attr('fill-opacity', 0.6)
             .attr('stroke', '#333')
+            .attr('data-testid', 'boxplot-rect')
             .append('title')
             .text(d => [d.key, 'Q1: ' + d.q1, 'Median: ' + d.q2, 'Q3: ' + d.q3, 'Low fence: ' + d.lowFence, 'High fence: ' + d.highFence].join('\n'));
 
@@ -120,7 +121,7 @@ const BoxplotChart = ({ data, config }) => {
     if (!rows.length) return null;
 
     return (
-        <div ref={containerRef} className='w-100 h-100'>
+        <div ref={containerRef} className='w-100 h-100' data-testid="boxplot-chart">
             <svg ref={svgRef} className='w-100 h-100' />
         </div>
     );

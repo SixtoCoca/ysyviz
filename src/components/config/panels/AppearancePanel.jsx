@@ -8,9 +8,9 @@ const AppearancePanel = ({ optionalKeys, draft, onChange }) => {
     if (!keys.length) return null;
 
     return <>
-        <Card>
+        <Card data-testid="appearance-panel">
             <Card.Body>
-                <h4 className='mb-3 text-center'>{t('appearance')}</h4>
+                <h4 className='mb-3 text-center' data-testid="appearance-title">{t('appearance')}</h4>
                 {keys.map((k) => {
                     const Cmp = ControlRegistry[k];
                     const val = draft[k];
@@ -18,6 +18,7 @@ const AppearancePanel = ({ optionalKeys, draft, onChange }) => {
                         key={k}
                         value={val}
                         onChange={(v) => onChange(k, coerceValueForKey(k, v))}
+                        data-testid={`appearance-control-${k}`}
                     />
                 })}
             </Card.Body>
